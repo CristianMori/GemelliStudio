@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(MSBuildThisFileDirectory)..\..\build\GemelliApp.props" />
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Gemelli.Studio</RootNamespace>
+    <AssemblyName>Gemelli.Studio</AssemblyName>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <!-- RID (win-x64) comes from build/GemelliApp.props, shared with the worker hosts so the assembled
+         dist folder is one consistent layout; it also pulls the USD.NET + Silk.NET native libs. -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
+    <ProjectReference Include="..\Gemelli.Scripting\Gemelli.Scripting.csproj" />
+    <ProjectReference Include="..\Gemelli.Viewport\Gemelli.Viewport.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.1" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Project>
+  <!--
+    Imported by the runtime executables (Gemelli.Studio + the Gemelli.PhysicsHost / Gemelli.RenderHost
+    workers) so the whole app assembles under one root: dist/<Config>/.
+
+    Studio lands in the root; each worker lands in its OWN subfolder (set GemelliAppSubdir before the
+    import). This isolation is mandatory, NOT cosmetic: Studio carries USD.NET's native USD/TBB libs
+    (tbb.dll = legacy TBB 2020, usd_*.dll) for the rasterized viewport, while ovrtx ships its own
+    Omniverse USD + oneTBB (tbb12.dll). If the ovrtx RenderHost shared a directory with USD.NET's libs,
+    those libs would shadow ovrtx's runtime and the ovrtx loader would crash on init. Separate folders
+    keep each worker's DLL search path clean; the orchestrator resolves them by deterministic relative
+    path (TwinHostLocator step 1) — no scanning.
+  -->
+  <PropertyGroup>
+    <OutDir>$(GemelliDistDir)$(GemelliAppSubdir)</OutDir>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <!-- One RID for all three so each output is a consistent win-x64 layout. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+</Project>

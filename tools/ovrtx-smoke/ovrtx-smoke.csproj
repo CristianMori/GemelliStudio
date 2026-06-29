@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Gemelli.OvrtxSmoke</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Gemelli.Core\Gemelli.Core.csproj" />
+    <ProjectReference Include="$(OvrtxProject)" />
+  </ItemGroup>
+
+</Project>

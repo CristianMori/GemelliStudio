@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Gemelli.Core</RootNamespace>
+    <AssemblyName>Gemelli.Core</AssemblyName>
+  </PropertyGroup>
+
+  <!--
+    Core is intentionally WRAPPER-FREE: it holds the IPC protocol, the named-pipe transport, the
+    pure pose<->matrix conversion, sensor-frame types, the PNG encoder, and the TwinSession
+    orchestrator. The native wrappers live only in the worker processes (Gemelli.Physics /
+    Gemelli.Render), so the conflicting Omniverse plugin sets never load into the same process.
+  -->
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Gemelli.Tests" />
+  </ItemGroup>
+
+</Project>

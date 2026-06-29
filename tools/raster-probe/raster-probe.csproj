@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Gemelli.RasterProbe</RootNamespace>
+    <AssemblyName>raster-probe</AssemblyName>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Gemelli.Viewport\Gemelli.Viewport.csproj" />
+    <ProjectReference Include="..\..\src\Gemelli.Core\Gemelli.Core.csproj" />
+  </ItemGroup>
+
+</Project>

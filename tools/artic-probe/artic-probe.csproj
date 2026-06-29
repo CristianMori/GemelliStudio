@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Gemelli.ArticProbe</RootNamespace>
+    <AssemblyName>artic-probe</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(OvPhysxProject)" />
+  </ItemGroup>
+
+</Project>

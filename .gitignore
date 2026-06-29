@@ -1,0 +1,25 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+*.user
+.vs/
+
+# Assembled-app output folder (whole app builds here; reproduced by `dotnet build`)
+dist/
+
+# Generated resolution-scaled scene copies (written next to the source scene at runtime)
+scenes/_gemelli_*
+
+# Native libraries (acquired separately, version-matched; never committed)
+native/
+*.dll
+*.so
+*.pdb
+
+# Vendored wrapper source (shallow clones of CristianMori/PhysX + CristianMori/ovrtx).
+# Re-create with the clone commands in README; not part of this repo's history.
+external/
+
+# Test/sample assets that are large or generated
+out/
+*.usdc

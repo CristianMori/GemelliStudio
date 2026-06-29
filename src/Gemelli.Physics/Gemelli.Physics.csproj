@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Own subfolder under dist/ so USD.NET's native USD/TBB libs (in the Studio root) don't shadow
+       this worker's dependencies. -->
+  <PropertyGroup>
+    <GemelliAppSubdir>physics\</GemelliAppSubdir>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\..\build\GemelliApp.props" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Gemelli.Physics</RootNamespace>
+    <AssemblyName>Gemelli.PhysicsHost</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
+    <ProjectReference Include="$(OvPhysxProject)" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Orchestrator: lands in the assembled-app root (dist/<Config>/) beside the worker subfolders. -->
+  <Import Project="$(MSBuildThisFileDirectory)..\..\build\GemelliApp.props" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Gemelli.Headless</RootNamespace>
+    <AssemblyName>Gemelli.Headless</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
+    <ProjectReference Include="..\Gemelli.Scripting\Gemelli.Scripting.csproj" />
+  </ItemGroup>
+
+</Project>

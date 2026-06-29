@@ -1,0 +1,26 @@
+<Project>
+  <!--
+    Shared properties for all ovGemelli projects (src/ and tests/).
+    The vendored wrapper projects under external/ are shielded by external/Directory.Build.props
+    (an empty file that stops the MSBuild walk-up), so they keep their own net8.0 settings.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <!-- Relative paths to the vendored wrappers, for use in <ProjectReference>. -->
+    <OvPhysxProject>$(MSBuildThisFileDirectory)external\physx\ovphysx\csharp\Nvidia.OvPhysx\Nvidia.OvPhysx.csproj</OvPhysxProject>
+    <OvrtxProject>$(MSBuildThisFileDirectory)external\ovrtx\csharp\Nvidia.Ovrtx\Nvidia.Ovrtx.csproj</OvrtxProject>
+
+    <!-- Single assembled-app folder for the runtime executables (Studio + the two worker hosts).
+         Opt in per-project with <Import .../> of GemelliApp.props so Studio and its workers all land
+         together under dist/<Config>/ and the orchestrator finds the hosts right beside it. -->
+    <GemelliDistDir>$(MSBuildThisFileDirectory)dist\$(Configuration)\</GemelliDistDir>
+  </PropertyGroup>
+</Project>

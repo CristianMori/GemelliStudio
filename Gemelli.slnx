@@ -1,0 +1,36 @@
+<Solution>
+  <Folder Name="/external/" />
+  <Folder Name="/external/ovrtx/" />
+  <Folder Name="/external/ovrtx/csharp/">
+    <Project Path="external/ovrtx/csharp/Nvidia.Ovrtx/Nvidia.Ovrtx.csproj" />
+  </Folder>
+  <Folder Name="/external/physx/" />
+  <Folder Name="/external/physx/ovphysx/" />
+  <Folder Name="/external/physx/ovphysx/csharp/">
+    <Project Path="external/physx/ovphysx/csharp/Nvidia.OvPhysx/Nvidia.OvPhysx.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Gemelli.Core/Gemelli.Core.csproj" />
+    <Project Path="src/Gemelli.Headless/Gemelli.Headless.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="src/Gemelli.Mcp/Gemelli.Mcp.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="src/Gemelli.Physics/Gemelli.Physics.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="src/Gemelli.Render/Gemelli.Render.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="src/Gemelli.Scripting/Gemelli.Scripting.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="src/Gemelli.Studio/Gemelli.Studio.csproj">
+      <Platform Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Gemelli.Tests/Gemelli.Tests.csproj" />
+  </Folder>
+</Solution>
