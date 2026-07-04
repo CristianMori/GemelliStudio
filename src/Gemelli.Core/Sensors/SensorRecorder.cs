@@ -19,7 +19,7 @@ public sealed class SensorRecorder : IDisposable
     private readonly StreamWriter _manifest;
     private int _written;
     private int _dropped;
-    private bool _disposed;
+    private volatile bool _disposed;
 
     private readonly record struct Item(int Index, CapturedFrame Frame);
 
@@ -37,12 +37,21 @@ public sealed class SensorRecorder : IDisposable
     public int Written => Volatile.Read(ref _written);
     public int Dropped => Volatile.Read(ref _dropped);
 
-    /// <summary>Queue a frame for writing. Non-blocking; drops (and counts) the frame if the queue is full.</summary>
+    /// <summary>Queue a frame for writing. Non-blocking; drops (and counts) the frame if the queue is full.
+    /// Safe to race with <see cref="Dispose"/> (the sim thread submits while the UI thread stops recording).</summary>
     public void Submit(int index, CapturedFrame frame)
     {
         if (_disposed) return;
-        if (!_queue.TryAdd(new Item(index, frame)))
-            Interlocked.Increment(ref _dropped);
+        try
+        {
+            if (!_queue.TryAdd(new Item(index, frame)))
+                Interlocked.Increment(ref _dropped);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or ObjectDisposedException)
+        {
+            // Raced with Dispose (TryAdd throws after CompleteAdding/queue disposal): the recorder is
+            // closing, so just drop the frame — an escape here would fault the caller's sim thread.
+        }
     }
 
     /// <summary>Worker loop: pulls queued frames and writes each, swallowing per-frame failures.</summary>

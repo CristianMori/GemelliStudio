@@ -1129,6 +1129,21 @@ public sealed class MainWindow : Window
     /// </summary>
     private void OnFrameProduced(IReadOnlyList<CapturedFrame> frames)
     {
+        // Sensor product (depth/segmentation): stash the whole frame, record it, and schedule a redraw.
+        // This must run before the viewport-color early-out below: in Fast mode ovrtx renders *only* the
+        // sensor product (the raster viewport draws the main view), so no frame matches _activeProduct.
+        if (_sensorProduct is not null)
+        {
+            CapturedFrame? sensor = frames.FirstOrDefault(f => f.RenderProduct == _sensorProduct);
+            if (sensor is not null)
+            {
+                _recorder?.Submit(Interlocked.Increment(ref _recordIndex), sensor);
+                _pendingSensorFrame = sensor;
+                if (Interlocked.Exchange(ref _sensorPostScheduled, 1) == 0)
+                    Dispatcher.UIThread.Post(ApplyPendingSensor);
+            }
+        }
+
         CapturedFrame? frame = _activeProduct is null
             ? frames.FirstOrDefault(f => f.Color is not null)
             : frames.FirstOrDefault(f => f.RenderProduct == _activeProduct);
@@ -1146,19 +1161,6 @@ public sealed class MainWindow : Window
         _pendingColor = color;
         if (Interlocked.Exchange(ref _postScheduled, 1) == 0)
             Dispatcher.UIThread.Post(ApplyPendingFrame);
-
-        // Sensor product (depth/segmentation): stash the whole frame, record it, and schedule a redraw.
-        if (_sensorProduct is not null)
-        {
-            CapturedFrame? sensor = frames.FirstOrDefault(f => f.RenderProduct == _sensorProduct);
-            if (sensor is not null)
-            {
-                _recorder?.Submit(Interlocked.Increment(ref _recordIndex), sensor);
-                _pendingSensorFrame = sensor;
-                if (Interlocked.Exchange(ref _sensorPostScheduled, 1) == 0)
-                    Dispatcher.UIThread.Post(ApplyPendingSensor);
-            }
-        }
     }
 
     /// <summary>

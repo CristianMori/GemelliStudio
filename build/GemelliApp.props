@@ -12,6 +12,9 @@
     path (TwinHostLocator step 1) — no scanning.
   -->
   <PropertyGroup>
+    <!-- Computed here (project body, after Sdk.props) rather than in Directory.Build.props, so
+         $(Configuration) has already been defaulted and a config-less build lands in dist\Debug\. -->
+    <GemelliDistDir>$(MSBuildThisFileDirectory)..\dist\$(Configuration)\</GemelliDistDir>
     <OutDir>$(GemelliDistDir)$(GemelliAppSubdir)</OutDir>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>

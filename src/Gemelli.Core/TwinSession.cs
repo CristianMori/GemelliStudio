@@ -116,21 +116,25 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
         if (!string.IsNullOrEmpty(options.OvPhysxLibrary))
             physicsEnv[GemelliEnvironment.OvPhysxLibEnvVar] = options.OvPhysxLibrary;
 
-        // Shared-memory framebuffer for zero-(pipe-)copy frame transport (Windows only).
-        string frameBufName = "";
-        long frameBufCap = 0;
-        if (OperatingSystem.IsWindows())
-        {
-            frameBufName = "gemelli-frame-" + Guid.NewGuid().ToString("N");
-            frameBufCap = options.FrameBufferBytes;
-            _frameBuffer = FrameBuffer.Create(frameBufName, frameBufCap);
-        }
-
-        _physics = WorkerHost.Launch("physics", TwinHostLocator.PhysicsHost(options.PhysicsHostPath), physicsPipe, physicsEnv);
-        _render = WorkerHost.Launch("render", TwinHostLocator.RenderHost(options.RenderHostPath), renderPipe);
-
+        // Everything from here on is guarded: a failure at any point (framebuffer, either worker
+        // launch, init/load) must dispose whatever already exists — otherwise a failed render launch
+        // leaks a live physics process and the mapped framebuffer. Dispose() is null-safe against
+        // the not-yet-assigned fields.
         try
         {
+            // Shared-memory framebuffer for zero-(pipe-)copy frame transport (Windows only).
+            string frameBufName = "";
+            long frameBufCap = 0;
+            if (OperatingSystem.IsWindows())
+            {
+                frameBufName = "gemelli-frame-" + Guid.NewGuid().ToString("N");
+                frameBufCap = options.FrameBufferBytes;
+                _frameBuffer = FrameBuffer.Create(frameBufName, frameBufCap);
+            }
+
+            _physics = WorkerHost.Launch("physics", TwinHostLocator.PhysicsHost(options.PhysicsHostPath), physicsPipe, physicsEnv);
+            _render = WorkerHost.Launch("render", TwinHostLocator.RenderHost(options.RenderHostPath), renderPipe);
+
             // Physics: init device, load USD, bind the rigid-body poses we will mirror.
             _physics.Send((ushort)PhysicsOp.Init, w => w.Write((int)options.Device));
             _physics.Send((ushort)PhysicsOp.LoadUsd, w => w.Write(options.UsdPath));

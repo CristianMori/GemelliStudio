@@ -1,4 +1,5 @@
-﻿using Gemelli.Core;
+﻿using System.Globalization;
+using Gemelli.Core;
 using Gemelli.Core.Control;
 using Gemelli.Core.Imaging;
 using Gemelli.Core.Sensors;
@@ -13,7 +14,7 @@ using Gemelli.Scripting;
 //   --steps <n>            frames to simulate (default 60)
 //   --out <dir>           output directory for PNGs (default ./out)
 //   --dt <seconds>        timestep (default 0.016667)
-//   --rigid <glob>        rigid-body pattern bridged to the renderer (default /World/*)
+//   --rigid <glob>        rigid-body pattern bridged to the renderer (default /World/**)
 //   --ovrtx-lib <dir>     directory containing ovrtx-dynamic.dll
 //   --ovphysx-lib <path>  absolute path to ovphysx.dll (else read from OVPHYSX_LIB)
 //   --device cpu|gpu|auto ovphysx device (default auto)
@@ -159,15 +160,19 @@ internal static class ArgParser
             UsdPath = usd,
             RenderProducts = products.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
             Device = device,
-            TimeStep = map.TryGetValue("dt", out string? dt) ? float.Parse(dt) : 1f / 60f,
-            RigidBodyPattern = map.GetValueOrDefault("rigid", "/World/*"),
+            TimeStep = map.TryGetValue("dt", out string? dt)
+                ? float.Parse(dt, CultureInfo.InvariantCulture) // invariant: on e.g. it-IT, "0.016667" would parse as 16667
+                : 1f / 60f,
+            // "/World/**" (recursive) to match SimulationOptions' default: a single-level "/World/*"
+            // misses nested articulation links, leaving robots frozen at their authored pose in renders.
+            RigidBodyPattern = map.GetValueOrDefault("rigid", "/World/**"),
             OvrtxLibraryDirectory = map.GetValueOrDefault("ovrtx-lib") ?? GemelliEnvironment.ResolveOvrtxDirectory(),
             OvPhysxLibrary = map.GetValueOrDefault("ovphysx-lib")
                              ?? GemelliEnvironment.ResolveOvPhysxLibrary(),
             RenderEnabled = !noRender,
         };
 
-        int steps = map.TryGetValue("steps", out string? s) ? int.Parse(s) : 60;
+        int steps = map.TryGetValue("steps", out string? s) ? int.Parse(s, CultureInfo.InvariantCulture) : 60;
         string outDir = map.GetValueOrDefault("out", "out");
         return new HeadlessOptions(sim, steps, outDir, map.GetValueOrDefault("script"), map.GetValueOrDefault("record"), map.GetValueOrDefault("dump-dof"));
     }

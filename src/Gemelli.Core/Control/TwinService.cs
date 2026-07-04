@@ -18,6 +18,11 @@ public sealed class TwinService : IDisposable
     public enum RunState { Stopped, Paused, Playing, Faulted }
 
     private readonly BlockingCollection<Action> _queue = new();
+    // Serializes enqueues against the run loop's exit: work may only be queued while _accepting is
+    // true, and the loop flips it false (under the gate) before its final drain — so no item can land
+    // after that drain and strand its caller in RunOnSimThread forever.
+    private readonly object _queueGate = new();
+    private bool _accepting;
     private readonly Func<SimulationOptions, ITwinDriver> _driverFactory;
     private Thread? _thread;
     private ITwinDriver? _driver;
@@ -133,6 +138,7 @@ public sealed class TwinService : IDisposable
             foreach (IController c in controllers) _runner.Add(c);
             _runner.Start(); // warmup + OnStart
             _state = RunState.Paused;
+            lock (_queueGate) _accepting = true;
             ready.SetResult();
         }
         catch (Exception ex)
@@ -197,8 +203,11 @@ public sealed class TwinService : IDisposable
             }
         }
 
-        // Drain commands queued during shutdown so their callers (Invoke/Step) don't hang forever;
-        // each runs through its own try/catch wrapper, so a failure unblocks the caller with an error.
+        // Stop accepting first (under the gate), then drain: anything queued before the flip is run
+        // here, and anything after the flip is rejected at the enqueue site — so no caller of
+        // Invoke/Step can be stranded waiting on an item added just after this final drain. Each item
+        // runs through its own try/catch wrapper, so a failure unblocks the caller with an error.
+        lock (_queueGate) _accepting = false;
         while (_queue.TryTake(out Action? pending)) { try { pending(); } catch { /* wrapper already reported */ } }
 
         try { _runner?.Stop(); } catch { /* ignore */ }
@@ -252,7 +261,9 @@ public sealed class TwinService : IDisposable
         }
         catch { /* keep the previous snapshot if a read hiccups */ }
 
-        FrameProduced?.Invoke(frames);
+        // Shield the run loop from subscriber bugs: an exception here would otherwise be caught by the
+        // loop's fault handler and tear the twin down as if a worker had crashed.
+        try { FrameProduced?.Invoke(frames); } catch { /* a frame consumer must never fault the twin */ }
     }
 
     public void Play() => Post(() => { if (_state != RunState.Stopped) _state = RunState.Playing; });
@@ -299,23 +310,32 @@ public sealed class TwinService : IDisposable
     {
         if (!IsRunning) return;
         _stopRequested = true;
-        _queue.Add(() => { }); // wake the loop
+        Post(() => { }); // wake the loop
         _thread?.Join(10_000);
     }
 
-    // Posts fire-and-forget work to the sim thread.
-    private void Post(Action work) { if (IsRunning) _queue.Add(work); }
+    // Posts fire-and-forget work to the sim thread; silently dropped once the loop stops accepting.
+    private void Post(Action work)
+    {
+        lock (_queueGate) { if (_accepting) _queue.Add(work); }
+    }
 
     // Posts work and blocks until it completes (propagating exceptions).
     private void RunOnSimThread(Action work)
     {
         if (Thread.CurrentThread == _thread) { work(); return; } // reentrant call already on the sim thread
         var done = new TaskCompletionSource();
-        _queue.Add(() =>
+        lock (_queueGate)
         {
-            try { work(); done.SetResult(); }
-            catch (Exception ex) { done.SetException(ex); }
-        });
+            // Checked under the gate (not just EnsureRunning at the call site): the loop may have
+            // faulted between the caller's check and here; adding then would strand us forever.
+            if (!_accepting) throw new InvalidOperationException("Twin is not running; call Start first.");
+            _queue.Add(() =>
+            {
+                try { work(); done.SetResult(); }
+                catch (Exception ex) { done.SetException(ex); }
+            });
+        }
         done.Task.GetAwaiter().GetResult();
     }
 

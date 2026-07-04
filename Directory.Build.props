@@ -18,9 +18,9 @@
     <OvPhysxProject>$(MSBuildThisFileDirectory)external\physx\ovphysx\csharp\Nvidia.OvPhysx\Nvidia.OvPhysx.csproj</OvPhysxProject>
     <OvrtxProject>$(MSBuildThisFileDirectory)external\ovrtx\csharp\Nvidia.Ovrtx\Nvidia.Ovrtx.csproj</OvrtxProject>
 
-    <!-- Single assembled-app folder for the runtime executables (Studio + the two worker hosts).
-         Opt in per-project with <Import .../> of GemelliApp.props so Studio and its workers all land
-         together under dist/<Config>/ and the orchestrator finds the hosts right beside it. -->
-    <GemelliDistDir>$(MSBuildThisFileDirectory)dist\$(Configuration)\</GemelliDistDir>
+    <!-- Single assembled-app folder for the runtime executables (Studio + the two worker hosts):
+         opt in per-project with an <Import> of build/GemelliApp.props, which computes the dist/<Config>/
+         output dir. (It cannot be computed here: Directory.Build.props is evaluated before MSBuild
+         defaults $(Configuration), so a config-less `dotnet build` would expand it to dist\.) -->
   </PropertyGroup>
 </Project>

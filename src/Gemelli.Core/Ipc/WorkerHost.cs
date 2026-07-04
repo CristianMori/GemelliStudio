@@ -60,7 +60,13 @@ internal sealed class WorkerHost : IDisposable
         }
         catch (Exception ex)
         {
-            throw host.Fail("failed to connect to its pipe", ex);
+            // The caller never receives the host, so Dispose can't run — kill the worker here or a
+            // process stuck in WaitForConnection outlives us. Build the exception first: Fail() reads
+            // the exit code and log tail, which a kill would clobber.
+            TwinWorkerException failure = host.Fail("failed to connect to its pipe", ex);
+            try { if (!process.HasExited) process.Kill(entireProcessTree: true); } catch { /* best effort */ }
+            process.Dispose();
+            throw failure;
         }
         return host;
     }
