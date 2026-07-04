@@ -20,7 +20,18 @@ public class TwinLiveTests
 
     private static string SampleUsd =>
         Environment.GetEnvironmentVariable("GEMELLI_SAMPLE_USD")
-        ?? @"C:\DataDrive\ovGemelli\native\ovphysx\ovphysx\samples\data\boxes_falling_on_groundplane.usda";
+        ?? Path.Combine(RepoRoot, @"native\ovphysx\ovphysx\samples\data\boxes_falling_on_groundplane.usda");
+
+    // The repo root (found by the solution file), so the default sample path works on any checkout.
+    private static string RepoRoot
+    {
+        get
+        {
+            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
+                if (File.Exists(Path.Combine(dir.FullName, "Gemelli.slnx"))) return dir.FullName;
+            return AppContext.BaseDirectory;
+        }
+    }
 
     private const string RenderProduct =
         "/Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0";
@@ -28,10 +39,11 @@ public class TwinLiveTests
     public TwinLiveTests(ITestOutputHelper output) => _out = output;
 
     // End-to-end: bridged rigid bodies are detected and the twin loop produces a non-black color frame.
-    [Fact]
+    [SkippableFact]
     public void Twin_Loop_Renders_Falling_Boxes()
     {
-        if (!Enabled) return;
+        // Reported as skipped (not silently passed) when the native libraries aren't configured.
+        Skip.IfNot(Enabled, "Set OVPHYSX_LIB and GEMELLI_OVRTX_DIR to run the live twin test.");
 
         var options = new SimulationOptions
         {

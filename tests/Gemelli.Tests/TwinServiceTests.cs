@@ -111,8 +111,10 @@ public class TwinServiceTests
         svc.Play();
         SpinWait.SpinUntil(() => svc.FrameCount > 3, TimeSpan.FromSeconds(2));
         svc.Pause();
-        // Let the loop observe the pause, then confirm the count stabilizes.
-        Thread.Sleep(50);
+        // Pause is a fire-and-forget post to the sim thread: wait until the loop has observed it
+        // (a fixed sleep races on a starved machine), then confirm the count stabilizes.
+        Assert.True(SpinWait.SpinUntil(() => svc.State == TwinService.RunState.Paused, TimeSpan.FromSeconds(2)),
+            "sim loop should observe the pause");
         long afterPause = svc.FrameCount;
         Thread.Sleep(50);
 

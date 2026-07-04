@@ -10,6 +10,9 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <!-- Skip.IfNot for the tier-2 live tests: they must REPORT as skipped without native libs,
+         not silently pass (green-when-not-run is indistinguishable from green-when-verified). -->
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
   </ItemGroup>
 
   <ItemGroup>
