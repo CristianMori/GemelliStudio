@@ -83,8 +83,9 @@ Attr(ptrNode, "node:typeVersion", SdfValueTypeNames.Int, false).Set(2);
 Attr(ptrNode, "outputs:__device", SdfValueTypeNames.Token, true).Set(new TfToken("cpu"));
 Console.WriteLine("Cloned SyntheticData copy + pointer nodes for segmentation.");
 
-Directory.CreateDirectory(Path.GetDirectoryName(outUsd)!);
-stage.GetRootLayer().Export(outUsd);
+// GetDirectoryName is "" for a bare filename like "out.usda"; CreateDirectory("") throws.
+if (Path.GetDirectoryName(outUsd) is { Length: > 0 } outDir) Directory.CreateDirectory(outDir);
+if (!stage.GetRootLayer().Export(outUsd)) { Console.Error.WriteLine($"Export failed: {outUsd}"); return 1; }
 Console.WriteLine($"Wrote {outUsd}.");
 return 0;
 

@@ -21,7 +21,7 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
     private readonly FrameBuffer? _frameBuffer; // shared-memory framebuffer (Windows); null = inline pipe transport
 
     private string[] _primPaths = [];
-    private float _simTime;
+    private double _simTime; // double: float ulps exceed a 1/60s increment after ~4.5h and sim time would drift
     private bool _disposed;
     private IReadOnlyList<CapturedFrame> _latestFrames = [];
 
@@ -37,7 +37,8 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
     public void SetCameraTransform(string primPath, double[] matrix16)
     {
         if (matrix16.Length != 16) throw new ArgumentException("Camera matrix must be 16 doubles.", nameof(matrix16));
-        lock (_camLock) { _cameraPath = primPath; _cameraMatrix = matrix16; }
+        // Copy: the caller may keep mutating its buffer while the sim thread snapshots it at Step.
+        lock (_camLock) { _cameraPath = primPath; _cameraMatrix = (double[])matrix16.Clone(); }
     }
 
     public double SimTime => _simTime;
@@ -196,7 +197,7 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
             using BinaryReader r = _physics.Request((ushort)PhysicsOp.StepAndReadPoses, w =>
             {
                 w.Write(_options.TimeStep);
-                w.Write(_simTime);
+                w.Write((float)_simTime); // wire stays float32; the accumulator is double
             });
             n = r.ReadInt32();
             poses = Wire.ReadFloatArray(r);

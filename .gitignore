@@ -23,3 +23,4 @@ external/
 # Test/sample assets that are large or generated
 out/
 *.usdc
+TestResults/

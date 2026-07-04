@@ -46,7 +46,9 @@ if (jointsFile is not null && File.Exists(jointsFile))
     var values = new Dictionary<string, float>();
     foreach (string line in File.ReadAllLines(jointsFile))
     {
-        string[] f = line.Trim().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        string s = line.Trim();
+        if (s.Length == 0 || s.StartsWith('#')) continue; // same comment convention as the poses file
+        string[] f = s.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
         if (f.Length >= 2) values[f[0]] = P(f[1]);
     }
     foreach (UsdPrim prim in stage.Traverse())
@@ -67,7 +69,12 @@ if (jointsFile is not null && File.Exists(jointsFile))
     }
 }
 
-stage.GetRootLayer().Export(outUsd);
+if (Path.GetDirectoryName(outUsd) is { Length: > 0 } outDir) Directory.CreateDirectory(outDir);
+if (!stage.GetRootLayer().Export(outUsd))
+{
+    Console.Error.WriteLine($"Export failed: {outUsd}"); // e.g. unwritable path — don't report success
+    return 1;
+}
 Console.WriteLine($"Snapshot wrote {written} body transforms, {joints} joint states ({skipped} bodies skipped) -> {outUsd}");
 return 0;
 

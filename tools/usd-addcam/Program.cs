@@ -14,8 +14,16 @@ string outUsd = args.Length > 1 ? args[1] : @"C:\DataDrive\ovGemelli\out\boxes_w
 string camPath = args.Length > 2 ? args[2] : "/OmniverseKit_Persp";
 
 (int W, int H)? res = null;
-if (args.Length > 3 && args[3].Split('x') is [var ws, var hs] && int.TryParse(ws, out int rw) && int.TryParse(hs, out int rh))
-    res = (rw, rh);
+if (args.Length > 3 && !string.IsNullOrWhiteSpace(args[3]))
+{
+    if (args[3].Split('x') is [var ws, var hs] && int.TryParse(ws, out int rw) && int.TryParse(hs, out int rh))
+        res = (rw, rh);
+    else
+    {
+        Console.Error.WriteLine($"Bad resolution '{args[3]}' — expected WxH, e.g. 960x540.");
+        return 1;
+    }
+}
 
 // Optional render mode token (e.g. "RealTimePathTracing" = fast, "PathTracing" = reference quality).
 string? renderMode = args.Length > 4 && !string.IsNullOrWhiteSpace(args[4]) ? args[4] : null;
@@ -90,7 +98,9 @@ if (res is not null || renderMode is not null)
     Console.WriteLine($"Set {what} on {patched} render product(s).");
 }
 
-Directory.CreateDirectory(Path.GetDirectoryName(outUsd)!);
-stage.GetRootLayer().Export(outUsd);
+// GetDirectoryName is "" for a bare filename like "out.usda"; CreateDirectory("") throws.
+if (Path.GetDirectoryName(outUsd) is { Length: > 0 } outDir) Directory.CreateDirectory(outDir);
+if (!stage.GetRootLayer().Export(outUsd)) { Console.Error.WriteLine($"Export failed: {outUsd}"); return 1; }
 
 Console.WriteLine($"Wrote {outUsd} with camera at {camPath} (eye {eye}, target {target}).");
+return 0;

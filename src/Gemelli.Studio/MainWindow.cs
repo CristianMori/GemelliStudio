@@ -255,7 +255,11 @@ public sealed class MainWindow : Window
         string? sceneDir = SceneFolder();
         if (sceneDir is not null && Directory.Exists(sceneDir))
             foreach (string f in Directory.GetFiles(sceneDir, "*.usd*").OrderBy(f => f))
+            {
+                // Skip the render-scale temp copies EffectiveScenePath writes next to the originals.
+                if (Path.GetFileName(f).StartsWith("_gemelli_", StringComparison.OrdinalIgnoreCase)) continue;
                 _scenes.Add(new SceneItem(Path.GetFileName(f), f));
+            }
 
         _sceneCombo = new ComboBox
         {
@@ -632,6 +636,8 @@ public sealed class MainWindow : Window
         double scale = (_resBox.SelectedItem as string) switch { "75%" => 0.75, "50%" => 0.5, _ => 1.0 };
         string scene = CurrentScenePath;
         if (scale >= 1.0 || string.IsNullOrEmpty(scene) || !scene.EndsWith(".usda", StringComparison.OrdinalIgnoreCase)) return scene;
+        // Never re-scale an already-scaled temp copy (75% of 75% = 56%) if one was picked via Browse.
+        if (Path.GetFileName(scene).StartsWith("_gemelli_", StringComparison.OrdinalIgnoreCase)) return scene;
         try
         {
             string text = File.ReadAllText(scene);
@@ -1184,8 +1190,10 @@ public sealed class MainWindow : Window
         {
             if (_viewportBitmap is null || _viewportBitmap.PixelSize.Width != w || _viewportBitmap.PixelSize.Height != h)
             {
+                WriteableBitmap? old = _viewportBitmap;
                 _viewportBitmap = new WriteableBitmap(new PixelSize(w, h), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
                 _viewport.Source = _viewportBitmap;
+                old?.Dispose(); // detached above; free its native buffer now instead of at finalization
             }
             ReadOnlySpan<byte> src = color.Bytes;
             using (ILockedFramebuffer fb = _viewportBitmap.Lock())
@@ -1318,8 +1326,10 @@ public sealed class MainWindow : Window
         {
             if (_sensorBitmap is null || _sensorBitmap.PixelSize.Width != w || _sensorBitmap.PixelSize.Height != h)
             {
+                WriteableBitmap? old = _sensorBitmap;
                 _sensorBitmap = new WriteableBitmap(new PixelSize(w, h), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
                 _sensorImage.Source = _sensorBitmap;
+                old?.Dispose(); // detached above; free its native buffer now instead of at finalization
             }
             using (ILockedFramebuffer fb = _sensorBitmap.Lock())
             {
@@ -1396,9 +1406,15 @@ public sealed class MainWindow : Window
         _posX = _posY = _posZ = null;
         _liveReadout = null;
 
-        float[] pose;
-        try { pose = _twin.Invoke(api => api.Read(SimTensor.RigidBodyPose, path)); }
-        catch { return; }
+        // Cache first: Invoke blocks until the sim loop drains its queue, which at high time-scale can
+        // stall the UI thread for the length of a full physics catch-up burst. The cache misses only
+        // before the first step, when the sim is idle and the blocking read returns immediately.
+        float[]? pose = _twin.TryGetPose(path);
+        if (pose is null)
+        {
+            try { pose = _twin.Invoke(api => api.Read(SimTensor.RigidBodyPose, path)); }
+            catch { return; }
+        }
 
         _inspector.Children.Clear();
         _inspector.Children.Add(new TextBlock { Text = path, Foreground = Text, FontSize = 13, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap });
@@ -1488,32 +1504,42 @@ public sealed class MainWindow : Window
         _statusLeft.Text = "Saving snapshot…";
         try
         {
-            // Gather current poses (and robot joint state) on the sim thread, then write temp files.
+            // Gather every pose (and robot joint state) in ONE Invoke so the whole snapshot comes from
+            // a single frame — per-body Invokes interleave with stepping while playing, and the saved
+            // initial conditions can end up mutually inconsistent (e.g. penetrating bodies).
             string[] paths = _twin.RigidBodyPaths.ToArray();
             string? robot = _robotPath;
             string posesFile = Path.GetTempFileName();
             string? jointsFile = null;
             await Task.Run(() =>
             {
-                using (var w = new StreamWriter(posesFile))
+                var poses = new List<(string Path, float[] Pose)>(paths.Length);
+                float[] dofs = [];
+                IReadOnlyList<string> names = [];
+                _twin.Invoke(api =>
+                {
                     foreach (string p in paths)
+                        poses.Add((p, api.Read(SimTensor.RigidBodyPose, p)));
+                    if (robot is not null)
                     {
-                        float[] pose = _twin.Invoke(api => api.Read(SimTensor.RigidBodyPose, p));
+                        dofs = api.Read(SimTensor.ArticulationDofPosition, robot);
+                        names = api.DofNames(robot);
+                    }
+                });
+
+                using (var w = new StreamWriter(posesFile))
+                    foreach ((string p, float[] pose) in poses)
+                    {
                         if (pose.Length < 7) continue;
                         w.WriteLine($"{p} {pose[0]:R} {pose[1]:R} {pose[2]:R} {pose[3]:R} {pose[4]:R} {pose[5]:R} {pose[6]:R}");
                     }
 
-                if (robot is not null)
+                int n = Math.Min(dofs.Length, names.Count);
+                if (n > 0)
                 {
-                    float[] dofs = _twin.Invoke(api => api.Read(SimTensor.ArticulationDofPosition, robot));
-                    IReadOnlyList<string> names = _twin.Invoke(api => api.DofNames(robot));
-                    int n = Math.Min(dofs.Length, names.Count);
-                    if (n > 0)
-                    {
-                        jointsFile = Path.GetTempFileName();
-                        using var jw = new StreamWriter(jointsFile);
-                        for (int i = 0; i < n; i++) jw.WriteLine($"{names[i]} {dofs[i]:R}");
-                    }
+                    jointsFile = Path.GetTempFileName();
+                    using var jw = new StreamWriter(jointsFile);
+                    for (int i = 0; i < n; i++) jw.WriteLine($"{names[i]} {dofs[i]:R}");
                 }
             });
 
@@ -1532,10 +1558,12 @@ public sealed class MainWindow : Window
         var psi = new ProcessStartInfo(exe) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
         foreach (string a in args) psi.ArgumentList.Add(a);
         using var proc = Process.Start(psi)!;
-        string stdout = await proc.StandardOutput.ReadToEndAsync();
-        string stderr = await proc.StandardError.ReadToEndAsync();
+        // Drain both streams concurrently: reading stdout to EOF before touching stderr deadlocks
+        // once the child fills the stderr pipe buffer while we're not consuming it.
+        Task<string> stdout = proc.StandardOutput.ReadToEndAsync();
+        Task<string> stderr = proc.StandardError.ReadToEndAsync();
         await proc.WaitForExitAsync();
-        return (proc.ExitCode, stdout + stderr);
+        return (proc.ExitCode, await stdout + await stderr);
     }
 
     // Finds a built tool exe under tools/<name>/bin/**/<name>.exe (newest), walking up to the solution.

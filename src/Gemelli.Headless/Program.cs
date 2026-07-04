@@ -20,7 +20,9 @@ using Gemelli.Scripting;
 //   --device cpu|gpu|auto ovphysx device (default auto)
 //   --script <path.csx>   per-frame C# behavior script (hot-reloaded); else passive playback
 
-HeadlessOptions? options = ArgParser.Parse(args);
+HeadlessOptions? options;
+try { options = ArgParser.Parse(args); }
+catch (FormatException) { options = null; } // malformed numeric arg (e.g. --steps abc) → usage, not a stack trace
 if (options is null)
 {
     ArgParser.PrintUsage();
@@ -141,6 +143,7 @@ internal static class ArgParser
         bool noRender = args.Contains("--no-render", StringComparer.OrdinalIgnoreCase);
         if (noRender) args = args.Where(a => !string.Equals(a, "--no-render", StringComparison.OrdinalIgnoreCase)).ToArray();
 
+        if (args.Length % 2 != 0) return null; // a flag without its value (e.g. trailing "--record")
         var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         for (int i = 0; i < args.Length - 1; i += 2)
         {

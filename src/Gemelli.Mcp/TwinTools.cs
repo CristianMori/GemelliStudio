@@ -101,7 +101,7 @@ public static class TwinTools
         return string.Join('\n', lines);
     }
 
-    [McpServerTool, Description("Read articulation DOF positions for prims matching a USD glob (flat row-major).")]
+    [McpServerTool, Description("Read articulation DOF positions for prims matching a USD glob (flat row-major; radians for revolute joints, metres for prismatic — NOT the degrees USD files author).")]
     public static float[] read_dof(
         TwinService twin,
         [Description("USD glob selecting the articulation(s), e.g. '/World/robot'.")] string pattern)
@@ -111,7 +111,7 @@ public static class TwinTools
     public static string set_dof_targets(
         TwinService twin,
         [Description("USD glob selecting the articulation(s), e.g. '/World/robot'.")] string pattern,
-        [Description("Target positions, one per DOF (flat row-major).")] float[] values)
+        [Description("Target positions, one per DOF (flat row-major). Radians for revolute joints, metres for prismatic — NOT the degrees USD files author.")] float[] values)
     {
         twin.Invoke(api => api.SetDofPositionTargets(pattern, values));
         return $"Set {values.Length} DOF position targets on '{pattern}'.";

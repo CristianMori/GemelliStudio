@@ -2,10 +2,10 @@ using Nvidia.OvPhysx;
 
 // Physics-only probe: load an Isaac Sim USD with ovphysx, find articulations, and dump what the
 // ArticulationLinkPose binding exposes — to learn whether BodyNames are full prim paths or names.
-// Usage: artic-probe <usd> [pattern]
+// Usage: artic-probe <usd> [articulationPattern] [gpu]
 
 string usd = args.Length > 0 ? args[0] : @"C:\DataDrive\IsaacSimSharp\out\urdf_import.usda";
-string pattern = args.Length > 1 ? args[1] : "/World/*";
+string pattern = args.Length > 1 ? args[1] : "/World/robot";
 var device = args.Length > 2 && args[2] == "gpu" ? DeviceType.Gpu : DeviceType.Cpu;
 Console.WriteLine($"device={device}");
 
@@ -15,7 +15,7 @@ load.Wait(TimeSpan.FromSeconds(30));
 Console.WriteLine($"loaded {usd}");
 
 // Inspect the articulation for IK: metadata, link names (with indices), and the Jacobian shape.
-string artPattern = "/World/robot";
+string artPattern = pattern;
 using (TensorBinding links = physx.CreateTensorBinding(TensorType.ArticulationLinkPose, artPattern, raiseIfEmpty: false))
 {
     Console.WriteLine($"\n>>> Articulation '{artPattern}'  N={links.Count}");

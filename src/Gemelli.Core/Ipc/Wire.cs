@@ -35,7 +35,7 @@ public enum SimTensor
 /// <summary>Opcodes for the render worker (ovrtx host).</summary>
 public enum RenderOp : ushort
 {
-    Init = 1,            // (string ovrtxDir, bool syncMode, string frameBufName, long frameBufCap) -> (uint maj,min,patch)
+    Init = 1,            // (string ovrtxDir, bool syncMode, string frameBufName, long frameBufCap, bool renderEnabled) -> (uint maj,min,patch)
     LoadUsd = 2,         // (string path) -> ()
     Warmup = 3,          // (string[] products, int frames) -> ()
     WriteAndStep = 4,    // (string[] paths, double[] matrices, string[] products, double dt) -> (bool sharedMem, frames)

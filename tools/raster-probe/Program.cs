@@ -26,7 +26,8 @@ using var ras = new GlRasterizer(W, H);
 ras.Upload(meshes);
 byte[] rgba = ras.Render(view, proj, _ => null);
 
-Directory.CreateDirectory(Path.GetDirectoryName(outPng)!);
+// GetDirectoryName is "" for a bare filename like "out.png"; CreateDirectory("") throws.
+if (Path.GetDirectoryName(outPng) is { Length: > 0 } outDir) Directory.CreateDirectory(outDir);
 File.WriteAllBytes(outPng, Png.Encode(rgba, W, H, 4));
 Console.WriteLine($"Wrote {outPng}");
 return 0;

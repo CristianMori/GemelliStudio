@@ -43,7 +43,9 @@ public sealed unsafe class FrameBuffer : IDisposable
     /// <summary>Copies <paramref name="source"/> into the region at <paramref name="offset"/>.</summary>
     public void Write(long offset, ReadOnlySpan<byte> source)
     {
-        if (offset < 0 || offset + source.Length > Capacity)
+        // Subtraction form: `offset + length > Capacity` wraps negative for a huge corrupt offset
+        // (signed overflow) and would pass the check, handing out a wild span.
+        if (offset < 0 || source.Length > Capacity - offset)
             throw new ArgumentOutOfRangeException(nameof(offset), "Frame write exceeds shared-buffer capacity.");
         source.CopyTo(new Span<byte>(_ptr + offset, source.Length));
     }
@@ -51,7 +53,7 @@ public sealed unsafe class FrameBuffer : IDisposable
     /// <summary>Copies <paramref name="length"/> bytes from <paramref name="offset"/> into a new managed array.</summary>
     public byte[] Read(long offset, int length)
     {
-        if (offset < 0 || offset + length > Capacity)
+        if (offset < 0 || length < 0 || length > Capacity - offset)
             throw new ArgumentOutOfRangeException(nameof(offset), "Frame read exceeds shared-buffer capacity.");
         var dst = new byte[length];
         new ReadOnlySpan<byte>(_ptr + offset, length).CopyTo(dst);

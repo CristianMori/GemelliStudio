@@ -10,7 +10,9 @@
     <Project Path="external/physx/ovphysx/csharp/Nvidia.OvPhysx/Nvidia.OvPhysx.csproj" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Gemelli.Core/Gemelli.Core.csproj" />
+    <Project Path="src/Gemelli.Core/Gemelli.Core.csproj">
+      <Platform Project="x64" />
+    </Project>
     <Project Path="src/Gemelli.Headless/Gemelli.Headless.csproj">
       <Platform Project="x64" />
     </Project>
@@ -29,8 +31,36 @@
     <Project Path="src/Gemelli.Studio/Gemelli.Studio.csproj">
       <Platform Project="x64" />
     </Project>
+    <Project Path="src/Gemelli.Viewport/Gemelli.Viewport.csproj">
+      <Platform Project="x64" />
+    </Project>
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Gemelli.Tests/Gemelli.Tests.csproj" />
+    <Project Path="tests/Gemelli.Tests/Gemelli.Tests.csproj">
+      <Platform Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/artic-probe/artic-probe.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="tools/ovrtx-smoke/ovrtx-smoke.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="tools/raster-probe/raster-probe.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="tools/usd-addcam/usd-addcam.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="tools/usd-addseg/usd-addseg.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="tools/usd-snapshot/usd-snapshot.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="tools/usd-spike/usd-spike.csproj">
+      <Platform Project="x64" />
+    </Project>
   </Folder>
 </Solution>

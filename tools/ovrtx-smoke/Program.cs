@@ -44,6 +44,11 @@ foreach (var frame in prod.Frames)
     var shape = t.GetShape();
     int h = (int)shape[0], w = (int)shape[1];
     int channels = Math.Max(1, (int)t.DType.Lanes);
+    if (t.DType.Bits != 8)
+    {
+        Console.WriteLine($"  {w}x{h}x{channels}, {t.DType.Bits}-bit elements — skipping (PNG probe handles 8-bit only)");
+        continue;
+    }
     long bytes = (long)h * w * channels;
 
     var buf = new byte[bytes];

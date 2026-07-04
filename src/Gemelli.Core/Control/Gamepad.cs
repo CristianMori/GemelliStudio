@@ -63,7 +63,7 @@ public static class Gamepad
     private static float Axis(short raw)
     {
         float v = raw / 32767f;
-        if (v > 1f) v = 1f;
+        v = Math.Clamp(v, -1f, 1f); // raw -32768 divides to -1.00003; clamp both ends
         if (MathF.Abs(v) < Deadzone) return 0f;
         // Rescale past the deadzone so motion starts smoothly from 0.
         return (v - MathF.CopySign(Deadzone, v)) / (1f - Deadzone);
