@@ -50,7 +50,7 @@ With the native libraries placed under `native\` (see [Setup](#setup)), no envir
 the apps auto-discover them. From the repo root (PowerShell):
 
 ```powershell
-.\run-studio.ps1            # build if needed, then launch the Studio UI
+.\run-studio.ps1            # incremental build, then launch the Studio UI (-NoBuild to skip)
 
 .\run-headless.ps1 --usd scenes\franka_studio.usda `
     --products /Render/OmniverseKit/HydraTextures/camera_sensor_162912244368 `
@@ -135,7 +135,7 @@ clean directory, and the orchestrator finds it by a fixed relative path (no scan
 | `tests/Gemelli.Tests` | xUnit; tier-1 (pure) + gated tier-2 live-twin tests |
 | `external/` | **Vendored** wrapper sources (gitignored — re-create below) |
 | `native/` | **Vendored** native libraries (gitignored — acquire below) |
-| `run-studio.ps1` / `run-headless.ps1` | One-command launchers (build if needed, auto-discover native libs) |
+| `run-studio.ps1` / `run-headless.ps1` | One-command launchers (incremental build, auto-discover native libs) |
 
 ---
 
