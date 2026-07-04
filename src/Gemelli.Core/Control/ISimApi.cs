@@ -33,6 +33,10 @@ public interface ISimApi
     /// <summary>Names of the articulation's DOFs (joint names), in the order of the DOF-position tensor.</summary>
     IReadOnlyList<string> DofNames(string pattern) => [];
 
+    /// <summary>Number of colliders overlapping a world-space sphere (physics scene query) — used by
+    /// FMI presence sensors and similar volume triggers. Default: none (for fakes/tests).</summary>
+    int OverlapSphere(float centerX, float centerY, float centerZ, float radius) => 0;
+
     /// <summary>Writes a physics tensor channel (e.g. DOF position/velocity targets) for matching prims.</summary>
     void Write(SimTensor channel, string pattern, float[] values);
 

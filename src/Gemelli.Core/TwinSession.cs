@@ -95,6 +95,19 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
         });
     }
 
+    public int OverlapSphere(float centerX, float centerY, float centerZ, float radius)
+    {
+        EnsureNotDisposed();
+        using BinaryReader r = _physics.Request((ushort)PhysicsOp.OverlapSphere, w =>
+        {
+            w.Write(centerX);
+            w.Write(centerY);
+            w.Write(centerZ);
+            w.Write(radius);
+        });
+        return r.ReadInt32();
+    }
+
     public void SetDofPositionTargets(string pattern, float[] values) =>
         Write(SimTensor.ArticulationDofPositionTarget, pattern, values);
 

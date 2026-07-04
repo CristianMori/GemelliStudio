@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Gemelli.Fmi</RootNamespace>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- USD.NET for reading the USD-FMI schema prims (FmuInstance/SspInstance). Same version as
+         Gemelli.Viewport, so the shared dist root carries one consistent set of USD natives. -->
+    <PackageReference Include="UniversalSceneDescription" Version="7.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
+  </ItemGroup>
+
+</Project>

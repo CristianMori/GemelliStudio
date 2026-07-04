@@ -38,12 +38,24 @@ try
                       $"Render products: {string.Join(", ", options.Sim.RenderProducts)}");
 
     var runner = new TwinRunner(twin);
+
+    // FMI co-simulation models embedded in the scene (ovfmi USD-FMI schema): detected automatically
+    // and stepped once per frame alongside whatever other controller runs.
+    Gemelli.Fmi.FmiSceneConfig? fmiConfig = null;
+    try { fmiConfig = Gemelli.Fmi.FmiSchema.Load(options.Sim.UsdPath); }
+    catch (Exception ex) { Console.Error.WriteLine($"FMI schema read failed: {ex.Message.Split('\n')[0]}"); }
+    if (fmiConfig is not null)
+    {
+        runner.Add(new Gemelli.Fmi.FmiController(fmiConfig));
+        Console.WriteLine($"Controller: FMI ({fmiConfig.Instances.Count} instance(s))");
+    }
+
     if (!string.IsNullOrEmpty(options.ScriptPath))
     {
         runner.Add(new ScriptController(options.ScriptPath));
         Console.WriteLine($"Controller: script '{options.ScriptPath}'");
     }
-    else
+    else if (fmiConfig is null)
     {
         runner.Add(new PlaybackController());
         Console.WriteLine("Controller: passive playback");

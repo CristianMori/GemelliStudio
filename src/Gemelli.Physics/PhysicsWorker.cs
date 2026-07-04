@@ -103,6 +103,16 @@ internal sealed class PhysicsWorker : IDisposable
                 return true;
             }
 
+            case PhysicsOp.OverlapSphere:
+            {
+                // Volume-trigger query (e.g. an FMI presence sensor): count colliders overlapping a sphere.
+                float cx = req.ReadSingle(), cy = req.ReadSingle(), cz = req.ReadSingle(), radius = req.ReadSingle();
+                SceneQueryHit[] hits = Physx.Overlap(
+                    SceneQueryGeometry.Sphere(radius, new System.Numerics.Vector3(cx, cy, cz)));
+                resp.Write(hits.Length);
+                return true;
+            }
+
             case PhysicsOp.Shutdown:
                 return false;
 

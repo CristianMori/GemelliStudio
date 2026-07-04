@@ -775,7 +775,21 @@ public sealed class MainWindow : Window
         {
             try
             {
-                _twin.Start(options);
+                // FMI co-simulation models embedded in the scene (ovfmi USD-FMI schema) run as a
+                // controller alongside the live script; detection failures must not block Start.
+                Gemelli.Fmi.FmiController? fmi = null;
+                try
+                {
+                    if (Gemelli.Fmi.FmiSchema.Load(scenePath) is { } fmiConfig)
+                    {
+                        fmi = new Gemelli.Fmi.FmiController(fmiConfig);
+                        Dispatcher.UIThread.Post(() => _statusLeft.Text =
+                            $"Starting twin ({fmiConfig.Instances.Count} FMI instance(s) detected)…");
+                    }
+                }
+                catch (Exception fex) { Console.Error.WriteLine("[fmi] scene detection failed: " + fex.Message.Split('\n')[0]); }
+
+                _twin.Start(options, fmi is null ? null : [fmi]);
                 // Render the sensor camera (depth/seg) at a quarter rate so it doesn't halve the viewport fps.
                 if (_sensorProduct is not null) _twin.SetSecondaryRenderInterval(4);
                 DetectRobot(scenePath);

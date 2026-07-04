@@ -38,6 +38,9 @@ Isaac Sim exports. Gemelli treats that USD as an editable, save-back-able docume
   dataset to disk (color + raw/preview depth + segmentation + manifest).
 - **Live editing + USD save-back.** Edit transforms in the inspector; bake the current body poses *and*
   robot joint state back to a standalone `.usda`.
+- **FMI co-simulation.** Industrial behavior models (FMI 2.0 FMUs and SSP 1.0 archives) embedded in the
+  scene via the [ovfmi](https://github.com/NVIDIA-Omniverse/omniverse-labs/tree/main/projects/ovfmi)
+  USD-FMI schema run in-process each frame — sensors in, drive commands out (see the conveyor demo).
 - **Adjustable time.** A settings pane exposes the physics timestep and a sim-time **time-scale** (slow-mo
   through ~10× acceleration, bounded by physics throughput).
 - **One assembled-app folder.** A `dotnet build` drops the whole app into `dist\<Config>\`.
@@ -129,6 +132,7 @@ clean directory, and the orchestrator finds it by a fixed relative path (no scan
 | `src/Gemelli.Studio` → `Gemelli.Studio.exe` | Avalonia UI: viewport, outliner, inspector, sensor panel, script panel, settings |
 | `src/Gemelli.Headless` → `Gemelli.Headless.exe` | Console host: load USD → run loop → save PNGs / record datasets |
 | `src/Gemelli.Scripting` | Roslyn `.csx` controller host (hot-reload) + script globals |
+| `src/Gemelli.Fmi` | FMI 2.0 co-simulation host (P/Invoke, no Python), SSP 1.0 runner, ovfmi USD-FMI schema reader, `FmiController` |
 | `src/Gemelli.Mcp` → `Gemelli.Mcp.exe` | Model Context Protocol server (stdio) — tool-drivable, incl. `render_frame` vision |
 | `scenes/` | Sample Isaac Sim–exported USD scenes (franka_studio, isaac_quickstart, …) |
 | `tools/` | USD authoring (`usd-addcam`, `usd-addseg`, `usd-snapshot`) and de-risk probes (`raster-probe`, `ovrtx-smoke`, `artic-probe`) |
@@ -277,6 +281,47 @@ this pose," velocity targets say "spin at this rate."
 
 ---
 
+## FMI co-simulation (the conveyor demo)
+
+Gemelli hosts **FMI 2.0 co-simulation** models (`.fmu`) and **SSP 1.0** archives (`.ssp`) embedded in a
+scene with the ovfmi **USD-FMI schema**: `FmuInstance`/`SspInstance` prims declare the archive, and
+`FmuConnection` → `FmuMapping` children bind model variables to scene state. Everything runs in the
+orchestrator process — the FMU's native win64 binary is called directly (no Python, no FMPy).
+
+Supported routings per mapping (`fmi:usdAttribute`):
+
+| Routing | Direction | Backed by |
+|---|---|---|
+| any USD attribute (e.g. `xformOp:translate`) | input | value captured from the stage (an "operator panel" prim) |
+| `physx:position` / `physx:velocity` | input | rigid-body pose/velocity tensor reads |
+| `physx:overlap` | input | a physics sphere-overlap query at the target prim (presence sensor) |
+| `physx:force` | output | rigid-body force tensor write |
+| `drive:angular:physics:targetVelocity` | output | articulation DOF velocity target (joint matched by name) |
+
+FMI prims are auto-detected at Start in both Studio and headless; instances step once per frame in USD
+authoring order, SSPs atomically. The **conveyor demo** wires a presence sensor, a five-zone line
+controller, and five motor drives (one SSP, three FMUs) to a physical roller conveyor:
+
+```powershell
+# one-time: vendor the ovfmi assets and build the demo FMUs (needs MSVC x64)
+git clone --depth 1 --filter=blob:none --sparse https://github.com/NVIDIA-Omniverse/omniverse-labs.git external/omniverse-labs
+git -C external/omniverse-labs sparse-checkout set projects/ovfmi
+.\tools\build-fmus.ps1
+
+# run it (or pick conveyor_fmi in Studio's scene dropdown)
+.\run-headless.ps1 --usd scenes\conveyor_fmi.usda `
+    --products /Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0 `
+    --steps 400 --device cpu
+```
+
+The operator panel is the `/World/FMI/ConveyorControls` prim: `translate = (operatorSpeed,
+rejectSpeed, eStop)`, `scale.x = enable` — set `eStop` to 1 and the whole line winds down through the
+controller and every motor drive. Current limits: FMI 2.0 co-simulation only (no 3.0, no model
+exchange), Real variables only, and FMU outputs mapped to visual-only USD attributes update the input
+cache but are not yet written back to the renderer.
+
+---
+
 ## Tool-drivable (MCP server)
 
 `Gemelli.Mcp` exposes the twin over the **Model Context Protocol** (stdio) so any MCP-compatible client can
@@ -332,6 +377,7 @@ reserved for the sensor cameras and ground-truth RTX mode.
 - ✅ **Live editing + USD save-back**: inspector transform edit; `usd-snapshot` bakes body poses **and robot joint state**
 - ✅ **Control**: `ISimApi` + playback / Roslyn C# scripting / differential IK; keyboard + Xbox-controller teleop
 - ✅ **Adjustable pacing**: live time-scale (slow-mo → ~10×) and physics timestep via the Settings pane
+- ✅ **FMI co-simulation** (`Gemelli.Fmi`) — FMI 2.0 + SSP 1.0 host via the ovfmi USD-FMI schema; conveyor demo verified end-to-end (sensor → controller → roller drives)
 - ✅ **MCP server** (`Gemelli.Mcp`) — tool-drivable incl. `render_frame` vision; verified end-to-end
 - ✅ **Avalonia Studio** — viewport + transport + outliner + inspector + sensor panel + settings over the shared `TwinService`
 - ✅ Packaging: single assembled-app folder (`dist\<Config>\`), native-lib auto-discovery, one-command launchers

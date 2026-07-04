@@ -13,6 +13,9 @@
     <Project Path="src/Gemelli.Core/Gemelli.Core.csproj">
       <Platform Project="x64" />
     </Project>
+    <Project Path="src/Gemelli.Fmi/Gemelli.Fmi.csproj">
+      <Platform Project="x64" />
+    </Project>
     <Project Path="src/Gemelli.Headless/Gemelli.Headless.csproj">
       <Platform Project="x64" />
     </Project>

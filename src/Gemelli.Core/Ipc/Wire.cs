@@ -12,6 +12,7 @@ public enum PhysicsOp : ushort
     WriteTensor = 5,     // (int tensorType, string pattern, float[] values) -> ()
     ReadTensor = 6,      // (int tensorType, string pattern) -> (long[] shape, float[] data)
     ReadDofNames = 7,    // (string pattern) -> (string[] dofNames)
+    OverlapSphere = 8,   // (float cx, cy, cz, radius) -> (int hitCount)
     Shutdown = 255,      // () -> ()
 }
 
@@ -29,6 +30,7 @@ public enum SimTensor
     ArticulationDofPositionTarget = 32, // [N, D]
     ArticulationDofVelocityTarget = 33, // [N, D]
     ArticulationDofActuationForce = 34, // [N, D]
+    RigidBodyForce = 50,          // [N, 3] external force at the center of mass (write)
     ArticulationJacobian = 70,    // [N, R, C] R=6*movingLinks, C=D(+6 floating base) (read-only)
 }
 

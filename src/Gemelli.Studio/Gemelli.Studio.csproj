@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
+    <ProjectReference Include="..\Gemelli.Fmi\Gemelli.Fmi.csproj" />
     <ProjectReference Include="..\Gemelli.Scripting\Gemelli.Scripting.csproj" />
     <ProjectReference Include="..\Gemelli.Viewport\Gemelli.Viewport.csproj" />
   </ItemGroup>

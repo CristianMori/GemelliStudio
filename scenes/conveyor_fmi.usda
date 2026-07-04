@@ -1,0 +1,214 @@
+#usda 1.0
+(
+    doc = """Conveyor digital twin driven by FMI co-simulation (ported from NVIDIA ovfmi).
+
+    Sublayers the vendored conveyor asset and embeds the ovfmi USD-FMI schema prims: an
+    SspInstance (presence sensor + line controller + five motor drives) that reads a
+    physics overlap sensor and operator inputs, and writes per-zone roller drive
+    velocities. Prerequisites (see README):
+      - external\\omniverse-labs (vendored ovfmi checkout, for the conveyor asset)
+      - scenes\\fmi\\conveyor_demo.ssp (build with tools\\build-fmus.ps1)
+    """
+    defaultPrim = "World"
+    metersPerUnit = 1
+    subLayers = [
+        @../external/omniverse-labs/projects/ovfmi/usd/conveyor/Conveyor.usda@
+    ]
+    timeCodesPerSecond = 60
+    upAxis = "Z"
+)
+
+over "World"
+{
+    def Xform "FMI"
+    {
+        # Operator "control panel": the FMU reads these authored components as inputs.
+        #   translate = (operatorSpeed, rejectSpeed, eStop)   scale.x = enable
+        def Xform "ConveyorControls"
+        {
+            double3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (16, 16, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def SspInstance "ConveyorDemo"
+        {
+            bool fmi:enabled = 1
+            asset fmi:ssp = @./fmi/conveyor_demo.ssp@
+
+            def FmuConnection "OverlapInputs"
+            {
+                rel fmi:targets = </World/Sensor>
+
+                def FmuMapping "PresenceRead"
+                {
+                    token fmi:direction = "input"
+                    token fmi:fmuAttribute = "rawPresence"
+                    token fmi:usdAttribute = "physx:overlap"
+                    int2 fmi:usdMapping = (0, 1)
+                }
+            }
+
+            def FmuConnection "OperatorInputs"
+            {
+                rel fmi:targets = </World/FMI/ConveyorControls>
+
+                def FmuMapping "OperatorSpeedRead"
+                {
+                    token fmi:direction = "input"
+                    token fmi:fmuAttribute = "operatorSpeed"
+                    token fmi:usdAttribute = "xformOp:translate"
+                    int2 fmi:usdMapping = (0, 1)
+                }
+
+                def FmuMapping "RejectSpeedRead"
+                {
+                    token fmi:direction = "input"
+                    token fmi:fmuAttribute = "rejectSpeed"
+                    token fmi:usdAttribute = "xformOp:translate"
+                    int2 fmi:usdMapping = (1, 1)
+                }
+
+                def FmuMapping "EStopRead"
+                {
+                    token fmi:direction = "input"
+                    token fmi:fmuAttribute = "eStop"
+                    token fmi:usdAttribute = "xformOp:translate"
+                    int2 fmi:usdMapping = (2, 1)
+                }
+
+                def FmuMapping "EnableRead"
+                {
+                    token fmi:direction = "input"
+                    token fmi:fmuAttribute = "enable"
+                    token fmi:usdAttribute = "xformOp:scale"
+                    int2 fmi:usdMapping = (0, 1)
+                }
+            }
+
+            def FmuConnection "Zone00Drive"
+            {
+                rel fmi:targets = </World/ConveyorBelt_A08/RollerGroup/Roller_00/DriveJoint_Zone00>
+
+                def FmuMapping "TargetVelocity0Write"
+                {
+                    token fmi:direction = "output"
+                    token fmi:fmuAttribute = "targetVelocity0"
+                    token fmi:usdAttribute = "drive:angular:physics:targetVelocity"
+                    int2 fmi:usdMapping = (0, 0)
+                }
+            }
+
+            def FmuConnection "Zone01Drive"
+            {
+                rel fmi:targets = </World/ConveyorBelt_A08/RollerGroup_01/Roller_00/DriveJoint_Zone01>
+
+                def FmuMapping "TargetVelocity1Write"
+                {
+                    token fmi:direction = "output"
+                    token fmi:fmuAttribute = "targetVelocity1"
+                    token fmi:usdAttribute = "drive:angular:physics:targetVelocity"
+                    int2 fmi:usdMapping = (0, 0)
+                }
+            }
+
+            def FmuConnection "Zone02Drive"
+            {
+                rel fmi:targets = </World/ConveyorBelt_A08/RollerGroup_02/Roller_00/DriveJoint_Zone02>
+
+                def FmuMapping "TargetVelocity2Write"
+                {
+                    token fmi:direction = "output"
+                    token fmi:fmuAttribute = "targetVelocity2"
+                    token fmi:usdAttribute = "drive:angular:physics:targetVelocity"
+                    int2 fmi:usdMapping = (0, 0)
+                }
+            }
+
+            def FmuConnection "Zone03Drive"
+            {
+                rel fmi:targets = </World/ConveyorBelt_A08/RollerGroup_03/Roller_00/DriveJoint_Zone03>
+
+                def FmuMapping "TargetVelocity3Write"
+                {
+                    token fmi:direction = "output"
+                    token fmi:fmuAttribute = "targetVelocity3"
+                    token fmi:usdAttribute = "drive:angular:physics:targetVelocity"
+                    int2 fmi:usdMapping = (0, 0)
+                }
+            }
+
+            def FmuConnection "Zone04Drive"
+            {
+                rel fmi:targets = </World/ConveyorBelt_A08/RollerGroup_04/Roller_00/DriveJoint_Zone04>
+
+                def FmuMapping "TargetVelocity4Write"
+                {
+                    token fmi:direction = "output"
+                    token fmi:fmuAttribute = "targetVelocity4"
+                    token fmi:usdAttribute = "drive:angular:physics:targetVelocity"
+                    int2 fmi:usdMapping = (0, 0)
+                }
+            }
+        }
+    }
+
+    over "PhysicsScene" (
+        prepend apiSchemas = ["PhysxSceneAPI"]
+    )
+    {
+    }
+}
+
+def "Render"
+{
+    def "OmniverseKit"
+    {
+        def "HydraTextures" (
+            hide_in_stage_window = true
+            no_delete = true
+        )
+        {
+            def RenderProduct "omni_kit_widget_viewport_ViewportTexture_0" (
+                apiSchemas = ["OmniRtxSettingsCommonAdvancedAPI_1", "OmniRtxSettingsRtAdvancedAPI_1", "OmniRtxSettingsPtAdvancedAPI_1"]
+                hide_in_stage_window = true
+                no_delete = true
+            )
+            {
+                rel camera = </OmniverseKit_Persp>
+                token omni:rtx:rendermode = "RealTimePathTracing"
+                rel orderedVars = </Render/Vars/LdrColor>
+                custom bool overrideClipRange = 0
+                uniform int2 resolution = (1280, 720)
+            }
+        }
+    }
+
+    def "Vars"
+    {
+        def RenderVar "LdrColor" (
+            hide_in_stage_window = true
+            no_delete = true
+        )
+        {
+            uniform string sourceName = "LdrColor"
+            uniform token sourceType = "raw"
+        }
+    }
+}
+
+def Camera "OmniverseKit_Persp" (
+    apiSchemas = ["OmniRtxCameraAutoExposureAPI_1", "OmniRtxCameraExposureAPI_1"]
+)
+{
+    float2 clippingRange = (0.01, 10000000)
+    float exposure:fStop = 5
+    float exposure:responsivity = 1.1026709
+    float exposure:time = 0.02
+    float focalLength = 18.147562
+    float focusDistance = 400
+    float3 xformOp:rotateXYZ = (75.968346, 0, -16.772127)
+    float3 xformOp:scale = (1, 1, 1)
+    double3 xformOp:translate = (2.0855425316533367, -4.591002945337837, 1.624458874021889)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+}
