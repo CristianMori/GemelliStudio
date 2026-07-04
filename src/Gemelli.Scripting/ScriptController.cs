@@ -17,6 +17,7 @@ public sealed class ScriptController : IController, IDisposable
     private readonly bool _hotReload;
     private ScriptRunner<object>? _runner;
     private DateTime _loadedStamp;
+    private string? _loadedSource;
     private string? _lastError;
 
     /// <summary>Binds to a script file (resolved to an absolute path); empty path means source-compiled.</summary>
@@ -55,7 +56,7 @@ public sealed class ScriptController : IController, IDisposable
         }
     }
 
-    /// <summary>(Re)compiles the script when no delegate exists yet or the file's write time changed.</summary>
+    /// <summary>(Re)compiles the script when the file's write time changed since the last attempt.</summary>
     private void EnsureCompiled()
     {
         if (string.IsNullOrEmpty(_path)) return; // source-compiled instance
@@ -63,13 +64,27 @@ public sealed class ScriptController : IController, IDisposable
         try { stamp = File.GetLastWriteTimeUtc(_path); }
         catch { return; }
 
-        if (_runner is not null && stamp == _loadedStamp) return;
+        // Stamp recorded per *attempt* (success or compile error), so a broken script is compiled
+        // once, not re-attempted every frame until it's fixed.
+        if (stamp == _loadedStamp) return;
+
+        string source;
+        try { source = File.ReadAllText(_path); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Editors save non-atomically, so a mid-save read can fail transiently. Leave the stamp
+            // untouched and retry next frame — file IO must never escape onto the sim thread.
+            return;
+        }
+
+        // Timestamp changed but content didn't (touch, editor save quirks): keep the compiled
+        // delegate. Every real recompile loads a fresh non-collectible Roslyn script assembly, so
+        // skipping no-op reloads also bounds memory growth to actual edits.
+        if (_runner is not null && source == _loadedSource) { _loadedStamp = stamp; return; }
 
         try
         {
-            string source = File.ReadAllText(_path);
             _runner = Compile(source);
-            _loadedStamp = stamp;
             _lastError = null;
             Console.WriteLine($"[script] compiled {Path.GetFileName(_path)}");
         }
@@ -78,6 +93,8 @@ public sealed class ScriptController : IController, IDisposable
             _runner = null;
             ReportOnce($"[script compile error] {string.Join("; ", ex.Diagnostics)}");
         }
+        _loadedStamp = stamp;
+        _loadedSource = source;
     }
 
     /// <summary>Builds the reusable Roslyn delegate with the core assemblies and namespaces scripts expect in scope.</summary>

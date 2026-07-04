@@ -47,6 +47,9 @@ public sealed class RasterViewport : IDisposable
         try
         {
             GeometryResult geo = UsdGeometryLoader.Load(usd, bodies);
+            // The USD load can easily outlast Dispose's bounded join; if we were stopped meanwhile,
+            // bail before raising Loaded (a late re-frame of the camera) or creating a GL context.
+            if (_stop) return;
             Loaded?.Invoke(geo.Center, geo.Radius);
             CameraSnapshot s0 = camera();
             ras = new GlRasterizer(Math.Max(16, s0.Width), Math.Max(16, s0.Height));

@@ -55,6 +55,7 @@ internal static class SensorHub
                     using MappedRenderVar mapped = varOutput.Map(MapDeviceType.Cpu);
                     DLTensor t = mapped.Tensor;
                     long[] shape = t.GetShape().ToArray();
+                    EnsureCompact(varName, t, shape);
                     long elements = 1;
                     foreach (long d in shape) elements *= d;
                     DLDataType dtype = t.DType;
@@ -82,6 +83,7 @@ internal static class SensorHub
     private static unsafe RenderVarData CopyTensor(string name, DLTensor tensor)
     {
         long[] shape = tensor.GetShape().ToArray();
+        EnsureCompact(name, tensor, shape);
         long elements = 1;
         foreach (long d in shape) elements *= d;
 
@@ -97,6 +99,26 @@ internal static class SensorHub
         }
 
         return new RenderVarData(name, shape, MapType(dtype.Code), dtype.Bits, dtype.Lanes, bytes);
+    }
+
+    /// <summary>
+    /// Both copy paths above read <c>elements × bytesPerElement</c> contiguous bytes, which is only
+    /// valid for a densely-packed tensor. DLPack allows padded/strided layouts (null strides means
+    /// compact; explicit strides may or may not be) — a padded row pitch here would scramble rows or
+    /// read out of bounds, so fail loudly instead of silently mis-copying.
+    /// </summary>
+    private static unsafe void EnsureCompact(string name, in DLTensor tensor, long[] shape)
+    {
+        if (tensor.Strides == IntPtr.Zero) return; // null strides = compact row-major per DLPack
+        var strides = new ReadOnlySpan<long>((void*)tensor.Strides, shape.Length);
+        long expected = 1; // strides are in elements, innermost-out
+        for (int i = shape.Length - 1; i >= 0; i--)
+        {
+            if (strides[i] != expected)
+                throw new NotSupportedException(
+                    $"Render var '{name}' is not densely packed (stride[{i}]={strides[i]}, expected {expected}); raw byte copy would scramble it.");
+            expected *= shape[i];
+        }
     }
 
     /// <summary>Maps a DLPack dtype code to the wire <see cref="ScalarType"/>; unknown codes become Other.</summary>

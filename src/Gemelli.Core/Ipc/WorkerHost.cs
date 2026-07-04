@@ -125,6 +125,16 @@ internal sealed class WorkerHost : IDisposable
         lock (_logLock) return string.Join('\n', _log);
     }
 
+    /// <summary>
+    /// Kills the worker process immediately, with no pipe IO. Safe to call from any thread — used to
+    /// break a thread blocked on a request to a hung (alive but unresponsive) worker: the process
+    /// death faults the pending pipe read, which unblocks the caller with a worker exception.
+    /// </summary>
+    public void Terminate()
+    {
+        try { if (!_process.HasExited) _process.Kill(entireProcessTree: true); } catch { /* best effort */ }
+    }
+
     public void Dispose()
     {
         if (_disposed) return;

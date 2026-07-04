@@ -254,16 +254,34 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
         if (_disposed) throw new ObjectDisposedException(nameof(TwinSession));
     }
 
+    /// <summary>
+    /// Kills both worker processes immediately (no pipe IO). Safe from any thread. Used when the
+    /// owning thread is stuck inside a blocking request to a hung worker and can never reach
+    /// <see cref="Dispose"/> — the kill faults the pending pipe read and unblocks it.
+    /// </summary>
+    public void Terminate()
+    {
+        _physics?.Terminate();
+        _render?.Terminate();
+    }
+
     public void Dispose()
     {
         if (_disposed) return;
         _disposed = true;
 
-        // Ask each worker to shut down cleanly; ignore failures (it may already be dead).
-        if (_physics is not null && _physics.IsAlive)
-            try { _physics.Send((ushort)PhysicsOp.Shutdown); } catch { /* already gone */ }
-        if (_render is not null && _render.IsAlive)
-            try { _render.Send((ushort)RenderOp.Shutdown); } catch { /* already gone */ }
+        // Ask each worker to shut down cleanly, but bounded: the Shutdown request itself does pipe
+        // IO, so a hung (alive but unresponsive) worker would otherwise hang Dispose forever — and
+        // the kill fallback below is the only thing that can break that hang.
+        var polite = Task.Run(() =>
+        {
+            if (_physics is not null && _physics.IsAlive)
+                try { _physics.Send((ushort)PhysicsOp.Shutdown); } catch { /* already gone */ }
+            if (_render is not null && _render.IsAlive)
+                try { _render.Send((ushort)RenderOp.Shutdown); } catch { /* already gone */ }
+        });
+        if (!polite.Wait(TimeSpan.FromSeconds(5)))
+            Terminate();
 
         _physics?.Dispose();
         _render?.Dispose();

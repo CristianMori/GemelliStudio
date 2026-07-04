@@ -764,6 +764,7 @@ public sealed class MainWindow : Window
         _statusLeft.Text = "Starting twin (launching workers, compiling shaders on first run)…";
         _startBtn.IsEnabled = false;
 
+        string scenePath = CurrentScenePath; // captured here: reads an Avalonia control, UI thread only
         Task.Run(() =>
         {
             try
@@ -771,7 +772,7 @@ public sealed class MainWindow : Window
                 _twin.Start(options);
                 // Render the sensor camera (depth/seg) at a quarter rate so it doesn't halve the viewport fps.
                 if (_sensorProduct is not null) _twin.SetSecondaryRenderInterval(4);
-                DetectRobot();
+                DetectRobot(scenePath);
                 Dispatcher.UIThread.Post(() =>
                 {
                     _outliner.ItemsSource = _twin.RigidBodyPaths.ToArray();
@@ -813,9 +814,12 @@ public sealed class MainWindow : Window
         _recordBtn.Content = "● Rec";
     }
 
-    /// <summary>Twin fault callback: surfaces the error and returns the UI to a stopped state.</summary>
+    /// <summary>Twin fault callback: tears down recording and the raster viewport (like Stop does),
+    /// surfaces the error, and returns the UI to a stopped state.</summary>
     private void OnFaulted(Exception ex) => Dispatcher.UIThread.Post(() =>
     {
+        StopRecording();
+        StopRasterViewport();
         _statusLeft.Text = "Twin faulted: " + ex.Message.Split('\n')[0];
         SetRunningControls(false);
         _startBtn.IsEnabled = true;
@@ -958,13 +962,14 @@ public sealed class MainWindow : Window
     }
 
     // Detects an articulation (robot) so the viewport can IK-drag it: reads the root from the scene's
-    // PhysicsArticulationRootAPI prim and confirms link poses are available.
-    private void DetectRobot()
+    // PhysicsArticulationRootAPI prim and confirms link poses are available. Runs off the UI thread,
+    // so the scene path comes in as a parameter (CurrentScenePath reads an Avalonia control).
+    private void DetectRobot(string scenePath)
     {
         _robotPath = null; _robotLinkCount = 0;
         try
         {
-            string text = File.ReadAllText(CurrentScenePath);
+            string text = File.ReadAllText(scenePath);
             var m = System.Text.RegularExpressions.Regex.Match(text, "def \\w+ \"(\\w+)\"\\s*\\([^{]*ArticulationRootAPI");
             if (!m.Success) return;
             string path = "/World/" + m.Groups[1].Value;
@@ -1213,13 +1218,22 @@ public sealed class MainWindow : Window
     /// <summary>Spins up the GL rasterized viewport, feeding it scene/body data and the camera snapshot, and wiring frame/fault/loaded callbacks.</summary>
     private void StartRasterViewport()
     {
+        StopRasterViewport(); // never stack two raster threads (e.g. a restart after a fault)
         try
         {
-            _raster = new RasterViewport(CurrentScenePath, _twin.RigidBodyPaths.ToArray(), _twin.TryGetPose, CameraSnapshotForRaster);
-            _raster.FrameReady += OnRasterFrame;
-            _raster.Faulted += ex => Dispatcher.UIThread.Post(() => _statusLeft.Text = "Raster viewport failed: " + ex.Message.Split('\n')[0]);
-            _raster.Loaded += (center, radius) => Dispatcher.UIThread.Post(() =>
+            var r = new RasterViewport(CurrentScenePath, _twin.RigidBodyPaths.ToArray(), _twin.TryGetPose, CameraSnapshotForRaster);
+            _raster = r;
+            // Every callback checks it still belongs to the current instance: a stopped viewport's
+            // thread can outlive Dispose (it may still be inside the USD geometry load) and must not
+            // feed stale frames, re-frame the camera for the previous scene, or overwrite the status.
+            r.FrameReady += (rgba, w, h) => { if (ReferenceEquals(_raster, r)) OnRasterFrame(rgba, w, h); };
+            r.Faulted += ex => Dispatcher.UIThread.Post(() =>
             {
+                if (ReferenceEquals(_raster, r)) _statusLeft.Text = "Raster viewport failed: " + ex.Message.Split('\n')[0];
+            });
+            r.Loaded += (center, radius) => Dispatcher.UIThread.Post(() =>
+            {
+                if (!ReferenceEquals(_raster, r)) return;
                 _camera.Frame(center.X, center.Y, center.Z, Math.Clamp(radius * 2.0f + 0.3f, 0.6f, 400f));
                 PushCamera();
             });
@@ -1227,13 +1241,12 @@ public sealed class MainWindow : Window
         catch (Exception ex) { _statusLeft.Text = "Raster init failed: " + ex.Message.Split('\n')[0]; }
     }
 
-    /// <summary>Detaches and disposes the raster viewport, joining its thread off the UI thread.</summary>
+    /// <summary>Retires and disposes the raster viewport, joining its thread off the UI thread.</summary>
     private void StopRasterViewport()
     {
         RasterViewport? r = _raster;
-        _raster = null;
+        _raster = null; // retires the instance: its callbacks all no-op once _raster no longer points at it
         if (r is null) return;
-        r.FrameReady -= OnRasterFrame;
         Task.Run(() => r.Dispose()); // Join off the UI thread
     }
 

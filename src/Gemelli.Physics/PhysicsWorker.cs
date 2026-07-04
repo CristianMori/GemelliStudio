@@ -38,7 +38,7 @@ internal sealed class PhysicsWorker : IDisposable
                 // Stage the USD scene; AddUsd is async, so block until the load completes.
                 string path = req.ReadString();
                 var (_, load) = Physx.AddUsd(path);
-                load.Wait(TimeSpan.FromSeconds(120));
+                load.Wait(TimeSpan.FromSeconds(120)); // throws OvPhysxTimeoutException on timeout
                 return true;
             }
 

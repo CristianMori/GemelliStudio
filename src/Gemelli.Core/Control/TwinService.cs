@@ -23,7 +23,11 @@ public sealed class TwinService : IDisposable
     // after that drain and strand its caller in RunOnSimThread forever.
     private readonly object _queueGate = new();
     private bool _accepting;
+    // Serializes Start calls: without it two concurrent Starts can both pass the IsRunning check
+    // (state stays Stopped until the sim thread reaches Paused) and spawn two loops sharing _queue.
+    private readonly object _startGate = new();
     private readonly Func<SimulationOptions, ITwinDriver> _driverFactory;
+    private string _posePattern = "/World/**";
     private Thread? _thread;
     private ITwinDriver? _driver;
     private TwinRunner? _runner;
@@ -112,19 +116,24 @@ public sealed class TwinService : IDisposable
     /// </summary>
     public void Start(SimulationOptions options, IEnumerable<IController>? controllers = null)
     {
-        if (IsRunning) throw new InvalidOperationException("Twin is already running.");
-        // Allow restart after Stop or Faulted.
-        _thread?.Join(5_000);
-        _stopRequested = false;
-        _fault = null;
-        _state = RunState.Stopped;
+        lock (_startGate)
+        {
+            if (IsRunning) throw new InvalidOperationException("Twin is already running.");
+            // Allow restart after Stop or Faulted — but never overlap the previous sim thread,
+            // which may still be tearing its twin down and nulling _driver/_runner.
+            if (_thread is not null && _thread.IsAlive && !_thread.Join(5_000))
+                throw new InvalidOperationException("The previous twin is still shutting down; try again.");
+            _stopRequested = false;
+            _fault = null;
+            _state = RunState.Stopped;
 
-        var ready = new TaskCompletionSource();
-        IController[] ctrls = controllers?.ToArray() ?? [];
+            var ready = new TaskCompletionSource();
+            IController[] ctrls = controllers?.ToArray() ?? [];
 
-        _thread = new Thread(() => RunLoop(options, ctrls, ready)) { IsBackground = true, Name = "ovGemelli-sim" };
-        _thread.Start();
-        ready.Task.GetAwaiter().GetResult(); // surface startup exceptions to the caller
+            _thread = new Thread(() => RunLoop(options, ctrls, ready)) { IsBackground = true, Name = "ovGemelli-sim" };
+            _thread.Start();
+            ready.Task.GetAwaiter().GetResult(); // surface startup exceptions to the caller
+        }
     }
 
     // The sim thread's body: builds the driver/runner (signalling startup via <paramref name="ready"/>), then
@@ -150,6 +159,7 @@ public sealed class TwinService : IDisposable
 
         int maxSubsteps = Math.Max(1, options.MaxPhysicsSubstepsPerFrame);
         bool realTime = options.RealTimePlayback;
+        _posePattern = options.RigidBodyPattern;        // pose cache must read the same set BindPoses matched
         _timeStep = Math.Max(1e-4f, options.TimeStep);  // seed live-adjustable pacing from options
         _timeScale = Math.Clamp(options.TimeScale, 0.01f, 100f);
         double accumulator = 0;
@@ -248,7 +258,9 @@ public sealed class TwinService : IDisposable
         {
             ISimApi api = _driver!.Api;
             IReadOnlyList<string> paths = api.RigidBodyPaths;
-            float[] all = api.Read(SimTensor.RigidBodyPose, "/World/**");
+            // Same pattern the paths were bound with — a different glob would return rows in an
+            // order/count that no longer corresponds to paths[i], silently mislabelling poses.
+            float[] all = api.Read(SimTensor.RigidBodyPose, _posePattern);
             int n = Math.Min(paths.Count, all.Length / 7);
             var snapshot = new Dictionary<string, float[]>(n);
             for (int i = 0; i < n; i++)
@@ -311,7 +323,14 @@ public sealed class TwinService : IDisposable
         if (!IsRunning) return;
         _stopRequested = true;
         Post(() => { }); // wake the loop
-        _thread?.Join(10_000);
+        Thread? t = _thread;
+        if (t is not null && !t.Join(10_000))
+        {
+            // The sim thread is stuck in a blocking call to a hung worker; kill the worker
+            // processes so the pipe read faults and the loop can tear down and exit.
+            (_driver as TwinSession)?.Terminate();
+            t.Join(5_000);
+        }
     }
 
     // Posts fire-and-forget work to the sim thread; silently dropped once the loop stops accepting.

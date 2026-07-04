@@ -119,6 +119,13 @@ internal sealed unsafe class RenderWorker : IDisposable
     /// </summary>
     private void WriteTransforms(string[] paths, double[] matrices)
     {
+        // The DLTensor below claims paths.Length elements over the pinned array; a short array would
+        // send the native side reading past it — an access violation that kills the whole worker with
+        // no error reply. Check here so a malformed frame becomes a clean pipe error instead.
+        if (matrices.Length != paths.Length * 16)
+            throw new InvalidOperationException(
+                $"Transform write mismatch: {paths.Length} prim paths require {paths.Length * 16} doubles, got {matrices.Length}.");
+
         // One DLTensor of N elements, each a 4×4 float64 matrix packed as 16 lanes -> omni:xform.
         var dtype = new DLDataType(DLDataTypeCode.Float, bits: 64, lanes: 16);
         fixed (double* data = matrices)
