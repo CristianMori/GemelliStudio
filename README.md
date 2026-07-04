@@ -178,7 +178,8 @@ dotnet test tests/Gemelli.Tests --filter TransformConversion
   viewport mode (**Fast** / **RTX**) · render scale · **⚙ Settings** · Script toggle · **Save USD** · Start.
 - **Outliner** (left) — rigid-body tree; select a body to inspect/edit it.
 - **Viewport** (centre) — live render; drag = orbit, Shift-drag = pan, wheel = zoom.
-- **Sensor** panel (right top) — fixed sensor camera with Color / Depth / Segmentation toggle + **● Rec**.
+- **Sensor** panel (right top) — the scene's sensor camera (wrist-mounted on the Franka hand in the
+  franka_studio scenes) with Color / Depth / Segmentation toggle + **● Rec**.
 - **Inspector** (right) — editable transform (X/Y/Z + Apply, written live) and a live pose readout.
 - **Script** panel (toggle) — per-frame C# (`.csx`) compiled by Roslyn; keyboard + Xbox controller
   readable in-script.
