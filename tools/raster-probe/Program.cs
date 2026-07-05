@@ -12,7 +12,7 @@ const int W = 1280, H = 720;
 
 GeometryResult geo = UsdGeometryLoader.Load(usd, System.Array.Empty<string>());
 List<RenderMesh> meshes = geo.Meshes;
-Console.WriteLine($"Loaded {meshes.Count} meshes, {meshes.Sum(m => m.Vertices.Length / 18)} triangles.");
+Console.WriteLine($"Loaded {meshes.Count} meshes, {meshes.Sum(m => m.Vertices.Length / 24)} triangles, {geo.Textures.Count} textures.");
 
 Vector3 center = geo.Center;
 float radius = geo.Radius;
@@ -23,7 +23,7 @@ Matrix4x4 view = ViewportCamera.View(eye, forward);
 Matrix4x4 proj = ViewportCamera.Projection(0.73f, (float)W / H);
 
 using var ras = new GlRasterizer(W, H);
-ras.Upload(meshes);
+ras.Upload(meshes, geo.Textures);
 byte[] rgba = ras.Render(view, proj, _ => null);
 
 // GetDirectoryName is "" for a bare filename like "out.png"; CreateDirectory("") throws.

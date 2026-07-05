@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Albedo texture decode for the rasterized viewport (Windows-only, like the rest of the app). -->
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
     <PackageReference Include="UniversalSceneDescription" Version="7.3.4" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.22.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.22.0" />

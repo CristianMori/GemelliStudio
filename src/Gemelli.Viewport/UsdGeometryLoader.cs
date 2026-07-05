@@ -5,15 +5,21 @@ using UniversalSceneDescription;
 namespace Gemelli.Viewport;
 
 /// <summary>
-/// One renderable mesh: interleaved position+normal (6 floats/vertex, 3 vertices/triangle), with smooth
+/// One renderable mesh: interleaved position+normal+uv (8 floats/vertex, 3 vertices/triangle), with smooth
 /// per-vertex normals so curved surfaces shade smoothly. Geometry is pre-baked into either the controlling
 /// rigid body's local frame (<see cref="BodyPath"/> non-null → per-frame model matrix is that body's live
-/// pose) or world space (null → static, model = identity).
+/// pose) or world space (null → static, model = identity). <see cref="TexturePath"/> keys into
+/// <see cref="GeometryResult.Textures"/>; the color acts as a tint when a texture is present.
 /// </summary>
-public sealed record RenderMesh(float[] Vertices, Vector3 Color, string? BodyPath);
+public sealed record RenderMesh(float[] Vertices, Vector3 Color, string? BodyPath, string? TexturePath = null);
+
+/// <summary>A decoded albedo texture (RGBA8, bottom-up rows to match GL/USD texture-coordinate origin).</summary>
+public sealed record TextureData(int Width, int Height, byte[] Rgba);
 
 /// <summary>Loaded geometry plus the world-space bounds of the renderable (non-ground) objects at load.</summary>
-public sealed record GeometryResult(List<RenderMesh> Meshes, Vector3 Center, float Radius, Dictionary<string, Matrix4x4> BodyInverse);
+public sealed record GeometryResult(
+    List<RenderMesh> Meshes, Vector3 Center, float Radius, Dictionary<string, Matrix4x4> BodyInverse,
+    Dictionary<string, TextureData> Textures);
 
 /// <summary>
 /// Extracts displayable geometry from an Isaac Sim USD via USD.NET: direct meshes (smooth-normalled), USD
@@ -23,7 +29,10 @@ public sealed record GeometryResult(List<RenderMesh> Meshes, Vector3 Center, flo
 /// </summary>
 public sealed class UsdGeometryLoader
 {
-    private readonly record struct Vtx(Vector3 Pos, Vector3 Nrm);
+    private readonly record struct Vtx(Vector3 Pos, Vector3 Nrm, Vector2 Uv = default);
+
+    /// <summary>What a bound material contributes: a constant tint and/or an albedo texture path.</summary>
+    private readonly record struct MaterialLook(Vector3? Tint, string? Texture);
 
     // Diffuse-color shader inputs we recognize: UsdPreviewSurface (diffuseColor) and Omniverse OmniPBR/MDL
     // (diffuse_color_constant). Checked in order; first valid GfVec3f wins.
@@ -34,6 +43,8 @@ public sealed class UsdGeometryLoader
     private readonly UsdStage _stage;
     private readonly UsdGeomXformCache _xf = new();
     private readonly List<RenderMesh> _out = new();
+    private readonly Dictionary<string, MaterialLook> _materialCache = new();  // material prim path -> look
+    private readonly Dictionary<string, TextureData> _textures = new();        // resolved file -> pixels
     private Vector3 _wMin = new(float.MaxValue), _wMax = new(float.MinValue);
 
     private UsdGeometryLoader(UsdStage stage, IReadOnlyCollection<string> rigidBodyPaths)
@@ -55,7 +66,7 @@ public sealed class UsdGeometryLoader
         bool any = loader._wMin.X <= loader._wMax.X;
         Vector3 center = any ? (loader._wMin + loader._wMax) * 0.5f : new Vector3(0, 0, 0.4f);
         float radius = any ? MathF.Max(0.3f, (loader._wMax - loader._wMin).Length() * 0.5f) : 1.5f;
-        return new GeometryResult(loader._out, center, radius, loader._bodyInverse);
+        return new GeometryResult(loader._out, center, radius, loader._bodyInverse, loader._textures);
     }
 
     // Two passes' worth of work: first cache each rigid body's inverse load-time (rigid) transform for baking,
@@ -71,15 +82,26 @@ public sealed class UsdGeometryLoader
                 _bodyInverse[b] = inv;
         }
 
+        // Subtrees culled by purpose/visibility: Traverse() is depth-first pre-order, so a skipped
+        // prim's descendants all arrive later with its path as a prefix.
+        var skips = new List<string>();
+        bool Skipped(string pth)
+        {
+            foreach (string s in skips) if (pth.StartsWith(s, StringComparison.Ordinal)) return true;
+            return false;
+        }
+
         foreach (UsdPrim prim in _stage.Traverse())
         {
             string type = prim.GetTypeName().GetString();
             string path = prim.GetPath().GetString();
+            if (Skipped(path)) continue;
+            if (!IsRenderable(prim)) { skips.Add(path + "/"); continue; }
 
             if (type == "Mesh")
                 EmitMesh(new UsdGeomMesh(prim), ToM(_xf.GetLocalToWorldTransform(prim)), path);
             else if (ShapeVerts(prim, type) is { } sv)
-                Emit(sv, ToM(_xf.GetLocalToWorldTransform(prim)), path, ColorFor(prim, path));
+                Emit(sv, ToM(_xf.GetLocalToWorldTransform(prim)), path, LookFor(prim, path).Color); // shapes carry no UVs → tint only
 
             // Instanced prim: walk the shared prototype's meshes and place each by composing its prototype-local
             // transform with this instance's world transform (the prototype is authored at the origin).
@@ -88,9 +110,20 @@ public sealed class UsdGeometryLoader
                 UsdPrim proto = prim.GetPrototype();
                 if (!proto.IsValid()) continue;
                 Matrix4x4 instWorld = ToM(_xf.GetLocalToWorldTransform(prim));
+                string protoRoot = proto.GetPath().GetString();
                 foreach (UsdPrim cp in proto.GetDescendants())
-                    if (cp.GetTypeName().GetString() == "Mesh")
-                        EmitMesh(new UsdGeomMesh(cp), ToM(_xf.GetLocalToWorldTransform(cp)) * instWorld, path);
+                    if (cp.GetTypeName().GetString() == "Mesh" && IsRenderable(cp))
+                    {
+                        // Prefer the instance-proxy prim over the raw prototype child: material
+                        // bindings authored inside an instanced payload only resolve with instance
+                        // context (on the prototype side USD culls them as out-of-scope), and the
+                        // proxy's transform is already the full world transform.
+                        UsdPrim proxy = _stage.GetPrimAtPath(new SdfPath(path + cp.GetPath().GetString()[protoRoot.Length..]));
+                        if (proxy.IsValid())
+                            EmitMesh(new UsdGeomMesh(proxy), ToM(_xf.GetLocalToWorldTransform(proxy)), path);
+                        else
+                            EmitMesh(new UsdGeomMesh(cp), ToM(_xf.GetLocalToWorldTransform(cp)) * instWorld, path);
+                    }
             }
         }
     }
@@ -112,22 +145,21 @@ public sealed class UsdGeometryLoader
         for (int i = 0; i < np; i++) { GfVec3f q = pts[i]; p[i] = new Vector3(q[0], q[1], q[2]); }
 
         int nf = (int)counts.size(), ni = (int)idx.size();
-        var faceStart = new int[nf];
         var n = new Vector3[np];
-        var faceTris = new List<(int A, int B, int C)>[nf];
+        // Triangles carry both POINT indices (positions/normals) and CORNER indices (face-varying UVs).
+        var faceTris = new List<(int A, int B, int C, int Ca, int Cb, int Cc)>[nf];
         int cursor = 0;
         for (int f = 0; f < nf; f++)
         {
-            faceStart[f] = cursor;
             int c = counts[f];
-            var tl = new List<(int, int, int)>();
+            var tl = new List<(int, int, int, int, int, int)>();
             if (c >= 3 && cursor + c <= ni)
                 for (int k = 1; k < c - 1; k++)
                 {
                     int a = idx[cursor], b = idx[cursor + k], d = idx[cursor + k + 1];
                     Vector3 fn = Vector3.Cross(p[b] - p[a], p[d] - p[a]);
                     n[a] += fn; n[b] += fn; n[d] += fn;
-                    tl.Add((a, b, d));
+                    tl.Add((a, b, d, cursor, cursor + k, cursor + k + 1));
                 }
             faceTris[f] = tl;
             cursor += c;
@@ -135,43 +167,94 @@ public sealed class UsdGeometryLoader
         for (int i = 0; i < np; i++)
             n[i] = n[i].LengthSquared() > 1e-12f ? Vector3.Normalize(n[i]) : Vector3.UnitZ;
 
-        // Per-face color: start with the mesh's own color, then override faces named by each GeomSubset.
-        Vector3 defColor = ColorFor(prim, path);
-        var faceColor = new Vector3[nf];
-        for (int f = 0; f < nf; f++) faceColor[f] = defColor;
+        Func<int, int, Vector2> uv = ReadUvLookup(prim, np, ni);
+
+        // Per-face look: start with the mesh's own, then override faces named by each GeomSubset
+        // (each subset can bind its own material — different texture and/or tint).
+        (Vector3 Color, string? Texture) defLook = LookFor(prim, path);
+        var faceLook = new (Vector3 Color, string? Texture)[nf];
+        for (int f = 0; f < nf; f++) faceLook[f] = defLook;
         foreach (UsdPrim sub in prim.GetChildren())
         {
             if (sub.GetTypeName().GetString() != "GeomSubset") continue;
-            Vector3 sc = MaterialDiffuse(sub) ?? defColor;
+            MaterialLook ml = MaterialLookFor(sub);
+            (Vector3, string?) sl = ml.Texture is not null
+                ? (ml.Tint is { } st && st.X + st.Y + st.Z > 0.05f ? st : Vector3.One, ml.Texture)
+                : (ml.Tint ?? defLook.Color, null);
             UsdAttribute ia = sub.GetAttribute(new TfToken("indices"));
             if (!ia.IsValid()) continue;
             try
             {
                 VtIntArray si = ia.Get(UsdTimeCode.Default());
                 if (si is null) continue;
-                for (int i = 0; i < (int)si.size(); i++) { int f = si[i]; if ((uint)f < (uint)nf) faceColor[f] = sc; }
+                for (int i = 0; i < (int)si.size(); i++) { int f = si[i]; if ((uint)f < (uint)nf) faceLook[f] = sl; }
             }
             catch { }
         }
 
-        // Bucket triangles by quantized color, emit one mesh per bucket.
-        var buckets = new Dictionary<int, (Vector3 color, List<Vtx> verts)>();
+        // Bucket triangles by (texture, quantized color), emit one mesh per bucket.
+        var buckets = new Dictionary<(string, int), (Vector3 color, string? tex, List<Vtx> verts)>();
         for (int f = 0; f < nf; f++)
         {
-            Vector3 col = faceColor[f];
-            int key = ((int)(col.X * 255) << 16) | ((int)(col.Y * 255) << 8) | (int)(col.Z * 255);
-            if (!buckets.TryGetValue(key, out var bk)) buckets[key] = bk = (col, new List<Vtx>());
-            foreach (var (a, b, c) in faceTris[f])
+            (Vector3 col, string? tex) = faceLook[f];
+            var key = (tex ?? "", ((int)(col.X * 255) << 16) | ((int)(col.Y * 255) << 8) | (int)(col.Z * 255));
+            if (!buckets.TryGetValue(key, out var bk)) buckets[key] = bk = (col, tex, new List<Vtx>());
+            foreach (var (a, b, c, ca, cb, cc) in faceTris[f])
             {
-                bk.verts.Add(new Vtx(p[a], n[a])); bk.verts.Add(new Vtx(p[b], n[b])); bk.verts.Add(new Vtx(p[c], n[c]));
+                bk.verts.Add(new Vtx(p[a], n[a], uv(a, ca)));
+                bk.verts.Add(new Vtx(p[b], n[b], uv(b, cb)));
+                bk.verts.Add(new Vtx(p[c], n[c], uv(c, cc)));
             }
         }
         foreach (var (_, bucket) in buckets)
-            Emit(bucket.verts, geoToWorld, path, bucket.color);
+            Emit(bucket.verts, geoToWorld, path, bucket.color, bucket.tex);
     }
 
-    // Bake local (pos, normal) verts into the owner's controlling-body frame and emit a RenderMesh.
-    private void Emit(List<Vtx> local, Matrix4x4 geoToWorld, string ownerPath, Vector3 color)
+    // Builds a (pointIndex, cornerIndex) → UV lookup from primvars:st. USD authors texcoords either
+    // per point ("vertex" interpolation: one UV per point) or per face corner ("faceVarying": one UV
+    // per faceVertexIndices entry, optionally indirected through primvars:st:indices). The array
+    // length disambiguates. Returns a zero lookup when the mesh has no usable texcoords.
+    private static Func<int, int, Vector2> ReadUvLookup(UsdPrim prim, int pointCount, int cornerCount)
+    {
+        static Func<int, int, Vector2> None() => (_, _) => default;
+        try
+        {
+            UsdAttribute st = prim.GetAttribute(new TfToken("primvars:st"));
+            if (!st.IsValid()) st = prim.GetAttribute(new TfToken("primvars:UVMap"));
+            if (!st.IsValid()) return None();
+            VtVec2fArray raw = st.Get(UsdTimeCode.Default());
+            if (raw is null || raw.size() == 0) return None();
+            var uvs = new Vector2[(int)raw.size()];
+            for (int i = 0; i < uvs.Length; i++) { GfVec2f v = raw[i]; uvs[i] = new Vector2(v[0], v[1]); }
+
+            int[]? indices = null;
+            UsdAttribute ia = prim.GetAttribute(new TfToken("primvars:st:indices"));
+            if (ia.IsValid())
+                try
+                {
+                    VtIntArray si = ia.Get(UsdTimeCode.Default());
+                    if (si is not null && si.size() > 0)
+                    {
+                        indices = new int[(int)si.size()];
+                        for (int i = 0; i < indices.Length; i++) indices[i] = si[i];
+                    }
+                }
+                catch { }
+
+            if (indices is not null && indices.Length == cornerCount)
+                return (_, corner) => (uint)corner < (uint)indices.Length && (uint)indices[corner] < (uint)uvs.Length
+                    ? uvs[indices[corner]] : default;
+            if (uvs.Length == cornerCount)
+                return (_, corner) => (uint)corner < (uint)uvs.Length ? uvs[corner] : default;
+            if (uvs.Length == pointCount)
+                return (point, _) => (uint)point < (uint)uvs.Length ? uvs[point] : default;
+        }
+        catch { }
+        return None();
+    }
+
+    // Bake local (pos, normal, uv) verts into the owner's controlling-body frame and emit a RenderMesh.
+    private void Emit(List<Vtx> local, Matrix4x4 geoToWorld, string ownerPath, Vector3 color, string? texture = null)
     {
         if (local.Count < 3) return;
         string? body = ControllingBody(ownerPath);
@@ -186,17 +269,91 @@ public sealed class UsdGeometryLoader
         Matrix4x4 toBaked = geoToWorld;
         if (body is not null && _bodyInverse.TryGetValue(body, out Matrix4x4 inv)) toBaked = geoToWorld * inv;
 
-        var verts = new float[local.Count * 6];
+        // The texture only ships if its pixels decode; otherwise the mesh falls back to its tint.
+        if (texture is not null && !EnsureTexture(texture)) texture = null;
+
+        var verts = new float[local.Count * 8];
         for (int i = 0; i < local.Count; i++)
         {
             Vector3 pos = Vector3.Transform(local[i].Pos, toBaked);
             Vector3 nrm = Vector3.TransformNormal(local[i].Nrm, toBaked);
             nrm = nrm.LengthSquared() > 1e-12f ? Vector3.Normalize(nrm) : Vector3.UnitZ;
-            int o = i * 6;
+            int o = i * 8;
             verts[o] = pos.X; verts[o + 1] = pos.Y; verts[o + 2] = pos.Z;
             verts[o + 3] = nrm.X; verts[o + 4] = nrm.Y; verts[o + 5] = nrm.Z;
+            verts[o + 6] = local[i].Uv.X; verts[o + 7] = local[i].Uv.Y;
         }
-        _out.Add(new RenderMesh(verts, color, body));
+        _out.Add(new RenderMesh(verts, color, body, texture));
+    }
+
+    // Decodes an albedo file into the shared texture set (once per distinct path), downscaled to a
+    // navigation-viewport-appropriate size. Returns false when the file is missing or undecodable.
+    private bool EnsureTexture(string path)
+    {
+        if (_textures.ContainsKey(path)) return true;
+        try
+        {
+            if (!File.Exists(path)) return false;
+            const int MaxDim = 256; // nav view: tint fidelity matters, texel fidelity does not
+            using var src = new System.Drawing.Bitmap(path);
+            int w = src.Width, h = src.Height;
+            if (Math.Max(w, h) > MaxDim)
+            {
+                float s = (float)MaxDim / Math.Max(w, h);
+                w = Math.Max(1, (int)(w * s)); h = Math.Max(1, (int)(h * s));
+            }
+            using var bmp = new System.Drawing.Bitmap(src, w, h);
+            var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, w, h),
+                System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var rgba = new byte[w * h * 4];
+            unsafe
+            {
+                byte* srcBase = (byte*)data.Scan0;
+                for (int y = 0; y < h; y++)
+                {
+                    // Flip rows (bitmap is top-down; GL/USD st origin is bottom-left) and BGRA → RGBA.
+                    byte* row = srcBase + y * data.Stride;
+                    int dst = (h - 1 - y) * w * 4;
+                    for (int x = 0; x < w; x++)
+                    {
+                        rgba[dst + 0] = row[x * 4 + 2];
+                        rgba[dst + 1] = row[x * 4 + 1];
+                        rgba[dst + 2] = row[x * 4 + 0];
+                        rgba[dst + 3] = row[x * 4 + 3];
+                        dst += 4;
+                    }
+                }
+            }
+            bmp.UnlockBits(data);
+            _textures[path] = new TextureData(w, h, rgba);
+            return true;
+        }
+        catch { return false; }
+    }
+
+    // Standard USD display semantics the viewport must respect: purpose "guide"/"proxy" marks
+    // non-render geometry (physics colliders, preview stand-ins), and authored invisibility hides a
+    // subtree (e.g. helper rigid bodies like an articulation-root hack cube).
+    private static bool IsRenderable(UsdPrim prim)
+    {
+        try
+        {
+            UsdAttribute p = prim.GetAttribute(new TfToken("purpose"));
+            if (p.IsValid())
+            {
+                TfToken t = p.Get(UsdTimeCode.Default());
+                string s = t?.GetString() ?? "";
+                if (s is "guide" or "proxy") return false;
+            }
+            UsdAttribute v = prim.GetAttribute(new TfToken("visibility"));
+            if (v.IsValid())
+            {
+                TfToken t = v.Get(UsdTimeCode.Default());
+                if (t?.GetString() == "invisible") return false;
+            }
+        }
+        catch { }
+        return true;
     }
 
     // Walk ancestors from the prim path up toward the root, returning the nearest one that is a tracked rigid
@@ -213,40 +370,151 @@ public sealed class UsdGeometryLoader
         return null;
     }
 
-    // ---- color: displayColor → bound-material diffuse → stable hash ----
+    // ---- look: material albedo texture → displayColor → material diffuse constant → stable hash ----
 
-    private Vector3 ColorFor(UsdPrim prim, string ownerPath)
+    private (Vector3 Color, string? Texture) LookFor(UsdPrim prim, string ownerPath)
     {
+        MaterialLook ml = MaterialLookFor(prim);
+        if (ml.Texture is not null)
+        {
+            // A near-black constant next to an authored texture is exporter noise, not a real tint.
+            Vector3 tint = ml.Tint is { } t && t.X + t.Y + t.Z > 0.05f ? t : Vector3.One;
+            return (tint, ml.Texture);
+        }
+
         UsdAttribute dc = prim.GetAttribute(new TfToken("primvars:displayColor"));
         if (dc.IsValid())
-            try { VtVec3fArray a = dc.Get(UsdTimeCode.Default()); if (a is not null && a.size() > 0) { GfVec3f c = a[0]; return new Vector3(c[0], c[1], c[2]); } } catch { }
+            try
+            {
+                VtVec3fArray a = dc.Get(UsdTimeCode.Default());
+                if (a is not null && a.size() > 0)
+                {
+                    GfVec3f c = a[0];
+                    // Near-black displayColor is usually exporter noise, not an authored look — skip it.
+                    if (c[0] + c[1] + c[2] > 0.02f) return (new Vector3(c[0], c[1], c[2]), null);
+                }
+            }
+            catch { }
 
-        if (MaterialDiffuse(prim) is { } m) return m;
-        return Hash(ownerPath);
+        return (ml.Tint ?? Hash(ownerPath), null);
     }
 
-    // Follow material:binding → the bound material prim → a child shader's inputs:diffuseColor.
-    private Vector3? MaterialDiffuse(UsdPrim prim)
+    // Follow material:binding to the bound material and cache what it contributes (per material prim:
+    // many meshes share one material, and the .mdl-source probe below does file IO).
+    private MaterialLook MaterialLookFor(UsdPrim prim)
     {
         try
         {
             UsdRelationship rel = prim.GetRelationship(new TfToken("material:binding"));
-            if (!rel.IsValid()) return null;
+            if (!rel.IsValid()) return default;
             SdfPathVector targets = rel.GetTargets();
-            if (targets is null || targets.Count == 0) return null;
+            if (targets is null || targets.Count == 0)
+            {
+                // A binding exists but its target didn't survive composition (payload-scope culling —
+                // common in vendor assets): approximate from an enclosing Looks scope instead.
+                MaterialLook fb = AncestorLooksFallback(prim.GetPath().GetString());
+                if (Environment.GetEnvironmentVariable("GEMELLI_RASTER_DEBUG") == "1")
+                    Console.Error.WriteLine($"[raster] culled binding on {prim.GetPath().GetString()} -> fallback tex={fb.Texture ?? "-"} tint={fb.Tint?.ToString() ?? "-"}");
+                return fb;
+            }
+            string matPath = targets[0].GetString();
+            if (_materialCache.TryGetValue(matPath, out MaterialLook cached)) return cached;
+
             UsdPrim mat = _stage.GetPrimAtPath(targets[0]);
-            if (!mat.IsValid()) return null;
-            // UsdPreviewSurface uses inputs:diffuseColor; Omniverse OmniPBR (MDL) uses diffuse_color_constant.
-            foreach (UsdPrim shader in mat.GetDescendants())
-                foreach (string attr in DiffuseAttrs)
-                {
-                    UsdAttribute d = shader.GetAttribute(new TfToken(attr));
-                    if (!d.IsValid()) continue;
-                    try { GfVec3f c = d.Get(UsdTimeCode.Default()); if (c is not null) return new Vector3(c[0], c[1], c[2]); } catch { }
-                }
+            MaterialLook look = mat.IsValid() ? ScanMaterial(mat) : default;
+            _materialCache[matPath] = look;
+            return look;
         }
-        catch { }
+        catch { return default; }
+    }
+
+    // For a broken binding: walk up from the mesh looking for a sibling "Looks" scope and take its
+    // first textured material (else first tinted). Approximate by design — the authored target was
+    // culled, so the true material is unknowable; a plausible nearby texture beats a hash tint.
+    private MaterialLook AncestorLooksFallback(string primPath)
+    {
+        for (string pth = primPath; ;)
+        {
+            int slash = pth.LastIndexOf('/');
+            if (slash <= 0) break;
+            pth = pth[..slash];
+            string looksPath = pth + "/Looks";
+            if (!_materialCache.TryGetValue(looksPath, out MaterialLook best))
+            {
+                best = default;
+                UsdPrim looks = _stage.GetPrimAtPath(new SdfPath(looksPath));
+                if (looks.IsValid())
+                    foreach (UsdPrim m in looks.GetChildren())
+                    {
+                        MaterialLook l = ScanMaterial(m);
+                        if (l.Texture is not null) { best = l; break; }
+                        if (best.Tint is null && l.Tint is not null) best = l;
+                    }
+                _materialCache[looksPath] = best;
+            }
+            if (best.Texture is not null || best.Tint is not null) return best;
+        }
+        return default;
+    }
+
+    private MaterialLook ScanMaterial(UsdPrim mat)
+    {
+        Vector3? tint = null;
+        string? texture = null;
+        foreach (UsdPrim shader in mat.GetDescendants())
+        {
+            // Albedo texture authored as a USD input (OmniPBR and friends).
+            texture ??= ReadAssetPath(shader, "inputs:diffuse_texture");
+
+            // Constant diffuse / tint inputs (UsdPreviewSurface diffuseColor, OmniPBR constants).
+            foreach (string attr in DiffuseAttrs) tint ??= ReadColor(shader, attr);
+            tint ??= ReadColor(shader, "inputs:diffuse_tint");
+
+            // Materials whose parameters live in the MDL source rather than USD inputs (e.g. the
+            // conveyor's Material Library): pull the albedo path out of the .mdl module text.
+            if (texture is null && ReadAssetPath(shader, "info:mdl:sourceAsset") is { } mdl)
+                texture = AlbedoFromMdlSource(mdl);
+        }
+        return new MaterialLook(tint, texture);
+    }
+
+    // The .mdl modules used here are small text files that pass the albedo to their base material as
+    //   diffuse_texture: texture_2d("../Textures/T_Steel_A1_Albedo.png", ...)
+    // — enough to recover the texture without evaluating MDL.
+    private static string? AlbedoFromMdlSource(string mdlPath)
+    {
+        try
+        {
+            if (!File.Exists(mdlPath) || new FileInfo(mdlPath).Length > 64 * 1024) return null;
+            var m = System.Text.RegularExpressions.Regex.Match(
+                File.ReadAllText(mdlPath), "diffuse_texture\\s*:\\s*texture_2d\\(\\s*\"([^\"]+)\"");
+            if (!m.Success) return null;
+            return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(mdlPath) ?? ".", m.Groups[1].Value));
+        }
+        catch { return null; }
+    }
+
+    private static Vector3? ReadColor(UsdPrim prim, string attrName)
+    {
+        UsdAttribute a = prim.GetAttribute(new TfToken(attrName));
+        if (!a.IsValid()) return null;
+        try { GfVec3f c = a.Get(UsdTimeCode.Default()); if (c is not null) return new Vector3(c[0], c[1], c[2]); } catch { }
         return null;
+    }
+
+    // Resolved filesystem path of an asset-valued attribute (resolution handles layer-relative paths).
+    private static string? ReadAssetPath(UsdPrim prim, string attrName)
+    {
+        UsdAttribute a = prim.GetAttribute(new TfToken(attrName));
+        if (!a.IsValid()) return null;
+        try
+        {
+            SdfAssetPath ap = a.Get(UsdTimeCode.Default());
+            if (ap is null) return null;
+            string resolved = ap.GetResolvedPath();
+            return string.IsNullOrEmpty(resolved) ? null : resolved;
+        }
+        catch { return null; }
     }
 
     // Deterministic fallback tint: FNV-1a hash the prim path, map to a hue, and return a muted pastel so

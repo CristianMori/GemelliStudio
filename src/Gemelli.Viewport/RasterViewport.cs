@@ -53,7 +53,7 @@ public sealed class RasterViewport : IDisposable
             Loaded?.Invoke(geo.Center, geo.Radius);
             CameraSnapshot s0 = camera();
             ras = new GlRasterizer(Math.Max(16, s0.Width), Math.Max(16, s0.Height));
-            ras.Upload(geo.Meshes);
+            ras.Upload(geo.Meshes, geo.Textures);
 
             // Fallback model per body = its load-time world transform (inverse of the bake inverse), used
             // when a live physics pose isn't available yet — so geometry sits at its authored pose instead

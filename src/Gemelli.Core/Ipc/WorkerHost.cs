@@ -44,6 +44,7 @@ internal sealed class WorkerHost : IDisposable
         psi.ArgumentList.Add(pipeName);
         if (env is not null)
             foreach (var (k, v) in env) psi.Environment[k] = v;
+        ScrubUsdNetEnvironment(psi);
 
         Process process = Process.Start(psi)
             ?? throw new TwinWorkerException($"Failed to start {name} worker ('{exePath}').");
@@ -69,6 +70,23 @@ internal sealed class WorkerHost : IDisposable
             throw failure;
         }
         return host;
+    }
+
+    /// <summary>
+    /// Strips USD.NET's process-environment pollution from a worker's start info. When USD.NET
+    /// initializes in the orchestrator (the Studio rasterizer, the FMI schema reader), it PREPENDS
+    /// its own directory to PATH and sets PXR_PLUGINPATH_NAME. A worker inheriting those resolves
+    /// tbb/usd DLLs from the orchestrator's directory instead of its own bundled Omniverse set —
+    /// the ovrtx loader then fails to initialize. Workers never need the orchestrator's dir on PATH.
+    /// </summary>
+    private static void ScrubUsdNetEnvironment(ProcessStartInfo psi)
+    {
+        psi.Environment.Remove("PXR_PLUGINPATH_NAME");
+        if (!psi.Environment.TryGetValue("PATH", out string? path) || string.IsNullOrEmpty(path)) return;
+        string baseDir = AppContext.BaseDirectory.TrimEnd('\\', '/');
+        psi.Environment["PATH"] = string.Join(Path.PathSeparator, path
+            .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+            .Where(e => !e.TrimEnd('\\', '/').StartsWith(baseDir, StringComparison.OrdinalIgnoreCase)));
     }
 
     /// <summary>Forwards a request to the worker, translating a pipe disconnect or low-level failure into

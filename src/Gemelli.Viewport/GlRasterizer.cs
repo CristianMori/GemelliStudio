@@ -20,7 +20,8 @@ public sealed unsafe class GlRasterizer : IDisposable
     private uint _gridVao, _gridVbo;
     private int _gridVerts;
     private uint _groundVao, _groundVbo;
-    private readonly List<(uint Vao, uint Vbo, int Count, Vector3 Color, string? Body)> _meshes = new();
+    private readonly List<(uint Vao, uint Vbo, int Count, Vector3 Color, string? Body, uint Tex)> _meshes = new();
+    private readonly Dictionary<string, uint> _textures = new(); // albedo path -> GL texture
     private byte[] _pixels = [];
 
     /// <summary>
@@ -51,13 +52,32 @@ public sealed unsafe class GlRasterizer : IDisposable
     }
 
     /// <summary>
-    /// Replaces the GPU mesh set: frees the previous VAOs/VBOs, then uploads each mesh's interleaved
-    /// position+normal buffer (6 floats/vertex) and records its draw count, color, and owning body path.
+    /// Replaces the GPU mesh set: frees the previous VAOs/VBOs/textures, uploads each albedo texture
+    /// once, then uploads each mesh's interleaved position+normal+uv buffer (8 floats/vertex) and
+    /// records its draw count, tint color, owning body path, and texture (0 = untextured).
     /// </summary>
-    public void Upload(IReadOnlyList<RenderMesh> meshes)
+    public void Upload(IReadOnlyList<RenderMesh> meshes, IReadOnlyDictionary<string, TextureData>? textures = null)
     {
-        foreach (var (vao, vbo, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
+        foreach (var (vao, vbo, _, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
         _meshes.Clear();
+        foreach (uint tex in _textures.Values) _gl.DeleteTexture(tex);
+        _textures.Clear();
+
+        if (textures is not null)
+            foreach (var (path, t) in textures)
+            {
+                uint tex = _gl.GenTexture();
+                _gl.BindTexture(TextureTarget.Texture2D, tex);
+                fixed (byte* p = t.Rgba)
+                    _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)t.Width, (uint)t.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, p);
+                _gl.GenerateMipmap(TextureTarget.Texture2D);
+                _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.LinearMipmapLinear);
+                _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
+                _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.Repeat);
+                _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.Repeat);
+                _textures[path] = tex;
+            }
+
         foreach (RenderMesh m in meshes)
         {
             if (m.Vertices.Length == 0) continue;
@@ -67,11 +87,14 @@ public sealed unsafe class GlRasterizer : IDisposable
             _gl.BindBuffer(BufferTargetARB.ArrayBuffer, vbo);
             fixed (float* p = m.Vertices)
                 _gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(m.Vertices.Length * sizeof(float)), p, BufferUsageARB.StaticDraw);
-            _gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), (void*)0);                  // loc 0: position
+            _gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), (void*)0);                  // loc 0: position
             _gl.EnableVertexAttribArray(0);
-            _gl.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), (void*)(3 * sizeof(float))); // loc 1: normal
+            _gl.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), (void*)(3 * sizeof(float))); // loc 1: normal
             _gl.EnableVertexAttribArray(1);
-            _meshes.Add((vao, vbo, m.Vertices.Length / 6, m.Color, m.BodyPath));
+            _gl.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), (void*)(6 * sizeof(float))); // loc 2: uv
+            _gl.EnableVertexAttribArray(2);
+            uint tex = m.TexturePath is not null && _textures.TryGetValue(m.TexturePath, out uint t2) ? t2 : 0;
+            _meshes.Add((vao, vbo, m.Vertices.Length / 8, m.Color, m.BodyPath, tex));
         }
         _gl.BindVertexArray(0);
     }
@@ -102,9 +125,11 @@ public sealed unsafe class GlRasterizer : IDisposable
         // Ground quad (lit, dark) — gives the scene a floor without the scene's huge ground mesh.
         _gl.UseProgram(_prog);
         _gl.Uniform3(_gl.GetUniformLocation(_prog, "uLightDir"), lightDir.X, lightDir.Y, lightDir.Z);
+        _gl.Uniform1(_gl.GetUniformLocation(_prog, "uTex"), 0);
         SetMat(_prog, "uModel", Matrix4x4.Identity);
         SetMat(_prog, "uMVP", vp);
         _gl.Uniform3(_gl.GetUniformLocation(_prog, "uColor"), 0.16f, 0.17f, 0.20f);
+        _gl.Uniform1(_gl.GetUniformLocation(_prog, "uUseTex"), 0);
         _gl.BindVertexArray(_groundVao);
         _gl.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
@@ -116,12 +141,15 @@ public sealed unsafe class GlRasterizer : IDisposable
 
         // Meshes.
         _gl.UseProgram(_prog);
-        foreach (var (vao, _, count, color, body) in _meshes)
+        _gl.ActiveTexture(TextureUnit.Texture0);
+        foreach (var (vao, _, count, color, body, tex) in _meshes)
         {
             Matrix4x4 model = body is not null ? modelLookup(body) ?? Matrix4x4.Identity : Matrix4x4.Identity;
             SetMat(_prog, "uModel", model);
             SetMat(_prog, "uMVP", model * vp);
             _gl.Uniform3(_gl.GetUniformLocation(_prog, "uColor"), color.X, color.Y, color.Z);
+            _gl.Uniform1(_gl.GetUniformLocation(_prog, "uUseTex"), tex != 0 ? 1 : 0);
+            if (tex != 0) _gl.BindTexture(TextureTarget.Texture2D, tex);
             _gl.BindVertexArray(vao);
             _gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)count);
         }
@@ -254,7 +282,8 @@ public sealed unsafe class GlRasterizer : IDisposable
     {
         try
         {
-            foreach (var (vao, vbo, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
+            foreach (var (vao, vbo, _, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
+            foreach (uint tex in _textures.Values) _gl.DeleteTexture(tex);
             _gl.DeleteFramebuffer(_fbo); _gl.DeleteTexture(_colorTex); _gl.DeleteRenderbuffer(_depthRbo);
             _gl.DeleteVertexArray(_gridVao); _gl.DeleteBuffer(_gridVbo);
             _gl.DeleteVertexArray(_groundVao); _gl.DeleteBuffer(_groundVbo);
@@ -269,29 +298,37 @@ public sealed unsafe class GlRasterizer : IDisposable
         #version 330 core
         layout(location=0) in vec3 aPos;
         layout(location=1) in vec3 aNormal;
+        layout(location=2) in vec2 aUv;
         uniform mat4 uMVP;
         uniform mat4 uModel;
         out vec3 vN;
+        out vec2 vUv;
         void main() {
             gl_Position = uMVP * vec4(aPos, 1.0);
             vN = mat3(uModel) * aNormal;
+            vUv = aUv;
         }
         """;
     private const string FragSrc = """
         #version 330 core
         in vec3 vN;
+        in vec2 vUv;
         uniform vec3 uColor;
         uniform vec3 uLightDir;
+        uniform sampler2D uTex;
+        uniform int uUseTex;
         out vec4 frag;
         void main() {
             vec3 n = normalize(vN);
             vec3 L = normalize(uLightDir);
+            // Base albedo: sampled texture (tinted) when present, else the flat mesh color.
+            vec3 base = uUseTex != 0 ? uColor * texture(uTex, vUv).rgb : uColor;
             // Hemisphere ambient (Z-up): sky tint on up-faces, cool shadow on down-faces.
             vec3 sky = vec3(0.58, 0.62, 0.70);
             vec3 grd = vec3(0.16, 0.17, 0.20);
             vec3 amb = mix(grd, sky, n.z * 0.5 + 0.5);
             float diff = max(dot(n, L), 0.0);
-            vec3 col = uColor * (0.45 * amb + 0.75 * diff);
+            vec3 col = base * (0.45 * amb + 0.75 * diff);
             col = pow(col, vec3(0.85));            // gentle gamma lift
             frag = vec4(col, 1.0);
         }
