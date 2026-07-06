@@ -41,6 +41,9 @@ Isaac Sim exports. Gemelli treats that USD as an editable, save-back-able docume
 - **FMI co-simulation.** Industrial behavior models (FMI 2.0 FMUs and SSP 1.0 archives) embedded in the
   scene via the [ovfmi](https://github.com/NVIDIA-Omniverse/omniverse-labs/tree/main/projects/ovfmi)
   USD-FMI schema run in-process each frame — sensors in, drive commands out (see the conveyor demo).
+- **Signal Mapper.** A live node graph of the FMI wiring: sensors and operator inputs on the left, the
+  models in the middle, actuators on the right, with per-wire values every frame. Cut and reconnect
+  wires, or pin an actuator to a live-editable constant — all while the twin runs.
 - **Adjustable time.** A settings pane exposes the physics timestep and a sim-time **time-scale** (slow-mo
   through ~10× acceleration, bounded by physics throughput).
 - **One assembled-app folder.** A `dotnet build` drops the whole app into `dist\<Config>\`.
@@ -179,7 +182,8 @@ dotnet test tests/Gemelli.Tests --filter TransformConversion
 `.\run-studio.ps1`. Layout:
 
 - **Header** — brand · transport (Play / Pause / Step / Stop) · scene dropdown + Browse · device ·
-  viewport mode (**Fast** / **RTX**) · render scale · **⚙ Settings** · Script toggle · **Save USD** · Start.
+  viewport mode (**Fast** / **RTX**) · render scale · **⚙ Settings** · Script toggle · **Signals**
+  (the FMI signal mapper) · **Save USD** · Start.
 - **Outliner** (left) — rigid-body tree; select a body to inspect/edit it.
 - **Viewport** (centre) — live render; drag = orbit, Shift-drag = pan, wheel = zoom.
 - **Sensor** panel (right top) — the scene's sensor camera (wrist-mounted on the Franka hand in the
@@ -288,6 +292,13 @@ scene with the ovfmi **USD-FMI schema**: `FmuInstance`/`SspInstance` prims decla
 `FmuConnection` → `FmuMapping` children bind model variables to scene state. Everything runs in the
 orchestrator process — the FMU's native win64 binary is called directly (no Python, no FMPy).
 
+![The conveyor demo in Gemelli Studio: an SSP-packaged line controller drives the roller zones while a
+parcel rides the belt](docs/conveyor-fmi.png)
+
+*The conveyor demo in the fast viewport: a presence sensor, a five-zone line controller, and five
+motor drives (one SSP, three FMUs inside) drive the roller zones; the parcel is an ordinary rigid
+body carried by roller contact.*
+
 Supported routings per mapping (`fmi:usdAttribute`):
 
 | Routing | Direction | Backed by |
@@ -319,6 +330,28 @@ rejectSpeed, eStop)`, `scale.x = enable` — set `eStop` to 1 and the whole line
 controller and every motor drive. Current limits: FMI 2.0 co-simulation only (no 3.0, no model
 exchange), Real variables only, and FMU outputs mapped to visual-only USD attributes update the input
 cache but are not yet written back to the renderer.
+
+### The Signal Mapper
+
+![The Signal Mapper: sensors and operator inputs wired through the SSP to the five roller drive
+joints, with live values on every wire](docs/signal-mapper.png)
+
+*The conveyor's wiring mid-run: the presence sensor and operator panel feed the SSP (blue wires), its
+zone outputs drive the five roller joints (orange wires, carrying −16 — a package reject reversal in
+progress), and unconnected output pins still show their live values.*
+
+**Signals** (header button, while a twin with FMI runs) opens the mapper — a node graph of the live
+wiring backed directly by the running controller:
+
+- **Nodes**: signal sources (overlap sensors, operator-panel values) on the left, FMI instances in
+  the middle, actuators (drive joints, force targets) on the right. Drag them by their title bar.
+- **Wires** are splines that follow the nodes and are labelled with the value that crossed them on
+  the latest frame; unconnected FMI output pins show their live value beside the dot.
+- **Right-click a wire to cut it; drag from one port dot to another to connect** — source → model
+  input, or model output → actuator. Changes apply to the running twin on the next frame.
+- **＋ Constant** adds a constant node with a live-editable value. Wire it to a model input, or
+  straight to an actuator (e.g. pin one roller zone to a fixed speed, bypassing the models
+  entirely). Right-click its title bar to remove it.
 
 ---
 
@@ -378,6 +411,7 @@ reserved for the sensor cameras and ground-truth RTX mode.
 - ✅ **Control**: `ISimApi` + playback / Roslyn C# scripting / differential IK; keyboard + Xbox-controller teleop
 - ✅ **Adjustable pacing**: live time-scale (slow-mo → ~10×) and physics timestep via the Settings pane
 - ✅ **FMI co-simulation** (`Gemelli.Fmi`) — FMI 2.0 + SSP 1.0 host via the ovfmi USD-FMI schema; conveyor demo verified end-to-end (sensor → controller → roller drives)
+- ✅ **Signal Mapper** — live node graph of the FMI wiring: per-wire values, cut/reconnect at runtime, editable constant sources
 - ✅ **MCP server** (`Gemelli.Mcp`) — tool-drivable incl. `render_frame` vision; verified end-to-end
 - ✅ **Avalonia Studio** — viewport + transport + outliner + inspector + sensor panel + settings over the shared `TwinService`
 - ✅ Packaging: single assembled-app folder (`dist\<Config>\`), native-lib auto-discovery, one-command launchers

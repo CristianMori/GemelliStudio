@@ -45,6 +45,8 @@ public sealed class SignalMapperWindow : Window
             Node.Pos.Y + (double.IsNaN(LocalY) ? HeaderH + RowIndex * RowH + RowH * 0.5 : LocalY));
     }
 
+    /// <summary>A draggable box on the canvas holding a column of ports. Port anchors are computed
+    /// from the node position and fixed row metrics, so wires follow a drag with no re-measuring.</summary>
     private sealed class Node
     {
         public required string Title;
@@ -62,8 +64,8 @@ public sealed class SignalMapperWindow : Window
     private readonly WireLayer _wires;
     private readonly List<Node> _nodes = [];
     private readonly List<Port> _ports = [];
-    private readonly Dictionary<Node, string> _fmiNodeInstance = new();
-    private readonly DispatcherTimer _timer;
+    private readonly Dictionary<Node, string> _fmiNodeInstance = new(); // FMI node -> its prim path
+    private readonly DispatcherTimer _timer; // repaints the wire layer so value labels stay live
 
     // Interaction state.
     private Node? _dragNode;
@@ -308,6 +310,7 @@ public sealed class SignalMapperWindow : Window
         _canvas.Children.Add(border);
     }
 
+    /// <summary>The clickable connection dot for a port; pressing it starts a wire drag.</summary>
     private Ellipse PortDot(Port p, IBrush fill)
     {
         var dot = new Ellipse
@@ -321,6 +324,7 @@ public sealed class SignalMapperWindow : Window
         return dot;
     }
 
+    /// <summary>Deletes a constant: its wires (via the controller), its ports, and its visual.</summary>
     private void RemoveConstantNode(Node node)
     {
         if (node.Constant is null) return;
@@ -409,6 +413,7 @@ public sealed class SignalMapperWindow : Window
     private string FindInstancePath(Port fmiPort) =>
         _fmiNodeInstance.TryGetValue(fmiPort.Node, out string? path) ? path : "";
 
+    /// <summary>The nearest port dot within <paramref name="radius"/> px of a point, or null.</summary>
     private Port? HitPort(Point pos, double radius)
     {
         Port? best = null;
@@ -423,6 +428,8 @@ public sealed class SignalMapperWindow : Window
 
     // ---------------------------------------------------------------- wires
 
+    // Resolves a mapping row to its wire's cubic-bezier control points (source and sink port
+    // anchors, with horizontal control handles), or null when either endpoint has no port.
     private (Point From, Point C1, Point C2, Point To)? WireGeometry(SignalMapping row)
     {
         Point from, to;
