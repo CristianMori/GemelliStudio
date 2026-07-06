@@ -279,6 +279,7 @@ public sealed class MainWindow : Window
 
         var scriptToggle = TransportButton("Script", () => { _scriptPanel.IsVisible = !_scriptPanel.IsVisible; });
         var settingsBtn = TransportButton("⚙ Settings", OpenSettings);
+        var signalsBtn = TransportButton("Signals", OpenSignalMapper);
         _saveBtn = TransportButton("Save USD", () => _ = SaveUsdSnapshot());
 
         var cfg = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 12, 0), VerticalAlignment = VerticalAlignment.Center, Spacing = 6 };
@@ -290,6 +291,7 @@ public sealed class MainWindow : Window
         cfg.Children.Add(_resBox);
         cfg.Children.Add(settingsBtn);
         cfg.Children.Add(scriptToggle);
+        cfg.Children.Add(signalsBtn);
         cfg.Children.Add(_saveBtn);
         cfg.Children.Add(_startBtn);
         Grid.SetColumn(cfg, 2);
@@ -788,6 +790,7 @@ public sealed class MainWindow : Window
                     }
                 }
                 catch (Exception fex) { Console.Error.WriteLine("[fmi] scene detection failed: " + fex.Message.Split('\n')[0]); }
+                _fmi = fmi;
 
                 _twin.Start(options, fmi is null ? null : [fmi]);
                 // Render the sensor camera (depth/seg) at a quarter rate so it doesn't halve the viewport fps.
@@ -812,11 +815,38 @@ public sealed class MainWindow : Window
         });
     }
 
+    // ----- FMI signal mapper -----
+
+    private Gemelli.Fmi.FmiController? _fmi;
+    private SignalMapperWindow? _signalMapper;
+
+    /// <summary>Opens (or focuses) the signal-mapper node graph for the running twin's FMI wiring.</summary>
+    private void OpenSignalMapper()
+    {
+        if (_fmi is null || !_twin.IsRunning)
+        {
+            _statusLeft.Text = "Signals: start a scene with FMI instances first (e.g. conveyor_fmi).";
+            return;
+        }
+        if (_signalMapper is not null) { _signalMapper.Activate(); return; }
+        _signalMapper = new SignalMapperWindow(_fmi);
+        _signalMapper.Closed += (_, _) => _signalMapper = null;
+        _signalMapper.Show(this);
+    }
+
+    private void CloseSignalMapper()
+    {
+        _signalMapper?.Close();
+        _signalMapper = null;
+        _fmi = null;
+    }
+
     /// <summary>Stops the twin and tears down recording, raster viewport, robot/IK, and selection state.</summary>
     private void OnStop()
     {
         StopRecording();
         StopRasterViewport();
+        CloseSignalMapper();
         Task.Run(() =>
         {
             _twin.Stop();
@@ -840,6 +870,7 @@ public sealed class MainWindow : Window
     {
         StopRecording();
         StopRasterViewport();
+        CloseSignalMapper();
         _statusLeft.Text = "Twin faulted: " + ex.Message.Split('\n')[0];
         SetRunningControls(false);
         _startBtn.IsEnabled = true;

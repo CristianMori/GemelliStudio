@@ -11,7 +11,7 @@ namespace Gemelli.Viewport;
 /// pose) or world space (null → static, model = identity). <see cref="TexturePath"/> keys into
 /// <see cref="GeometryResult.Textures"/>; the color acts as a tint when a texture is present.
 /// </summary>
-public sealed record RenderMesh(float[] Vertices, Vector3 Color, string? BodyPath, string? TexturePath = null);
+public sealed record RenderMesh(float[] Vertices, Vector3 Color, string? BodyPath, string? TexturePath = null, float Alpha = 1f);
 
 /// <summary>A decoded albedo texture (RGBA8, bottom-up rows to match GL/USD texture-coordinate origin).</summary>
 public sealed record TextureData(int Width, int Height, byte[] Rgba);
@@ -101,7 +101,8 @@ public sealed class UsdGeometryLoader
             if (type == "Mesh")
                 EmitMesh(new UsdGeomMesh(prim), ToM(_xf.GetLocalToWorldTransform(prim)), path);
             else if (ShapeVerts(prim, type) is { } sv)
-                Emit(sv, ToM(_xf.GetLocalToWorldTransform(prim)), path, LookFor(prim, path).Color); // shapes carry no UVs → tint only
+                Emit(sv, ToM(_xf.GetLocalToWorldTransform(prim)), path, LookFor(prim, path).Color, // shapes carry no UVs → tint only
+                    alpha: ReadOpacity(prim));
 
             // Instanced prim: walk the shared prototype's meshes and place each by composing its prototype-local
             // transform with this instance's world transform (the prototype is authored at the origin).
@@ -206,8 +207,27 @@ public sealed class UsdGeometryLoader
                 bk.verts.Add(new Vtx(p[c], n[c], uv(c, cc)));
             }
         }
+        float meshAlpha = ReadOpacity(prim);
         foreach (var (_, bucket) in buckets)
-            Emit(bucket.verts, geoToWorld, path, bucket.color, bucket.tex);
+            Emit(bucket.verts, geoToWorld, path, bucket.color, bucket.tex, meshAlpha);
+    }
+
+    // Authored primvars:displayOpacity (constant across the prim), 1 = opaque. Lets scenes mark
+    // helper geometry (sensor volumes) translucent in the nav viewport. NOTE: displayOpacity is a
+    // BUILT-IN Gprim attribute, so GetAttribute returns a valid handle even when nothing is
+    // authored and Get yields an empty array — only a non-empty array counts (an unauthored value
+    // must not read as 0 = fully transparent).
+    private static float ReadOpacity(UsdPrim prim)
+    {
+        UsdAttribute a = prim.GetAttribute(new TfToken("primvars:displayOpacity"));
+        if (!a.IsValid()) return 1f;
+        try
+        {
+            VtFloatArray arr = a.Get(UsdTimeCode.Default());
+            if (arr is not null && arr.size() > 0) return Math.Clamp(arr[0], 0f, 1f);
+        }
+        catch { }
+        return 1f;
     }
 
     // Builds a (pointIndex, cornerIndex) → UV lookup from primvars:st. USD authors texcoords either
@@ -254,7 +274,7 @@ public sealed class UsdGeometryLoader
     }
 
     // Bake local (pos, normal, uv) verts into the owner's controlling-body frame and emit a RenderMesh.
-    private void Emit(List<Vtx> local, Matrix4x4 geoToWorld, string ownerPath, Vector3 color, string? texture = null)
+    private void Emit(List<Vtx> local, Matrix4x4 geoToWorld, string ownerPath, Vector3 color, string? texture = null, float alpha = 1f)
     {
         if (local.Count < 3) return;
         string? body = ControllingBody(ownerPath);
@@ -283,7 +303,7 @@ public sealed class UsdGeometryLoader
             verts[o + 3] = nrm.X; verts[o + 4] = nrm.Y; verts[o + 5] = nrm.Z;
             verts[o + 6] = local[i].Uv.X; verts[o + 7] = local[i].Uv.Y;
         }
-        _out.Add(new RenderMesh(verts, color, body, texture));
+        _out.Add(new RenderMesh(verts, color, body, texture, alpha));
     }
 
     // Decodes an albedo file into the shared texture set (once per distinct path), downscaled to a

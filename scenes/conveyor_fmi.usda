@@ -158,6 +158,17 @@ over "World"
     )
     {
     }
+
+    # The presence-sensor marker ball: translucent instead of solid red. displayOpacity drives the
+    # fast rasterized viewport; the acrylic material rebind makes the RTX path render it glassy.
+    over "Sensor"
+    {
+        over "Sphere"
+        {
+            float[] primvars:displayOpacity = [0.25]
+            rel material:binding = </World/ConveyorBelt_A08/Looks/Acrylic_Clear_Glossy_Blue_A>
+        }
+    }
 }
 
 def "Render"

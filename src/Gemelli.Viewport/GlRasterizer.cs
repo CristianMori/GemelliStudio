@@ -20,7 +20,7 @@ public sealed unsafe class GlRasterizer : IDisposable
     private uint _gridVao, _gridVbo;
     private int _gridVerts;
     private uint _groundVao, _groundVbo;
-    private readonly List<(uint Vao, uint Vbo, int Count, Vector3 Color, string? Body, uint Tex)> _meshes = new();
+    private readonly List<(uint Vao, uint Vbo, int Count, Vector3 Color, string? Body, uint Tex, float Alpha)> _meshes = new();
     private readonly Dictionary<string, uint> _textures = new(); // albedo path -> GL texture
     private byte[] _pixels = [];
 
@@ -58,7 +58,7 @@ public sealed unsafe class GlRasterizer : IDisposable
     /// </summary>
     public void Upload(IReadOnlyList<RenderMesh> meshes, IReadOnlyDictionary<string, TextureData>? textures = null)
     {
-        foreach (var (vao, vbo, _, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
+        foreach (var (vao, vbo, _, _, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
         _meshes.Clear();
         foreach (uint tex in _textures.Values) _gl.DeleteTexture(tex);
         _textures.Clear();
@@ -94,7 +94,7 @@ public sealed unsafe class GlRasterizer : IDisposable
             _gl.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), (void*)(6 * sizeof(float))); // loc 2: uv
             _gl.EnableVertexAttribArray(2);
             uint tex = m.TexturePath is not null && _textures.TryGetValue(m.TexturePath, out uint t2) ? t2 : 0;
-            _meshes.Add((vao, vbo, m.Vertices.Length / 8, m.Color, m.BodyPath, tex));
+            _meshes.Add((vao, vbo, m.Vertices.Length / 8, m.Color, m.BodyPath, tex, m.Alpha));
         }
         _gl.BindVertexArray(0);
     }
@@ -130,6 +130,7 @@ public sealed unsafe class GlRasterizer : IDisposable
         SetMat(_prog, "uMVP", vp);
         _gl.Uniform3(_gl.GetUniformLocation(_prog, "uColor"), 0.16f, 0.17f, 0.20f);
         _gl.Uniform1(_gl.GetUniformLocation(_prog, "uUseTex"), 0);
+        _gl.Uniform1(_gl.GetUniformLocation(_prog, "uAlpha"), 1f);
         _gl.BindVertexArray(_groundVao);
         _gl.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
@@ -139,20 +140,35 @@ public sealed unsafe class GlRasterizer : IDisposable
         _gl.BindVertexArray(_gridVao);
         _gl.DrawArrays(PrimitiveType.Lines, 0, (uint)_gridVerts);
 
-        // Meshes.
+        // Meshes: opaque first, then translucent (blended, depth-test-only) so the see-through
+        // helpers (sensor volumes) composite over the geometry behind them.
         _gl.UseProgram(_prog);
         _gl.ActiveTexture(TextureUnit.Texture0);
-        foreach (var (vao, _, count, color, body, tex) in _meshes)
+        for (int pass = 0; pass < 2; pass++)
         {
-            Matrix4x4 model = body is not null ? modelLookup(body) ?? Matrix4x4.Identity : Matrix4x4.Identity;
-            SetMat(_prog, "uModel", model);
-            SetMat(_prog, "uMVP", model * vp);
-            _gl.Uniform3(_gl.GetUniformLocation(_prog, "uColor"), color.X, color.Y, color.Z);
-            _gl.Uniform1(_gl.GetUniformLocation(_prog, "uUseTex"), tex != 0 ? 1 : 0);
-            if (tex != 0) _gl.BindTexture(TextureTarget.Texture2D, tex);
-            _gl.BindVertexArray(vao);
-            _gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)count);
+            bool translucentPass = pass == 1;
+            if (translucentPass)
+            {
+                _gl.Enable(EnableCap.Blend);
+                _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                _gl.DepthMask(false);
+            }
+            foreach (var (vao, _, count, color, body, tex, alpha) in _meshes)
+            {
+                if (alpha < 0.999f != translucentPass) continue;
+                Matrix4x4 model = body is not null ? modelLookup(body) ?? Matrix4x4.Identity : Matrix4x4.Identity;
+                SetMat(_prog, "uModel", model);
+                SetMat(_prog, "uMVP", model * vp);
+                _gl.Uniform3(_gl.GetUniformLocation(_prog, "uColor"), color.X, color.Y, color.Z);
+                _gl.Uniform1(_gl.GetUniformLocation(_prog, "uUseTex"), tex != 0 ? 1 : 0);
+                _gl.Uniform1(_gl.GetUniformLocation(_prog, "uAlpha"), alpha);
+                if (tex != 0) _gl.BindTexture(TextureTarget.Texture2D, tex);
+                _gl.BindVertexArray(vao);
+                _gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)count);
+            }
         }
+        _gl.DepthMask(true);
+        _gl.Disable(EnableCap.Blend);
         _gl.BindVertexArray(0);
 
         // Readback.
@@ -282,7 +298,7 @@ public sealed unsafe class GlRasterizer : IDisposable
     {
         try
         {
-            foreach (var (vao, vbo, _, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
+            foreach (var (vao, vbo, _, _, _, _, _) in _meshes) { _gl.DeleteVertexArray(vao); _gl.DeleteBuffer(vbo); }
             foreach (uint tex in _textures.Values) _gl.DeleteTexture(tex);
             _gl.DeleteFramebuffer(_fbo); _gl.DeleteTexture(_colorTex); _gl.DeleteRenderbuffer(_depthRbo);
             _gl.DeleteVertexArray(_gridVao); _gl.DeleteBuffer(_gridVbo);
@@ -317,6 +333,7 @@ public sealed unsafe class GlRasterizer : IDisposable
         uniform vec3 uLightDir;
         uniform sampler2D uTex;
         uniform int uUseTex;
+        uniform float uAlpha;
         out vec4 frag;
         void main() {
             vec3 n = normalize(vN);
@@ -330,7 +347,7 @@ public sealed unsafe class GlRasterizer : IDisposable
             float diff = max(dot(n, L), 0.0);
             vec3 col = base * (0.45 * amb + 0.75 * diff);
             col = pow(col, vec3(0.85));            // gentle gamma lift
-            frag = vec4(col, 1.0);
+            frag = vec4(col, uAlpha);
         }
         """;
     private const string GridVertSrc = """
