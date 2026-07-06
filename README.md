@@ -292,8 +292,7 @@ scene with the ovfmi **USD-FMI schema**: `FmuInstance`/`SspInstance` prims decla
 `FmuConnection` → `FmuMapping` children bind model variables to scene state. Everything runs in the
 orchestrator process — the FMU's native win64 binary is called directly (no Python, no FMPy).
 
-![The conveyor demo in Gemelli Studio: an SSP-packaged line controller drives the roller zones while a
-parcel rides the belt](docs/conveyor-fmi.png)
+![The conveyor demo in Gemelli Studio: an SSP-packaged line controller driving the roller zones](docs/conveyor-fmi.png)
 
 *The conveyor demo in the fast viewport: a presence sensor, a five-zone line controller, and five
 motor drives (one SSP, three FMUs inside) drive the roller zones; the parcel is an ordinary rigid
@@ -333,8 +332,7 @@ cache but are not yet written back to the renderer.
 
 ### The Signal Mapper
 
-![The Signal Mapper: sensors and operator inputs wired through the SSP to the five roller drive
-joints, with live values on every wire](docs/signal-mapper.png)
+![The Signal Mapper: sensors and operator inputs wired through the SSP to the roller drive joints, with live values on every wire](docs/signal-mapper.png)
 
 *The conveyor's wiring mid-run: the presence sensor and operator panel feed the SSP (blue wires), its
 zone outputs drive the five roller joints (orange wires, carrying −16 — a package reject reversal in
