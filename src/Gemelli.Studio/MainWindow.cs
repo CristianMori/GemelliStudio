@@ -777,22 +777,29 @@ public sealed class MainWindow : Window
         {
             try
             {
-                // FMI co-simulation models embedded in the scene (ovfmi USD-FMI schema) run as a
-                // controller alongside the live script; detection failures must not block Start.
-                Gemelli.Fmi.FmiController? fmi = null;
+                // The signal graph runs as a controller alongside the live script. Scenes with FMI
+                // prims (ovfmi USD-FMI schema) seed it with their instances and wires; other scenes
+                // get an empty graph so device/constant blocks can still be wired in the mapper.
+                // Detection failures must not block Start.
+                Gemelli.Fmi.FmiSceneConfig? fmiConfig = null;
                 try
                 {
-                    if (Gemelli.Fmi.FmiSchema.Load(scenePath) is { } fmiConfig)
+                    fmiConfig = Gemelli.Fmi.FmiSchema.Load(scenePath);
+                    if (fmiConfig is not null)
                     {
-                        fmi = new Gemelli.Fmi.FmiController(fmiConfig);
-                        Dispatcher.UIThread.Post(() => _statusLeft.Text =
-                            $"Starting twin ({fmiConfig.Instances.Count} FMI instance(s) detected)…");
+                        // Describe what was actually found ("1 ONNX block", "2 FMU blocks, 1 SSP block")
+                        // rather than calling everything FMI — ONNX policies aren't.
+                        string kinds = string.Join(", ", fmiConfig.Instances
+                            .GroupBy(i => i.Kind)
+                            .Select(g => $"{g.Count()} {g.Key.ToString().ToUpperInvariant()} block{(g.Count() == 1 ? "" : "s")}"));
+                        Dispatcher.UIThread.Post(() => _statusLeft.Text = $"Starting twin ({kinds} detected)…");
                     }
                 }
                 catch (Exception fex) { Console.Error.WriteLine("[fmi] scene detection failed: " + fex.Message.Split('\n')[0]); }
-                _fmi = fmi;
+                var graph = new Gemelli.Fmi.SignalGraphController(fmiConfig);
+                _fmi = graph;
 
-                _twin.Start(options, fmi is null ? null : [fmi]);
+                _twin.Start(options, [graph]);
                 // Render the sensor camera (depth/seg) at a quarter rate so it doesn't halve the viewport fps.
                 if (_sensorProduct is not null) _twin.SetSecondaryRenderInterval(4);
                 DetectRobot(scenePath);
@@ -815,17 +822,17 @@ public sealed class MainWindow : Window
         });
     }
 
-    // ----- FMI signal mapper -----
+    // ----- signal mapper -----
 
-    private Gemelli.Fmi.FmiController? _fmi;
+    private Gemelli.Fmi.SignalGraphController? _fmi;
     private SignalMapperWindow? _signalMapper;
 
-    /// <summary>Opens (or focuses) the signal-mapper node graph for the running twin's FMI wiring.</summary>
+    /// <summary>Opens (or focuses) the signal-mapper node graph for the running twin's signal graph.</summary>
     private void OpenSignalMapper()
     {
         if (_fmi is null || !_twin.IsRunning)
         {
-            _statusLeft.Text = "Signals: start a scene with FMI instances first (e.g. conveyor_fmi).";
+            _statusLeft.Text = "Signals: start a twin first.";
             return;
         }
         if (_signalMapper is not null) { _signalMapper.Activate(); return; }

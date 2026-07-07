@@ -479,7 +479,11 @@ public sealed class UsdGeometryLoader
 
     private MaterialLook ScanMaterial(UsdPrim mat)
     {
+        // Interface inputs authored on the Material prim itself (the shader inputs then merely
+        // connect to them, with no value of their own — e.g. the URDF importer's PreviewSurfaces).
         Vector3? tint = null;
+        foreach (string attr in DiffuseAttrs) tint ??= ReadColor(mat, attr);
+
         string? texture = null;
         foreach (UsdPrim shader in mat.GetDescendants())
         {

@@ -1,0 +1,52 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.2"
+    }
+    defaultPrim = "onshape"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\tmpw8qpsj5j\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\usdex_robot\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\temp_robot\\robot.usd
+
+
+Generated from Composed Stage of root layer C:\\DataDrive\\ovGemelli\\scenes\\duck\\robot\\payloads\\base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "onshape" (
+    prepend references = @./payloads/base.usda@
+    variants = {
+        string Physics = "physx"
+    }
+    append variantSets = "Physics"
+)
+{
+    variantSet "Physics" = {
+        "mujoco" (
+            prepend payload = @./payloads/Physics/mujoco.usda@
+        ) {
+
+        }
+        "none" {
+
+        }
+        "physics" (
+            prepend payload = @./payloads/Physics/physics.usda@
+        ) {
+
+        }
+        "physx" (
+            prepend payload = @./payloads/Physics/physx.usda@
+        ) {
+
+        }
+    }
+}
+

@@ -1,0 +1,1509 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.2"
+    }
+    defaultPrim = "onshape"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\tmpw8qpsj5j\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\usdex_robot\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\temp_robot\\robot.usd
+
+
+Generated from Composed Stage of root layer C:\\DataDrive\\ovGemelli\\scenes\\duck\\robot\\payloads\\base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "onshape"
+{
+    over "Physics"
+    {
+        def MjcActuator "left_ankle_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/left_ankle>
+        }
+
+        def MjcActuator "left_knee_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/left_knee>
+        }
+
+        def MjcActuator "left_hip_pitch_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/left_hip_pitch>
+        }
+
+        def MjcActuator "left_hip_roll_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/left_hip_roll>
+        }
+
+        def MjcActuator "left_hip_yaw_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/left_hip_yaw>
+        }
+
+        def MjcActuator "right_ankle_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/right_ankle>
+        }
+
+        def MjcActuator "right_knee_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/right_knee>
+        }
+
+        def MjcActuator "right_hip_pitch_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/right_hip_pitch>
+        }
+
+        def MjcActuator "right_hip_roll_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/right_hip_roll>
+        }
+
+        def MjcActuator "right_hip_yaw_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/right_hip_yaw>
+        }
+
+        def MjcActuator "left_antenna_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/left_antenna>
+        }
+
+        def MjcActuator "right_antenna_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/right_antenna>
+        }
+
+        def MjcActuator "head_roll_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/head_roll>
+        }
+
+        def MjcActuator "head_yaw_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/head_yaw>
+        }
+
+        def MjcActuator "head_pitch_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/head_pitch>
+        }
+
+        def MjcActuator "neck_pitch_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -0.23335051536560059, -0.005235987715423107, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 1
+            uniform double mjc:forceRange:min = -1
+            uniform double[] mjc:gainPrm = [0.23335051536560059, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </onshape/Physics/neck_pitch>
+        }
+
+        over "trunk_frame"
+        {
+        }
+
+        over "left_foot_frame"
+        {
+        }
+
+        over "left_ankle" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "left_knee" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "left_hip_pitch" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "left_hip_roll" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "left_hip_yaw" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "right_foot_frame"
+        {
+        }
+
+        over "right_ankle" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "right_knee" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "right_hip_pitch" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "right_hip_roll" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "right_hip_yaw" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "head_frame"
+        {
+        }
+
+        over "left_antenna" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "right_antenna" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "head_roll" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "head_yaw" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "head_pitch" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+
+        over "neck_pitch" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            over "joint_properties"
+            {
+            }
+        }
+    }
+
+    over "Geometry"
+    {
+        over "trunk_assembly"
+        {
+            over "hip_roll_assembly"
+            {
+                over "left_roll_to_pitch_assembly"
+                {
+                    over "knee_and_ankle_assembly"
+                    {
+                        over "knee_and_ankle_assembly_2"
+                        {
+                            over "foot_assembly"
+                            {
+                                over "left_foot"
+                                {
+                                }
+
+                                over "foot_side"
+                                {
+                                }
+
+                                over "foot_bottom_tpu"
+                                {
+                                }
+
+                                over "foot_bottom_pla"
+                                {
+                                }
+
+                                over "foot_top"
+                                {
+                                }
+
+                                over "foot_side_1"
+                                {
+                                }
+
+                                over "foot_bottom_tpu_1"
+                                {
+                                }
+
+                                over "foot_bottom_pla_1"
+                                {
+                                }
+
+                                over "foot_top_1"
+                                {
+                                }
+                            }
+
+                            over "leg_spacer"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_right_sheet"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_left_sheet"
+                            {
+                            }
+
+                            over "tn__wjwk000123middlecase_56_xX07"
+                            {
+                            }
+
+                            over "drive_palonier"
+                            {
+                            }
+
+                            over "tn__wjwk000124bottomcase_45_xX07"
+                            {
+                            }
+
+                            over "tn__wjwk000122topcabinetcase_95_rd07"
+                            {
+                            }
+
+                            over "passive_palonier"
+                            {
+                            }
+
+                            over "leg_spacer_1"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_right_sheet_1"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_left_sheet_1"
+                            {
+                            }
+
+                            over "tn__wjwk000123middlecase_56_1_ua07"
+                            {
+                            }
+
+                            over "drive_palonier_1"
+                            {
+                            }
+
+                            over "tn__wjwk000124bottomcase_45_1_ua07"
+                            {
+                            }
+
+                            over "tn__wjwk000122topcabinetcase_95_1_og07"
+                            {
+                            }
+
+                            over "passive_palonier_1"
+                            {
+                            }
+                        }
+
+                        over "left_cache"
+                        {
+                        }
+
+                        over "leg_spacer"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_right_sheet"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_left_sheet"
+                        {
+                        }
+
+                        over "tn__wjwk000123middlecase_56_xX07"
+                        {
+                        }
+
+                        over "drive_palonier"
+                        {
+                        }
+
+                        over "tn__wjwk000124bottomcase_45_xX07"
+                        {
+                        }
+
+                        over "tn__wjwk000122topcabinetcase_95_rd07"
+                        {
+                        }
+
+                        over "passive_palonier"
+                        {
+                        }
+
+                        over "left_cache_1"
+                        {
+                        }
+
+                        over "leg_spacer_1"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_right_sheet_1"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_left_sheet_1"
+                        {
+                        }
+
+                        over "tn__wjwk000123middlecase_56_1_ua07"
+                        {
+                        }
+
+                        over "drive_palonier_1"
+                        {
+                        }
+
+                        over "tn__wjwk000124bottomcase_45_1_ua07"
+                        {
+                        }
+
+                        over "tn__wjwk000122topcabinetcase_95_1_og07"
+                        {
+                        }
+
+                        over "passive_palonier_1"
+                        {
+                        }
+                    }
+
+                    over "left_roll_to_pitch"
+                    {
+                    }
+
+                    over "tn__wjwk000123middlecase_56_xX07"
+                    {
+                    }
+
+                    over "drive_palonier"
+                    {
+                    }
+
+                    over "tn__wjwk000124bottomcase_45_xX07"
+                    {
+                    }
+
+                    over "tn__wjwk000122topcabinetcase_95_rd07"
+                    {
+                    }
+
+                    over "passive_palonier"
+                    {
+                    }
+
+                    over "left_roll_to_pitch_1"
+                    {
+                    }
+
+                    over "tn__wjwk000123middlecase_56_1_ua07"
+                    {
+                    }
+
+                    over "drive_palonier_1"
+                    {
+                    }
+
+                    over "tn__wjwk000124bottomcase_45_1_ua07"
+                    {
+                    }
+
+                    over "tn__wjwk000122topcabinetcase_95_1_og07"
+                    {
+                    }
+
+                    over "passive_palonier_1"
+                    {
+                    }
+                }
+
+                over "roll_motor_bottom"
+                {
+                }
+
+                over "roll_motor_top"
+                {
+                }
+
+                over "tn__wjwk000123middlecase_56_xX07"
+                {
+                }
+
+                over "drive_palonier"
+                {
+                }
+
+                over "tn__wjwk000124bottomcase_45_xX07"
+                {
+                }
+
+                over "tn__wjwk000122topcabinetcase_95_rd07"
+                {
+                }
+
+                over "passive_palonier"
+                {
+                }
+
+                over "roll_motor_bottom_1"
+                {
+                }
+
+                over "roll_motor_top_1"
+                {
+                }
+
+                over "tn__wjwk000123middlecase_56_1_ua07"
+                {
+                }
+
+                over "drive_palonier_1"
+                {
+                }
+
+                over "tn__wjwk000124bottomcase_45_1_ua07"
+                {
+                }
+
+                over "tn__wjwk000122topcabinetcase_95_1_og07"
+                {
+                }
+
+                over "passive_palonier_1"
+                {
+                }
+            }
+
+            over "hip_roll_assembly_2"
+            {
+                over "right_roll_to_pitch_assembly"
+                {
+                    over "knee_and_ankle_assembly_3"
+                    {
+                        over "knee_and_ankle_assembly_4"
+                        {
+                            over "foot_assembly_2"
+                            {
+                                over "right_foot"
+                                {
+                                }
+
+                                over "foot_side"
+                                {
+                                }
+
+                                over "foot_bottom_tpu"
+                                {
+                                }
+
+                                over "foot_bottom_pla"
+                                {
+                                }
+
+                                over "foot_top"
+                                {
+                                }
+
+                                over "foot_side_1"
+                                {
+                                }
+
+                                over "foot_bottom_tpu_1"
+                                {
+                                }
+
+                                over "foot_bottom_pla_1"
+                                {
+                                }
+
+                                over "foot_top_1"
+                                {
+                                }
+                            }
+
+                            over "leg_spacer"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_right_sheet"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_left_sheet"
+                            {
+                            }
+
+                            over "tn__wjwk000123middlecase_56_xX07"
+                            {
+                            }
+
+                            over "drive_palonier"
+                            {
+                            }
+
+                            over "tn__wjwk000124bottomcase_45_xX07"
+                            {
+                            }
+
+                            over "tn__wjwk000122topcabinetcase_95_rd07"
+                            {
+                            }
+
+                            over "passive_palonier"
+                            {
+                            }
+
+                            over "leg_spacer_1"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_right_sheet_1"
+                            {
+                            }
+
+                            over "left_knee_to_ankle_left_sheet_1"
+                            {
+                            }
+
+                            over "tn__wjwk000123middlecase_56_1_ua07"
+                            {
+                            }
+
+                            over "drive_palonier_1"
+                            {
+                            }
+
+                            over "tn__wjwk000124bottomcase_45_1_ua07"
+                            {
+                            }
+
+                            over "tn__wjwk000122topcabinetcase_95_1_og07"
+                            {
+                            }
+
+                            over "passive_palonier_1"
+                            {
+                            }
+                        }
+
+                        over "right_cache"
+                        {
+                        }
+
+                        over "leg_spacer"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_right_sheet"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_left_sheet"
+                        {
+                        }
+
+                        over "tn__wjwk000123middlecase_56_xX07"
+                        {
+                        }
+
+                        over "drive_palonier"
+                        {
+                        }
+
+                        over "tn__wjwk000124bottomcase_45_xX07"
+                        {
+                        }
+
+                        over "tn__wjwk000122topcabinetcase_95_rd07"
+                        {
+                        }
+
+                        over "passive_palonier"
+                        {
+                        }
+
+                        over "right_cache_1"
+                        {
+                        }
+
+                        over "leg_spacer_1"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_right_sheet_1"
+                        {
+                        }
+
+                        over "left_knee_to_ankle_left_sheet_1"
+                        {
+                        }
+
+                        over "tn__wjwk000123middlecase_56_1_ua07"
+                        {
+                        }
+
+                        over "drive_palonier_1"
+                        {
+                        }
+
+                        over "tn__wjwk000124bottomcase_45_1_ua07"
+                        {
+                        }
+
+                        over "tn__wjwk000122topcabinetcase_95_1_og07"
+                        {
+                        }
+
+                        over "passive_palonier_1"
+                        {
+                        }
+                    }
+
+                    over "right_roll_to_pitch"
+                    {
+                    }
+
+                    over "tn__wjwk000123middlecase_56_xX07"
+                    {
+                    }
+
+                    over "drive_palonier"
+                    {
+                    }
+
+                    over "tn__wjwk000124bottomcase_45_xX07"
+                    {
+                    }
+
+                    over "tn__wjwk000122topcabinetcase_95_rd07"
+                    {
+                    }
+
+                    over "passive_palonier"
+                    {
+                    }
+
+                    over "right_roll_to_pitch_1"
+                    {
+                    }
+
+                    over "tn__wjwk000123middlecase_56_1_ua07"
+                    {
+                    }
+
+                    over "drive_palonier_1"
+                    {
+                    }
+
+                    over "tn__wjwk000124bottomcase_45_1_ua07"
+                    {
+                    }
+
+                    over "tn__wjwk000122topcabinetcase_95_1_og07"
+                    {
+                    }
+
+                    over "passive_palonier_1"
+                    {
+                    }
+                }
+
+                over "roll_motor_bottom"
+                {
+                }
+
+                over "roll_motor_top"
+                {
+                }
+
+                over "tn__wjwk000123middlecase_56_xX07"
+                {
+                }
+
+                over "drive_palonier"
+                {
+                }
+
+                over "tn__wjwk000124bottomcase_45_xX07"
+                {
+                }
+
+                over "tn__wjwk000122topcabinetcase_95_rd07"
+                {
+                }
+
+                over "passive_palonier"
+                {
+                }
+
+                over "roll_motor_bottom_1"
+                {
+                }
+
+                over "roll_motor_top_1"
+                {
+                }
+
+                over "tn__wjwk000123middlecase_56_1_ua07"
+                {
+                }
+
+                over "drive_palonier_1"
+                {
+                }
+
+                over "tn__wjwk000124bottomcase_45_1_ua07"
+                {
+                }
+
+                over "tn__wjwk000122topcabinetcase_95_1_og07"
+                {
+                }
+
+                over "passive_palonier_1"
+                {
+                }
+            }
+
+            over "neck_pitch_assembly"
+            {
+                over "head_pitch_to_yaw"
+                {
+                    over "neck_yaw_assembly"
+                    {
+                        over "head_assembly"
+                        {
+                            over "left_antenna_holder"
+                            {
+                                over "antenna"
+                                {
+                                }
+
+                                over "left_antenna_holder"
+                                {
+                                }
+
+                                over "antenna_1"
+                                {
+                                }
+
+                                over "left_antenna_holder_1"
+                                {
+                                }
+                            }
+
+                            over "right_antenna_holder"
+                            {
+                                over "right_antenna_holder"
+                                {
+                                }
+
+                                over "antenna"
+                                {
+                                }
+
+                                over "right_antenna_holder_1"
+                                {
+                                }
+
+                                over "antenna_1"
+                                {
+                                }
+                            }
+
+                            over "head_2"
+                            {
+                            }
+
+                            over "head_bot_sheet"
+                            {
+                            }
+
+                            over "head"
+                            {
+                            }
+
+                            over "head_roll_mount"
+                            {
+                            }
+
+                            over "raspberrypizerow"
+                            {
+                            }
+
+                            over "roll_bearing"
+                            {
+                            }
+
+                            over "sg90"
+                            {
+                            }
+
+                            over "sg90_1"
+                            {
+                            }
+
+                            over "board"
+                            {
+                            }
+
+                            over "tn__wjwk000123middlecase_56_xX07"
+                            {
+                            }
+
+                            over "drive_palonier"
+                            {
+                            }
+
+                            over "tn__wjwk000124bottomcase_45_xX07"
+                            {
+                            }
+
+                            over "tn__wjwk000122topcabinetcase_95_rd07"
+                            {
+                            }
+
+                            over "passive_palonier"
+                            {
+                            }
+
+                            over "head_bot_sheet_1"
+                            {
+                            }
+
+                            over "head_1"
+                            {
+                            }
+
+                            over "head_roll_mount_1"
+                            {
+                            }
+
+                            over "raspberrypizerow_1"
+                            {
+                            }
+
+                            over "roll_bearing_1"
+                            {
+                            }
+
+                            over "sg90_2"
+                            {
+                            }
+
+                            over "sg90_3"
+                            {
+                            }
+
+                            over "board_1"
+                            {
+                            }
+
+                            over "tn__wjwk000123middlecase_56_1_ua07"
+                            {
+                            }
+
+                            over "drive_palonier_1"
+                            {
+                            }
+
+                            over "tn__wjwk000124bottomcase_45_1_ua07"
+                            {
+                            }
+
+                            over "tn__wjwk000122topcabinetcase_95_1_og07"
+                            {
+                            }
+
+                            over "passive_palonier_1"
+                            {
+                            }
+                        }
+
+                        over "head_yaw_to_roll"
+                        {
+                        }
+
+                        over "tn__wjwk000123middlecase_56_xX07"
+                        {
+                        }
+
+                        over "drive_palonier"
+                        {
+                        }
+
+                        over "tn__wjwk000124bottomcase_45_xX07"
+                        {
+                        }
+
+                        over "tn__wjwk000122topcabinetcase_95_rd07"
+                        {
+                        }
+
+                        over "passive_palonier"
+                        {
+                        }
+
+                        over "head_yaw_to_roll_1"
+                        {
+                        }
+
+                        over "tn__wjwk000123middlecase_56_1_ua07"
+                        {
+                        }
+
+                        over "drive_palonier_1"
+                        {
+                        }
+
+                        over "tn__wjwk000124bottomcase_45_1_ua07"
+                        {
+                        }
+
+                        over "tn__wjwk000122topcabinetcase_95_1_og07"
+                        {
+                        }
+
+                        over "passive_palonier_1"
+                        {
+                        }
+                    }
+
+                    over "head_pitch_to_yaw"
+                    {
+                    }
+
+                    over "head_pitch_to_yaw_1"
+                    {
+                    }
+                }
+
+                over "neck_left_sheet"
+                {
+                }
+
+                over "neck_right_sheet"
+                {
+                }
+
+                over "tn__wjwk000123middlecase_56_xX07"
+                {
+                }
+
+                over "drive_palonier"
+                {
+                }
+
+                over "tn__wjwk000124bottomcase_45_xX07"
+                {
+                }
+
+                over "tn__wjwk000122topcabinetcase_95_rd07"
+                {
+                }
+
+                over "passive_palonier"
+                {
+                }
+
+                over "neck_left_sheet_1"
+                {
+                }
+
+                over "neck_right_sheet_1"
+                {
+                }
+
+                over "tn__wjwk000123middlecase_56_1_ua07"
+                {
+                }
+
+                over "drive_palonier_1"
+                {
+                }
+
+                over "tn__wjwk000124bottomcase_45_1_ua07"
+                {
+                }
+
+                over "tn__wjwk000122topcabinetcase_95_1_og07"
+                {
+                }
+
+                over "passive_palonier_1"
+                {
+                }
+            }
+
+            over "trunk"
+            {
+            }
+
+            over "body_front"
+            {
+            }
+
+            over "usb_c_charger"
+            {
+            }
+
+            over "body_back"
+            {
+            }
+
+            over "body_middle_bottom"
+            {
+            }
+
+            over "power_switch"
+            {
+            }
+
+            over "bms"
+            {
+            }
+
+            over "battery_pack_lid"
+            {
+            }
+
+            over "body_middle_top"
+            {
+            }
+
+            over "bno055"
+            {
+            }
+
+            over "roll_bearing"
+            {
+            }
+
+            over "trunk_bottom"
+            {
+            }
+
+            over "trunk_top"
+            {
+            }
+
+            over "board"
+            {
+            }
+
+            over "roll_bearing_1"
+            {
+            }
+
+            over "cell"
+            {
+            }
+
+            over "holder"
+            {
+            }
+
+            over "cell_1"
+            {
+            }
+
+            over "tn__wjwk000123middlecase_56_xX07"
+            {
+            }
+
+            over "drive_palonier"
+            {
+            }
+
+            over "tn__wjwk000124bottomcase_45_xX07"
+            {
+            }
+
+            over "tn__wjwk000122topcabinetcase_95_rd07"
+            {
+            }
+
+            over "passive_palonier"
+            {
+            }
+
+            over "tn__wjwk000123middlecase_56_1_ua07"
+            {
+            }
+
+            over "drive_palonier_1"
+            {
+            }
+
+            over "tn__wjwk000124bottomcase_45_1_ua07"
+            {
+            }
+
+            over "tn__wjwk000122topcabinetcase_95_1_og07"
+            {
+            }
+
+            over "passive_palonier_1"
+            {
+            }
+
+            over "tn__wjwk000123middlecase_56_2_ua07"
+            {
+            }
+
+            over "drive_palonier_2"
+            {
+            }
+
+            over "tn__wjwk000124bottomcase_45_2_ua07"
+            {
+            }
+
+            over "tn__wjwk000122topcabinetcase_95_2_og07"
+            {
+            }
+
+            over "passive_palonier_2"
+            {
+            }
+
+            over "body_front_1"
+            {
+            }
+
+            over "usb_c_charger_1"
+            {
+            }
+
+            over "body_back_1"
+            {
+            }
+
+            over "body_middle_bottom_1"
+            {
+            }
+
+            over "power_switch_1"
+            {
+            }
+
+            over "bms_1"
+            {
+            }
+
+            over "battery_pack_lid_1"
+            {
+            }
+
+            over "body_middle_top_1"
+            {
+            }
+
+            over "bno055_1"
+            {
+            }
+
+            over "roll_bearing_2"
+            {
+            }
+
+            over "trunk_bottom_1"
+            {
+            }
+
+            over "trunk_top_1"
+            {
+            }
+
+            over "board_1"
+            {
+            }
+
+            over "roll_bearing_3"
+            {
+            }
+
+            over "cell_2"
+            {
+            }
+
+            over "holder_1"
+            {
+            }
+
+            over "cell_3"
+            {
+            }
+
+            over "tn__wjwk000123middlecase_56_3_ua07"
+            {
+            }
+
+            over "drive_palonier_3"
+            {
+            }
+
+            over "tn__wjwk000124bottomcase_45_3_ua07"
+            {
+            }
+
+            over "tn__wjwk000122topcabinetcase_95_3_og07"
+            {
+            }
+
+            over "passive_palonier_3"
+            {
+            }
+
+            over "tn__wjwk000123middlecase_56_4_ua07"
+            {
+            }
+
+            over "drive_palonier_4"
+            {
+            }
+
+            over "tn__wjwk000124bottomcase_45_4_ua07"
+            {
+            }
+
+            over "tn__wjwk000122topcabinetcase_95_4_og07"
+            {
+            }
+
+            over "passive_palonier_4"
+            {
+            }
+
+            over "tn__wjwk000123middlecase_56_5_ua07"
+            {
+            }
+
+            over "drive_palonier_5"
+            {
+            }
+
+            over "tn__wjwk000124bottomcase_45_5_ua07"
+            {
+            }
+
+            over "tn__wjwk000122topcabinetcase_95_5_og07"
+            {
+            }
+
+            over "passive_palonier_5"
+            {
+            }
+        }
+    }
+
+    over "Materials"
+    {
+    }
+
+    over "VisualMaterials"
+    {
+    }
+}
+

@@ -1,0 +1,143 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.2"
+    }
+    defaultPrim = "onshape"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\tmpw8qpsj5j\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\usdex_robot\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\temp_robot\\robot.usd
+
+
+Generated from Composed Stage of root layer C:\\DataDrive\\ovGemelli\\scenes\\duck\\robot\\payloads\\base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "onshape"
+{
+    over "Physics"
+    {
+        over "left_ankle" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "left_knee" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "left_hip_pitch" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "left_hip_roll" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "left_hip_yaw" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "right_ankle" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "right_knee" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "right_hip_pitch" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "right_hip_roll" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "right_hip_yaw" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "left_antenna" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "right_antenna" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "head_roll" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "head_yaw" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "head_pitch" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        over "neck_pitch" (
+            prepend apiSchemas = ["PhysxJointAPI"]
+        )
+        {
+            float physxJoint:maxJointVelocity = 1145.9156
+        }
+    }
+}
+

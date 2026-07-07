@@ -41,9 +41,13 @@ Isaac Sim exports. Gemelli treats that USD as an editable, save-back-able docume
 - **FMI co-simulation.** Industrial behavior models (FMI 2.0 FMUs and SSP 1.0 archives) embedded in the
   scene via the [ovfmi](https://github.com/NVIDIA-Omniverse/omniverse-labs/tree/main/projects/ovfmi)
   USD-FMI schema run in-process each frame — sensors in, drive commands out (see the conveyor demo).
-- **Signal Mapper.** A live node graph of the FMI wiring: sensors and operator inputs on the left, the
-  models in the middle, actuators on the right, with per-wire values every frame. Cut and reconnect
-  wires, or pin an actuator to a live-editable constant — all while the twin runs.
+- **Signal Mapper.** A live node graph of the signal wiring: sensors and operator inputs on the left,
+  behavior blocks in the middle, actuators on the right, with per-wire values every frame. Cut and
+  reconnect wires, add constants, gamepad/keyboard sources, multipliers, or ONNX policies from the
+  palette — all while the twin runs.
+- **ONNX policies as blocks.** An exported RL actor drops into the graph like any other block. The
+  bundled demo walks the **Open Duck Mini v2** biped with its MuJoCo-trained policy, steered live
+  from the mapper.
 - **Adjustable time.** A settings pane exposes the physics timestep and a sim-time **time-scale** (slow-mo
   through ~10× acceleration, bounded by physics throughput).
 - **One assembled-app folder.** A `dotnet build` drops the whole app into `dist\<Config>\`.
@@ -135,10 +139,10 @@ clean directory, and the orchestrator finds it by a fixed relative path (no scan
 | `src/Gemelli.Studio` → `Gemelli.Studio.exe` | Avalonia UI: viewport, outliner, inspector, sensor panel, script panel, settings |
 | `src/Gemelli.Headless` → `Gemelli.Headless.exe` | Console host: load USD → run loop → save PNGs / record datasets |
 | `src/Gemelli.Scripting` | Roslyn `.csx` controller host (hot-reload) + script globals |
-| `src/Gemelli.Fmi` | FMI 2.0 co-simulation host (P/Invoke, no Python), SSP 1.0 runner, ovfmi USD-FMI schema reader, `FmiController` |
+| `src/Gemelli.Fmi` | Signal graph: FMI 2.0 co-simulation host (P/Invoke, no Python), SSP 1.0 runner, ovfmi USD-FMI schema reader, ONNX policy blocks, device/constant/multiply blocks, `SignalGraphController` |
 | `src/Gemelli.Mcp` → `Gemelli.Mcp.exe` | Model Context Protocol server (stdio) — tool-drivable, incl. `render_frame` vision |
-| `scenes/` | Sample Isaac Sim–exported USD scenes (franka_studio, isaac_quickstart, …) |
-| `tools/` | USD authoring (`usd-addcam`, `usd-addseg`, `usd-snapshot`) and de-risk probes (`raster-probe`, `ovrtx-smoke`, `artic-probe`) |
+| `scenes/` | Sample USD scenes (franka_studio, conveyor_fmi, duck_walk, …) |
+| `tools/` | USD authoring (`usd-addcam`, `usd-addseg`, `usd-snapshot`), `import_duck_urdf.py`, and de-risk probes (`raster-probe`, `ovrtx-smoke`, `artic-probe`) |
 | `tests/Gemelli.Tests` | xUnit; tier-1 (pure) + gated tier-2 live-twin tests |
 | `external/` | **Vendored** wrapper sources (gitignored — re-create below) |
 | `native/` | **Vendored** native libraries (gitignored — acquire below) |
@@ -183,7 +187,7 @@ dotnet test tests/Gemelli.Tests --filter TransformConversion
 
 - **Header** — brand · transport (Play / Pause / Step / Stop) · scene dropdown + Browse · device ·
   viewport mode (**Fast** / **RTX**) · render scale · **⚙ Settings** · Script toggle · **Signals**
-  (the FMI signal mapper) · **Save USD** · Start.
+  (the signal mapper) · **Save USD** · Start.
 - **Outliner** (left) — rigid-body tree; select a body to inspect/edit it.
 - **Viewport** (centre) — live render; drag = orbit, Shift-drag = pan, wheel = zoom.
 - **Sensor** panel (right top) — the scene's sensor camera (wrist-mounted on the Franka hand in the
@@ -307,6 +311,12 @@ Supported routings per mapping (`fmi:usdAttribute`):
 | `physx:overlap` | input | a physics sphere-overlap query at the target prim (presence sensor) |
 | `physx:force` | output | rigid-body force tensor write |
 | `drive:angular:physics:targetVelocity` | output | articulation DOF velocity target (joint matched by name) |
+| `fmi:dofPositions` / `fmi:dofVelocities` | input | whole articulation DOF vector (measured), one thick wire |
+| `fmi:dofPositionTargets` / `fmi:dofVelocityTargets` | output | whole articulation drive-target vector |
+| `fmi:bodyPose` / `fmi:bodyVelocity` | input | rigid-body pose `[px py pz qx qy qz qw]` / velocity `[v ω]` |
+
+The `fmi:usdMapping` `(offset, count)` selector doubles as the wire width: a count above 1 authors a
+vector wire that carries the whole slice.
 
 FMI prims are auto-detected at Start in both Studio and headless; instances step once per frame in USD
 authoring order, SSPs atomically. The **conveyor demo** wires a presence sensor, a five-zone line
@@ -338,18 +348,60 @@ cache but are not yet written back to the renderer.
 zone outputs drive the five roller joints (orange wires, carrying −16 — a package reject reversal in
 progress), and unconnected output pins still show their live values.*
 
-**Signals** (header button, while a twin with FMI runs) opens the mapper — a node graph of the live
-wiring backed directly by the running controller:
+**Signals** (header button, while a twin runs) opens the mapper — a node graph of the live wiring
+backed directly by the running controller:
 
-- **Nodes**: signal sources (overlap sensors, operator-panel values) on the left, FMI instances in
+- **Nodes**: signal sources (overlap sensors, operator-panel values) on the left, behavior blocks in
   the middle, actuators (drive joints, force targets) on the right. Drag them by their title bar.
 - **Wires** are splines that follow the nodes and are labelled with the value that crossed them on
-  the latest frame; unconnected FMI output pins show their live value beside the dot.
-- **Right-click a wire to cut it; drag from one port dot to another to connect** — source → model
-  input, or model output → actuator. Changes apply to the running twin on the next frame.
-- **＋ Constant** adds a constant node with a live-editable value. Wire it to a model input, or
-  straight to an actuator (e.g. pin one roller zone to a fixed speed, bypassing the models
-  entirely). Right-click its title bar to remove it.
+  the latest frame; unconnected output pins show their live value beside the dot. Vector pins are
+  marked `[N]` and connect with **thick wires** carrying the whole vector; dropping a thick wire on
+  a scalar pin opens an element picker so you choose which component the wire carries.
+- **Right-click a wire to cut it; drag from one port dot to another to connect** — any source-side
+  port to any sink-side port, including block output → block input (chains of blocks). Changes
+  apply to the running twin on the next frame.
+- **The palette** (toolbar) adds blocks at runtime:
+  - **＋ Constant** — a live-editable value; wire it to a block input or straight to an actuator
+    (e.g. pin one roller zone to a fixed speed, bypassing the models entirely).
+  - **＋ Gamepad** — the Xbox controller as a source block: sticks, triggers, and buttons as pins.
+  - **＋ Keyboard** — keys as 0/1 pins, with an add-key box to grow the pin list on the fly.
+  - **＋ Multiply** — `out = a × b`, the everyday scaler (an unwired input acts as 1).
+  - **＋ ONNX…** — load an exported ONNX network; its named tensors become vector pins.
+  - Right-click a block's title bar to remove it.
+
+---
+
+## RL policies as blocks (the duck demo)
+
+The same graph hosts neural controllers: an `OnnxInstance` prim (or the **＋ ONNX…** palette button)
+wraps an exported network in a block whose named tensors are vector pins. The bundled demo is the
+**Open Duck Mini v2** — a 3D-printed biped whose walking policy was trained with RL in MuJoCo
+(Open Duck Playground) and runs here, unmodified, against PhysX.
+
+![The Open Duck Mini v2 standing in the Fast viewport, driven by its ONNX walking policy](docs/duck-walk.png)
+
+*The duck in the Fast viewport (424 fps), standing in the policy's home pose. The robot is the
+URDF-converted model; the two thin lines are its antennae.*
+
+![The duck's signal graph: joint, IMU, and foot-pose vectors feed the policy block; its 16-wide target vector drives the articulation](docs/duck-signal-blocks.png)
+
+*The whole controller is five wires: joint positions/velocities `[16]`, body pose `[7]` and velocity
+`[6]` (the IMU), and the two foot poses feed the policy block; one thick `[16]` wire carries its
+joint targets back to the articulation drives. The command pins (`cmd_vx`, `cmd_vy`, `cmd_wz`) are
+left unwired — wire a constant, a multiplier, or a gamepad stick to steer it live.*
+
+Since the network alone isn't a controller, the scene's `fmi:preset = "open_duck_mini_v2"` selects a
+host block that replicates the training-side conventions around the raw actor: observation assembly
+in training order (body-frame gyro/accelerometer synthesized from world-frame physics), the
+MuJoCo-actuator ↔ PhysX-DOF order remap, 50 Hz self-pacing against sim time, action scaling around
+the home pose, and the servo's rate limit.
+
+The demo runs from a fresh clone: the converted robot USD and the Apache-2.0-licensed policy network
+from the [Open Duck Mini](https://github.com/apirrone/Open_Duck_Mini) project are vendored under
+`scenes\duck\` (see the NOTICE there). Pick `duck_walk.usda` in Studio and Start — the duck holds
+its crouch, steps in place, and walks under keyboard, constant, or gamepad commands wired in the
+mapper. To regenerate the robot USD from the source URDF, clone the Open Duck Mini repo and run
+`tools\import_duck_urdf.py` with Isaac Sim's bundled Python.
 
 ---
 
@@ -409,7 +461,8 @@ reserved for the sensor cameras and ground-truth RTX mode.
 - ✅ **Control**: `ISimApi` + playback / Roslyn C# scripting / differential IK; keyboard + Xbox-controller teleop
 - ✅ **Adjustable pacing**: live time-scale (slow-mo → ~10×) and physics timestep via the Settings pane
 - ✅ **FMI co-simulation** (`Gemelli.Fmi`) — FMI 2.0 + SSP 1.0 host via the ovfmi USD-FMI schema; conveyor demo verified end-to-end (sensor → controller → roller drives)
-- ✅ **Signal Mapper** — live node graph of the FMI wiring: per-wire values, cut/reconnect at runtime, editable constant sources
+- ✅ **Signal Mapper** — live node graph of the signal wiring: per-wire values, cut/reconnect at runtime, vector pins with thick wires + element picker, palette of constant / gamepad / keyboard / multiply / ONNX blocks
+- ✅ **ONNX policy blocks** — exported RL actors as graph blocks; the Open Duck Mini v2 walks in PhysX with its MuJoCo-trained policy (`duck_walk.usda`)
 - ✅ **MCP server** (`Gemelli.Mcp`) — tool-drivable incl. `render_frame` vision; verified end-to-end
 - ✅ **Avalonia Studio** — viewport + transport + outliner + inspector + sensor panel + settings over the shared `TwinService`
 - ✅ Packaging: single assembled-app folder (`dist\<Config>\`), native-lib auto-discovery, one-command launchers

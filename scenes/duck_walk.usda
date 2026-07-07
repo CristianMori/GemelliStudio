@@ -1,0 +1,354 @@
+#usda 1.0
+(
+    doc = """Open Duck Mini v2 in Gemelli: the URDF-converted robot on a flat ground plane, spawned
+    in the walking policy's home pose, with the policy authored as an OnnxInstance prim. The robot
+    USD and the policy network are vendored under scenes\\duck\\ (see the NOTICE there); the robot
+    can be regenerated from the source URDF with tools\\import_duck_urdf.py.
+    """
+    defaultPrim = "World"
+    metersPerUnit = 1
+    timeCodesPerSecond = 60
+    upAxis = "Z"
+)
+
+def Xform "World"
+{
+    def PhysicsScene "PhysicsScene" (
+        prepend apiSchemas = ["PhysxSceneAPI"]
+    )
+    {
+    }
+
+    # Static ground: a thin box whose top face is z=0, with MuJoCo-like friction (sliding 1.0).
+    def Cube "Ground" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysicsMaterialBindingAPI"]
+    )
+    {
+        float3[] extent = [(-0.5, -0.5, -0.5), (0.5, 0.5, 0.5)]
+        double size = 1
+        rel material:binding:physics = </World/GroundPhysicsMaterial>
+        color3f[] primvars:displayColor = [(0.35, 0.37, 0.40)]
+        quatd xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:scale = (20, 20, 0.1)
+        double3 xformOp:translate = (0, 0, -0.05)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+
+    def Material "GroundPhysicsMaterial" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:dynamicFriction = 1
+        float physics:staticFriction = 1
+    }
+
+    def "duck" (
+        prepend references = @./duck/robot/robot.usda@
+    )
+    {
+        quatd xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:scale = (1, 1, 1)
+        double3 xformOp:translate = (0, 0, 0.16)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        # Spawn in the policy's home pose (the MJCF "home" keyframe; ovphysx reads joint state in
+        # USD degrees) and hold it with the position drives until the policy takes over.
+        over "Physics"
+        {
+            over "left_hip_yaw" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 0.11459
+                float drive:angular:physics:targetPosition = 0.11459
+            }
+
+            over "left_hip_roll" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 3.03668
+                float drive:angular:physics:targetPosition = 3.03668
+            }
+
+            over "left_hip_pitch" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = -36.09634
+                float drive:angular:physics:targetPosition = -36.09634
+            }
+
+            over "left_knee" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 78.38062
+                float drive:angular:physics:targetPosition = 78.38062
+            }
+
+            over "left_ankle" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = -44.91989
+                float drive:angular:physics:targetPosition = -44.91989
+            }
+
+            over "neck_pitch" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 0
+                float drive:angular:physics:targetPosition = 0
+            }
+
+            over "head_pitch" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 0
+                float drive:angular:physics:targetPosition = 0
+            }
+
+            over "head_yaw" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 0
+                float drive:angular:physics:targetPosition = 0
+            }
+
+            over "head_roll" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 0
+                float drive:angular:physics:targetPosition = 0
+            }
+
+            over "right_hip_yaw" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = -0.17189
+                float drive:angular:physics:targetPosition = -0.17189
+            }
+
+            over "right_hip_roll" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = -3.72423
+                float drive:angular:physics:targetPosition = -3.72423
+            }
+
+            over "right_hip_pitch" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 36.38287
+                float drive:angular:physics:targetPosition = 36.38287
+            }
+
+            over "right_knee" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = 79.01087
+                float drive:angular:physics:targetPosition = 79.01087
+            }
+
+            over "right_ankle" (
+                prepend apiSchemas = ["PhysicsJointStateAPI:angular"]
+            )
+            {
+                float state:angular:physics:position = -45.60744
+                float drive:angular:physics:targetPosition = -45.60744
+            }
+        }
+    }
+
+    def DomeLight "DomeLight"
+    {
+        float inputs:intensity = 1000
+        color3f inputs:color = (1, 1, 1)
+    }
+
+    # The walking policy: the exported ONNX actor wrapped in the open_duck_mini_v2 preset
+    # (observation assembly, joint-order remap, 50 Hz pacing, servo rate limits). Velocity command
+    # pins (cmd_vx/cmd_vy/cmd_wz) are left unwired here — wire constants or a gamepad in the
+    # Signal Mapper to steer; unwired commands default to zero (step in place).
+    # Velocity command panel (same convention as the conveyor's operator panel):
+    #   translate = (cmd_vx, cmd_vy, cmd_wz)   ranges ±0.15, ±0.2, ±1.0
+    # Rewire to a gamepad or constants in the Signal Mapper for live steering.
+    def Xform "DuckCommands"
+    {
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def OnnxInstance "DuckPolicy"
+    {
+        bool fmi:enabled = 1
+        asset fmi:onnx = @./duck/policy/BEST_WALK_ONNX_2.onnx@
+        token fmi:preset = "open_duck_mini_v2"
+
+        def FmuConnection "Commands"
+        {
+            rel fmi:targets = </World/DuckCommands>
+
+            def FmuMapping "VxRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "cmd_vx"
+                token fmi:usdAttribute = "xformOp:translate"
+                int2 fmi:usdMapping = (0, 1)
+            }
+
+            def FmuMapping "VyRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "cmd_vy"
+                token fmi:usdAttribute = "xformOp:translate"
+                int2 fmi:usdMapping = (1, 1)
+            }
+
+            def FmuMapping "WzRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "cmd_wz"
+                token fmi:usdAttribute = "xformOp:translate"
+                int2 fmi:usdMapping = (2, 1)
+            }
+        }
+
+        def FmuConnection "Joints"
+        {
+            rel fmi:targets = </World/duck/Geometry/trunk_assembly>
+
+            def FmuMapping "DofPosRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "dof_pos"
+                token fmi:usdAttribute = "fmi:dofPositions"
+                int2 fmi:usdMapping = (0, 16)
+            }
+
+            def FmuMapping "DofVelRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "dof_vel"
+                token fmi:usdAttribute = "fmi:dofVelocities"
+                int2 fmi:usdMapping = (0, 16)
+            }
+
+            def FmuMapping "TargetsWrite"
+            {
+                token fmi:direction = "output"
+                token fmi:fmuAttribute = "dof_targets"
+                token fmi:usdAttribute = "fmi:dofPositionTargets"
+                int2 fmi:usdMapping = (0, 16)
+            }
+        }
+
+        def FmuConnection "Imu"
+        {
+            rel fmi:targets = </World/duck/Geometry/trunk_assembly>
+
+            def FmuMapping "RootPoseRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "root_pose"
+                token fmi:usdAttribute = "fmi:bodyPose"
+                int2 fmi:usdMapping = (0, 7)
+            }
+
+            def FmuMapping "RootVelRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "root_vel"
+                token fmi:usdAttribute = "fmi:bodyVelocity"
+                int2 fmi:usdMapping = (0, 6)
+            }
+        }
+
+        def FmuConnection "LeftFoot"
+        {
+            rel fmi:targets = </World/duck/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2/foot_assembly>
+
+            def FmuMapping "PoseRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "left_foot_pose"
+                token fmi:usdAttribute = "fmi:bodyPose"
+                int2 fmi:usdMapping = (0, 7)
+            }
+        }
+
+        def FmuConnection "RightFoot"
+        {
+            rel fmi:targets = </World/duck/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4/foot_assembly_2>
+
+            def FmuMapping "PoseRead"
+            {
+                token fmi:direction = "input"
+                token fmi:fmuAttribute = "right_foot_pose"
+                token fmi:usdAttribute = "fmi:bodyPose"
+                int2 fmi:usdMapping = (0, 7)
+            }
+        }
+    }
+}
+
+def "Render"
+{
+    def "OmniverseKit"
+    {
+        def "HydraTextures" (
+            hide_in_stage_window = true
+            no_delete = true
+        )
+        {
+            def RenderProduct "omni_kit_widget_viewport_ViewportTexture_0" (
+                apiSchemas = ["OmniRtxSettingsCommonAdvancedAPI_1", "OmniRtxSettingsRtAdvancedAPI_1", "OmniRtxSettingsPtAdvancedAPI_1"]
+                hide_in_stage_window = true
+                no_delete = true
+            )
+            {
+                rel camera = </OmniverseKit_Persp>
+                token omni:rtx:rendermode = "RealTimePathTracing"
+                rel orderedVars = </Render/Vars/LdrColor>
+                custom bool overrideClipRange = 0
+                uniform int2 resolution = (1280, 720)
+            }
+        }
+    }
+
+    def "Vars"
+    {
+        def RenderVar "LdrColor" (
+            hide_in_stage_window = true
+            no_delete = true
+        )
+        {
+            uniform string sourceName = "LdrColor"
+            uniform token sourceType = "raw"
+        }
+    }
+}
+
+def Camera "OmniverseKit_Persp" (
+    apiSchemas = ["OmniRtxCameraAutoExposureAPI_1", "OmniRtxCameraExposureAPI_1"]
+)
+{
+    float2 clippingRange = (0.01, 10000000)
+    float exposure:fStop = 5
+    float exposure:responsivity = 1.1026709
+    float exposure:time = 0.02
+    float focalLength = 18.147562
+    float3 xformOp:rotateXYZ = (75, 0, 135)
+    float3 xformOp:scale = (1, 1, 1)
+    double3 xformOp:translate = (0.75, 0.75, 0.45)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+}

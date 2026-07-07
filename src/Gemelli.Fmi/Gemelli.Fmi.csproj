@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- ONNX Runtime for policy blocks (RL controllers exported as .onnx), CPU execution. -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.20.1" />
     <!-- USD.NET for reading the USD-FMI schema prims (FmuInstance/SspInstance). Same version as
          Gemelli.Viewport, so the shared dist root carries one consistent set of USD natives. -->
     <PackageReference Include="UniversalSceneDescription" Version="7.3.4" />

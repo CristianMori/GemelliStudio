@@ -9,9 +9,18 @@ public sealed record FmiMapping(string FmuVariable, string UsdAttribute, bool Is
 /// <summary>Mappings grouped by their USD target prim (ovfmi FmuConnection prim).</summary>
 public sealed record FmiConnection(string TargetPath, IReadOnlyList<FmiMapping> Mappings);
 
-/// <summary>One FmuInstance/SspInstance prim: the archive it references and its connections.</summary>
+/// <summary>What kind of behavior model an instance prim references.</summary>
+public enum FmiInstanceKind { Fmu, Ssp, Onnx }
+
+/// <summary>One FmuInstance/SspInstance/OnnxInstance prim: its archive and connections.
+/// <paramref name="Preset"/> selects a specialized host wrapper (e.g. "open_duck_mini_v2" wraps
+/// the raw ONNX actor in <see cref="DuckPolicyBlock"/>'s observation/action conventions).</summary>
 public sealed record FmiInstanceConfig(
-    string PrimPath, string ArchivePath, bool IsSsp, IReadOnlyList<FmiConnection> Connections);
+    string PrimPath, string ArchivePath, FmiInstanceKind Kind, IReadOnlyList<FmiConnection> Connections,
+    string? Preset = null)
+{
+    public bool IsSsp => Kind == FmiInstanceKind.Ssp;
+}
 
 /// <summary>A presence-sensor volume: world-space sphere derived from the target prim's transform.</summary>
 public sealed record OverlapSensor(string PrimPath, float X, float Y, float Z, float Radius);
@@ -36,9 +45,21 @@ public static class FmiSchema
     public const string PhysxOverlap = "physx:overlap";
     public const string DriveTargetVelocity = "drive:angular:physics:targetVelocity";
 
+    // Vector routings beyond the ovfmi schema: whole articulation DOF vectors (the endpoint's
+    // TargetPath is the articulation pattern; element order/labels are the DOF names), and whole
+    // rigid-body state vectors (pose = px py pz qx qy qz qw; velocity = linear xyz + angular xyz).
+    public const string DofPositions = "fmi:dofPositions";           // source: measured positions
+    public const string DofVelocities = "fmi:dofVelocities";         // source: measured velocities
+    public const string DofPositionTargets = "fmi:dofPositionTargets";   // sink: drive targets
+    public const string DofVelocityTargets = "fmi:dofVelocityTargets";   // sink: drive targets
+    public const string BodyPose = "fmi:bodyPose";                   // source: rigid-body pose [7]
+    public const string BodyVelocity = "fmi:bodyVelocity";           // source: rigid-body velocity [6]
+
     /// <summary>Attributes routed through physics rather than read/written as USD attributes.</summary>
     public static bool IsPhysicsAttribute(string attr) =>
-        attr is PhysxPosition or PhysxVelocity or PhysxForce or PhysxOverlap or DriveTargetVelocity;
+        attr is PhysxPosition or PhysxVelocity or PhysxForce or PhysxOverlap or DriveTargetVelocity
+            or DofPositions or DofVelocities or DofPositionTargets or DofVelocityTargets
+            or BodyPose or BodyVelocity;
 
     /// <summary>Returns the scene's FMI configuration, or null if it contains no FMI prims.</summary>
     public static FmiSceneConfig? Load(string usdPath)
@@ -56,13 +77,20 @@ public static class FmiSchema
         foreach (UsdPrim prim in stage.Traverse())
         {
             string type = prim.GetTypeName().GetString();
-            bool isSsp = type == "SspInstance";
-            if (type != "FmuInstance" && !isSsp) continue;
+            FmiInstanceKind kind;
+            string assetAttr;
+            switch (type)
+            {
+                case "FmuInstance": kind = FmiInstanceKind.Fmu; assetAttr = "fmi:fmu"; break;
+                case "SspInstance": kind = FmiInstanceKind.Ssp; assetAttr = "fmi:ssp"; break;
+                case "OnnxInstance": kind = FmiInstanceKind.Onnx; assetAttr = "fmi:onnx"; break;
+                default: continue;
+            }
             if (!ReadBool(prim, "fmi:enabled", defaultValue: true)) continue;
 
-            string? archive = ReadAssetPath(prim, isSsp ? "fmi:ssp" : "fmi:fmu", layerDir);
+            string? archive = ReadAssetPath(prim, assetAttr, layerDir);
             if (archive is null)
-                throw new FmiException($"{prim.GetPath().GetString()} has no {(isSsp ? "fmi:ssp" : "fmi:fmu")} asset.");
+                throw new FmiException($"{prim.GetPath().GetString()} has no {assetAttr} asset.");
 
             var connections = new List<FmiConnection>();
             foreach (UsdPrim conn in prim.GetChildren())
@@ -97,7 +125,8 @@ public static class FmiSchema
                 }
             }
 
-            instances.Add(new FmiInstanceConfig(prim.GetPath().GetString(), archive, isSsp, connections));
+            instances.Add(new FmiInstanceConfig(
+                prim.GetPath().GetString(), archive, kind, connections, ReadToken(prim, "fmi:preset")));
         }
 
         return instances.Count == 0 ? null : new FmiSceneConfig(instances, sensors, initialValues);
