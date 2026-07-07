@@ -119,6 +119,30 @@ public sealed class SspBlock : ISignalBlock
 }
 
 /// <summary>
+/// Multiplies its two inputs: <c>out = a × b</c>. The everyday use is scaling a signal — e.g. a
+/// keyboard key (0/1) times a constant (0.15) makes a bounded velocity command. An unwired input
+/// acts as 1, so a half-wired multiplier passes the other signal through unchanged.
+/// </summary>
+public sealed class MultiplyBlock : ISignalBlock
+{
+    public string DisplayName => "Multiply";
+    public IReadOnlyList<BlockPin> InputPins { get; } = [new BlockPin("a"), new BlockPin("b")];
+    public IReadOnlyList<BlockPin> OutputPins { get; } = [new BlockPin("out")];
+
+    public void Start(double time, IReadOnlyDictionary<string, double> startValues) { }
+
+    public IReadOnlyDictionary<string, double[]> Step(
+        IReadOnlyDictionary<string, double[]> inputs, double time, double dt)
+    {
+        double a = inputs.GetValueOrDefault("a") is { Length: > 0 } va ? va[0] : 1;
+        double b = inputs.GetValueOrDefault("b") is { Length: > 0 } vb ? vb[0] : 1;
+        return new Dictionary<string, double[]> { ["out"] = [a * b] };
+    }
+
+    public void Dispose() { }
+}
+
+/// <summary>
 /// The Xbox controller as a source block: axes, triggers, and common buttons (as 0/1) become
 /// output pins, read from XInput each step. No input pins.
 /// </summary>

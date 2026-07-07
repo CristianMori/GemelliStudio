@@ -97,6 +97,7 @@ public sealed class SignalMapperWindow : Window
         toolbar.Children.Add(ToolbarButton("+ Constant", () => AddConstantNode(_graph.AddConstant())));
         toolbar.Children.Add(ToolbarButton("+ Gamepad", () => AddDeviceNode(new GamepadBlock())));
         toolbar.Children.Add(ToolbarButton("+ Keyboard", () => AddDeviceNode(new KeyboardBlock())));
+        toolbar.Children.Add(ToolbarButton("+ Multiply", () => AddDeviceNode(new MultiplyBlock())));
         toolbar.Children.Add(ToolbarButton("+ ONNX…", () => _ = AddOnnxBlock()));
         toolbar.Children.Add(new TextBlock
         {
