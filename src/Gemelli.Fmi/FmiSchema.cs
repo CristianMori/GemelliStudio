@@ -12,9 +12,12 @@ public sealed record FmiConnection(string TargetPath, IReadOnlyList<FmiMapping> 
 /// <summary>What kind of behavior model an instance prim references.</summary>
 public enum FmiInstanceKind { Fmu, Ssp, Onnx }
 
-/// <summary>One FmuInstance/SspInstance/OnnxInstance prim: its archive and connections.</summary>
+/// <summary>One FmuInstance/SspInstance/OnnxInstance prim: its archive and connections.
+/// <paramref name="Preset"/> selects a specialized host wrapper (e.g. "open_duck_mini_v2" wraps
+/// the raw ONNX actor in <see cref="DuckPolicyBlock"/>'s observation/action conventions).</summary>
 public sealed record FmiInstanceConfig(
-    string PrimPath, string ArchivePath, FmiInstanceKind Kind, IReadOnlyList<FmiConnection> Connections)
+    string PrimPath, string ArchivePath, FmiInstanceKind Kind, IReadOnlyList<FmiConnection> Connections,
+    string? Preset = null)
 {
     public bool IsSsp => Kind == FmiInstanceKind.Ssp;
 }
@@ -43,16 +46,20 @@ public static class FmiSchema
     public const string DriveTargetVelocity = "drive:angular:physics:targetVelocity";
 
     // Vector routings beyond the ovfmi schema: whole articulation DOF vectors (the endpoint's
-    // TargetPath is the articulation pattern; element order/labels are the DOF names).
+    // TargetPath is the articulation pattern; element order/labels are the DOF names), and whole
+    // rigid-body state vectors (pose = px py pz qx qy qz qw; velocity = linear xyz + angular xyz).
     public const string DofPositions = "fmi:dofPositions";           // source: measured positions
     public const string DofVelocities = "fmi:dofVelocities";         // source: measured velocities
     public const string DofPositionTargets = "fmi:dofPositionTargets";   // sink: drive targets
     public const string DofVelocityTargets = "fmi:dofVelocityTargets";   // sink: drive targets
+    public const string BodyPose = "fmi:bodyPose";                   // source: rigid-body pose [7]
+    public const string BodyVelocity = "fmi:bodyVelocity";           // source: rigid-body velocity [6]
 
     /// <summary>Attributes routed through physics rather than read/written as USD attributes.</summary>
     public static bool IsPhysicsAttribute(string attr) =>
         attr is PhysxPosition or PhysxVelocity or PhysxForce or PhysxOverlap or DriveTargetVelocity
-            or DofPositions or DofVelocities or DofPositionTargets or DofVelocityTargets;
+            or DofPositions or DofVelocities or DofPositionTargets or DofVelocityTargets
+            or BodyPose or BodyVelocity;
 
     /// <summary>Returns the scene's FMI configuration, or null if it contains no FMI prims.</summary>
     public static FmiSceneConfig? Load(string usdPath)
@@ -118,7 +125,8 @@ public static class FmiSchema
                 }
             }
 
-            instances.Add(new FmiInstanceConfig(prim.GetPath().GetString(), archive, kind, connections));
+            instances.Add(new FmiInstanceConfig(
+                prim.GetPath().GetString(), archive, kind, connections, ReadToken(prim, "fmi:preset")));
         }
 
         return instances.Count == 0 ? null : new FmiSceneConfig(instances, sensors, initialValues);

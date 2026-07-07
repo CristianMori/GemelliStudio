@@ -60,6 +60,7 @@ public sealed class SignalGraphController : IController, IDisposable
             ISignalBlock block = config.Kind switch
             {
                 FmiInstanceKind.Ssp => new SspBlock(config.ArchivePath, name),
+                FmiInstanceKind.Onnx when config.Preset == "open_duck_mini_v2" => new DuckPolicyBlock(config.ArchivePath),
                 FmiInstanceKind.Onnx => new OnnxPolicyBlock(config.ArchivePath),
                 _ => new FmuBlock(config.ArchivePath, name),
             };
@@ -76,6 +77,9 @@ public sealed class SignalGraphController : IController, IDisposable
                         SinkPin = m.IsInput ? new PinRef(config.PrimPath, m.FmuVariable) : null,
                         SourcePin = m.IsInput ? null : new PinRef(config.PrimPath, m.FmuVariable),
                         SinkEndpoint = m.IsInput ? null : ep,
+                        // The schema's (offset, count) selector doubles as the wire width: a count
+                        // above 1 is a vector wire (scene vector endpoints or block vector pins).
+                        Count = Math.Max(1, m.Count),
                     });
                 }
         }
@@ -364,11 +368,12 @@ public sealed class SignalGraphController : IController, IDisposable
                 // Whole articulation DOF vector (measured), sliced by the wire's element selection.
                 SimTensor channel = ep.UsdAttribute == FmiSchema.DofPositions
                     ? SimTensor.ArticulationDofPosition : SimTensor.ArticulationDofVelocity;
-                float[] dofs = sim.Read(channel, ep.TargetPath);
-                var all = new double[dofs.Length];
-                for (int i = 0; i < dofs.Length; i++) all[i] = dofs[i];
-                return SliceVector(all, row.SourceOffset, row.Count);
+                return SliceFloats(sim.Read(channel, ep.TargetPath), row);
             }
+            case FmiSchema.BodyPose:
+                return SliceFloats(sim.Read(SimTensor.RigidBodyPose, ep.TargetPath), row);
+            case FmiSchema.BodyVelocity:
+                return SliceFloats(sim.Read(SimTensor.RigidBodyVelocity, ep.TargetPath), row);
             default:
                 return TryReadAttrCache(ep, out double v) ? [v] : null;
         }
@@ -377,6 +382,13 @@ public sealed class SignalGraphController : IController, IDisposable
     // Slices a block output pin's vector for a wire (SourceOffset, Count).
     private double[]? SliceFromOutputs(IReadOnlyDictionary<string, double[]> outputs, SignalMapping row) =>
         SliceVector(outputs.GetValueOrDefault(row.SourcePin!.Pin), row.SourceOffset, row.Count);
+
+    private static double[]? SliceFloats(float[] values, SignalMapping row)
+    {
+        var all = new double[values.Length];
+        for (int i = 0; i < values.Length; i++) all[i] = values[i];
+        return SliceVector(all, row.SourceOffset, row.Count);
+    }
 
     private static double[]? SliceVector(double[]? vector, int offset, int count)
     {
