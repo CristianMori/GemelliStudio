@@ -20,11 +20,6 @@ public sealed class SignalGraphController : IController, IDisposable
     /// <summary>Pseudo endpoint attribute marking a wire whose source is an <see cref="FmiConstant"/>.</summary>
     public const string ConstantAttribute = "fmi:constant";
 
-    /// <summary>Vector actuator endpoints: the whole DOF target vector of the articulation matched
-    /// by the endpoint's TargetPath pattern (element labels are the DOF names).</summary>
-    public const string DofVelocityTargets = "fmi:dofVelocityTargets";
-    public const string DofPositionTargets = "fmi:dofPositionTargets";
-
     private readonly FmiSceneConfig? _scene;
     private readonly List<(string Path, ISignalBlock Block)> _blocks = [];
 
@@ -62,9 +57,12 @@ public sealed class SignalGraphController : IController, IDisposable
         foreach (FmiInstanceConfig config in scene.Instances)
         {
             string name = config.PrimPath.TrimEnd('/').Split('/')[^1];
-            ISignalBlock block = config.IsSsp
-                ? new SspBlock(config.ArchivePath, name)
-                : new FmuBlock(config.ArchivePath, name);
+            ISignalBlock block = config.Kind switch
+            {
+                FmiInstanceKind.Ssp => new SspBlock(config.ArchivePath, name),
+                FmiInstanceKind.Onnx => new OnnxPolicyBlock(config.ArchivePath),
+                _ => new FmuBlock(config.ArchivePath, name),
+            };
             _blocks.Add((config.PrimPath, block));
 
             foreach (FmiConnection conn in config.Connections)
@@ -360,6 +358,17 @@ public sealed class SignalGraphController : IController, IDisposable
             case FmiSchema.PhysxOverlap:
                 return overlaps is not null && overlaps.TryGetValue(ep.TargetPath, out double presence)
                     ? [presence] : null;
+            case FmiSchema.DofPositions:
+            case FmiSchema.DofVelocities:
+            {
+                // Whole articulation DOF vector (measured), sliced by the wire's element selection.
+                SimTensor channel = ep.UsdAttribute == FmiSchema.DofPositions
+                    ? SimTensor.ArticulationDofPosition : SimTensor.ArticulationDofVelocity;
+                float[] dofs = sim.Read(channel, ep.TargetPath);
+                var all = new double[dofs.Length];
+                for (int i = 0; i < dofs.Length; i++) all[i] = dofs[i];
+                return SliceVector(all, row.SourceOffset, row.Count);
+            }
             default:
                 return TryReadAttrCache(ep, out double v) ? [v] : null;
         }
@@ -435,10 +444,10 @@ public sealed class SignalGraphController : IController, IDisposable
                 if (value.Length > 0) sinks.JointVelocity[ep.TargetPath] = value[0];
                 break;
 
-            case DofVelocityTargets:
-            case DofPositionTargets:
+            case FmiSchema.DofVelocityTargets:
+            case FmiSchema.DofPositionTargets:
             {
-                bool position = ep.UsdAttribute == DofPositionTargets;
+                bool position = ep.UsdAttribute == FmiSchema.DofPositionTargets;
                 if (!sinks.DofVectors.TryGetValue(ep.TargetPath, out var entry) || entry.Position != position)
                     sinks.DofVectors[ep.TargetPath] = entry = (position, new Dictionary<int, double>());
                 for (int i = 0; i < value.Length; i++)

@@ -97,6 +97,7 @@ public sealed class SignalMapperWindow : Window
         toolbar.Children.Add(ToolbarButton("+ Constant", () => AddConstantNode(_graph.AddConstant())));
         toolbar.Children.Add(ToolbarButton("+ Gamepad", () => AddDeviceNode(new GamepadBlock())));
         toolbar.Children.Add(ToolbarButton("+ Keyboard", () => AddDeviceNode(new KeyboardBlock())));
+        toolbar.Children.Add(ToolbarButton("+ ONNX…", () => _ = AddOnnxBlock()));
         toolbar.Children.Add(new TextBlock
         {
             Text = "drag headers to move · drag a dot to connect · right-click a wire to cut",
@@ -260,7 +261,26 @@ public sealed class SignalMapperWindow : Window
         _wires.InvalidateVisual();
     }
 
-    /// <summary>Adds a device block (gamepad/keyboard) to the running graph and builds its node.</summary>
+    /// <summary>Picks an .onnx file and adds it to the graph as a policy block.</summary>
+    private async Task AddOnnxBlock()
+    {
+        var files = await StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+        {
+            Title = "Add ONNX policy block",
+            FileTypeFilter = [new Avalonia.Platform.Storage.FilePickerFileType("ONNX model") { Patterns = ["*.onnx"] }],
+        });
+        if (files.Count == 0) return;
+        try
+        {
+            AddDeviceNode(new OnnxPolicyBlock(files[0].Path.LocalPath));
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("[fmi] ONNX block failed: " + ex.Message.Split('\n')[0]);
+        }
+    }
+
+    /// <summary>Adds a runtime block (device, policy) to the running graph and builds its node.</summary>
     private void AddDeviceNode(ISignalBlock block)
     {
         string path = _graph.AddBlock(block);
