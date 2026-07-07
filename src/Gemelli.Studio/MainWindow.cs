@@ -835,10 +835,24 @@ public sealed class MainWindow : Window
             _statusLeft.Text = "Signals: start a twin first.";
             return;
         }
-        if (_signalMapper is not null) { _signalMapper.Activate(); return; }
-        _signalMapper = new SignalMapperWindow(_fmi);
-        _signalMapper.Closed += (_, _) => _signalMapper = null;
-        _signalMapper.Show(this);
+        // A closed window silently ignores Activate(), so trust visibility over the reference:
+        // if the tracked window is no longer visible (closed by the user), build a fresh one.
+        if (_signalMapper is not null)
+        {
+            if (_signalMapper.IsVisible) { _signalMapper.Activate(); return; }
+            _signalMapper = null;
+        }
+        try
+        {
+            _signalMapper = new SignalMapperWindow(_fmi);
+            _signalMapper.Closed += (_, _) => _signalMapper = null;
+            _signalMapper.Show(this);
+        }
+        catch (Exception ex)
+        {
+            _signalMapper = null;
+            _statusLeft.Text = "Signals failed to open: " + ex.Message.Split('\n')[0];
+        }
     }
 
     private void CloseSignalMapper()
