@@ -226,13 +226,16 @@ public sealed class SignalMapperWindow : Window
             byPrim[ep.TargetPath] = node;
             _nodes.Add(node);
         }
-        // A port per distinct (attribute, offset) endpoint.
+        // A port per distinct (attribute, offset) endpoint. Vector endpoints (whole DOF or body-state
+        // vectors) keep their width so reconnecting them makes a full-width wire, not an element pick.
         if (node.Ports.Any(p => Equals(p.Endpoint, ep))) return;
+        int pinWidth = Math.Max(1, ep.Count);
+        string label = ep.UsdAttribute == FmiSchema.PhysxOverlap ? "presence (overlap)" : ep.Label.Split('.')[^1];
         var port = new Port
         {
             Node = node, Kind = kind,
-            Label = ep.UsdAttribute == FmiSchema.PhysxOverlap ? "presence (overlap)" : ep.Label.Split('.')[^1],
-            Endpoint = ep, RowIndex = node.Ports.Count,
+            Label = pinWidth > 1 ? $"{label} [{pinWidth}]" : label,
+            Endpoint = ep, Width = pinWidth, RowIndex = node.Ports.Count,
         };
         node.Ports.Add(port);
         _ports.Add(port);

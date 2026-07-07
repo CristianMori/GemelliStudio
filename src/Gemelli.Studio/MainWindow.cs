@@ -786,8 +786,14 @@ public sealed class MainWindow : Window
                 {
                     fmiConfig = Gemelli.Fmi.FmiSchema.Load(scenePath);
                     if (fmiConfig is not null)
-                        Dispatcher.UIThread.Post(() => _statusLeft.Text =
-                            $"Starting twin ({fmiConfig.Instances.Count} FMI instance(s) detected)…");
+                    {
+                        // Describe what was actually found ("1 ONNX block", "2 FMU blocks, 1 SSP block")
+                        // rather than calling everything FMI — ONNX policies aren't.
+                        string kinds = string.Join(", ", fmiConfig.Instances
+                            .GroupBy(i => i.Kind)
+                            .Select(g => $"{g.Count()} {g.Key.ToString().ToUpperInvariant()} block{(g.Count() == 1 ? "" : "s")}"));
+                        Dispatcher.UIThread.Post(() => _statusLeft.Text = $"Starting twin ({kinds} detected)…");
+                    }
                 }
                 catch (Exception fex) { Console.Error.WriteLine("[fmi] scene detection failed: " + fex.Message.Split('\n')[0]); }
                 var graph = new Gemelli.Fmi.SignalGraphController(fmiConfig);
