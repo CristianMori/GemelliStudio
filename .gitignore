@@ -13,9 +13,6 @@ scenes/_gemelli_*
 # Built FMU/SSP archives (contain compiled DLLs; regenerate with tools\build-fmus.ps1)
 scenes/fmi/
 
-# URDF-converted duck robot (regenerate with tools\import_duck_urdf.py in Isaac Sim)
-scenes/duck/
-
 # Native libraries (acquired separately, version-matched; never committed)
 native/
 *.dll

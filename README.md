@@ -394,10 +394,14 @@ Since the network alone isn't a controller, the scene's `fmi:preset = "open_duck
 host block that replicates the training-side conventions around the raw actor: observation assembly
 in training order (body-frame gyro/accelerometer synthesized from world-frame physics), the
 MuJoCo-actuator ↔ PhysX-DOF order remap, 50 Hz self-pacing against sim time, action scaling around
-the home pose, and the servo's rate limit. Regenerate the robot USD from the URDF with
-`tools\import_duck_urdf.py` (Isaac Sim's importer), then pick `duck_walk.usda` in Studio and Start —
-the duck holds its crouch, steps in place, and walks under keyboard, constant, or gamepad commands
-wired in the mapper.
+the home pose, and the servo's rate limit.
+
+The demo runs from a fresh clone: the converted robot USD and the Apache-2.0-licensed policy network
+from the [Open Duck Mini](https://github.com/apirrone/Open_Duck_Mini) project are vendored under
+`scenes\duck\` (see the NOTICE there). Pick `duck_walk.usda` in Studio and Start — the duck holds
+its crouch, steps in place, and walks under keyboard, constant, or gamepad commands wired in the
+mapper. To regenerate the robot USD from the source URDF, clone the Open Duck Mini repo and run
+`tools\import_duck_urdf.py` with Isaac Sim's bundled Python.
 
 ---
 

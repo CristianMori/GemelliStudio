@@ -1,0 +1,3278 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.2"
+    }
+    defaultPrim = "onshape"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\tmpw8qpsj5j\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\usdex_robot\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\temp_robot\\robot.usd
+
+
+Generated from Composed Stage of root layer C:\\DataDrive\\ovGemelli\\scenes\\duck\\robot\\payloads\\base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./robot.usda@
+    ]
+    upAxis = "Z"
+)
+
+def Xform "onshape" (
+    prepend apiSchemas = ["GeomModelAPI"]
+    assetInfo = {
+        string name = "onshape"
+    }
+    kind = "component"
+)
+{
+    float3[] extentsHint = [(-0.154, -0.122999996, -0.19619906), (0.101, 0.12305, 0.3222736), (3.4028235e38, 3.4028235e38, 3.4028235e38), (-3.4028235e38, -3.4028235e38, -3.4028235e38), (3.4028235e38, 3.4028235e38, 3.4028235e38), (-3.4028235e38, -3.4028235e38, -3.4028235e38), (-0.154, -0.122999996, -0.19619906), (0.101, 0.12305, 0.3222736)]
+
+    def Scope "Materials"
+    {
+    }
+
+    def Scope "Geometry"
+    {
+        def Xform "trunk_assembly"
+        {
+            def Xform "body_front" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_front>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 0, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "usb_c_charger" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/usb_c_charger>
+            )
+            {
+                quatd xformOp:orient = (0.5, 0.5, -0.5, 0.5)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1263, -0.0257, 0.05760788544)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "body_back" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_back>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 3.469446952e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "body_middle_bottom" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_middle_bottom>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -3.469446952e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "power_switch" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/power_switch>
+            )
+            {
+                quatd xformOp:orient = (0.9013032317, 0, -0.4331887364, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1203403424, -2.775557562e-17, 0.08991260578)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "bms" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/bms>
+            )
+            {
+                quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.07520275855, -0.0249, 0.02948994591)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "battery_pack_lid" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/battery_pack_lid>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 0, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "body_middle_top" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_middle_top>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 0, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "bno055" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/bno055>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.08711, 1.301042607e-16, 0.04179093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "roll_bearing" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/roll_bearing>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -6.938893904e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "trunk_bottom" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/trunk_bottom>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 9.107298249e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "trunk_top" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/trunk_top>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -2.424276058e-16, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "board" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/board>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0, 1)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.06349001262, 0.01649999234, 0.06039093815)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "roll_bearing_1" (
+                displayName = "roll_bearing"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/roll_bearing>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -0.07, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "cell" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/cell>
+            )
+            {
+                quatd xformOp:orient = (0, 0.4574659169, 0.8892271519, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1296245682, -0.0105, 0.06501343217)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "holder" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/holder>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1396245682, -0.06352445856, 0.03145495376)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "cell_1" (
+                displayName = "cell"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/cell>
+            )
+            {
+                quatd xformOp:orient = (0.9304590225, 0, 0, 0.3663959801)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1296245682, 0.0105, 0.00001343217405)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000123middlecase_56_xX07" (
+                displayName = "wj-wk00-0123middlecase_56"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "drive_palonier" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/drive_palonier>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                displayName = "wj-wk00-0124bottomcase_45"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                displayName = "wj-wk00-0122topcabinetcase_95"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "passive_palonier" (
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/passive_palonier>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0126, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                displayName = "wj-wk00-0123middlecase_56"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "drive_palonier_1" (
+                displayName = "drive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/drive_palonier>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                displayName = "wj-wk00-0124bottomcase_45"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                displayName = "wj-wk00-0122topcabinetcase_95"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "passive_palonier_1" (
+                displayName = "passive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/passive_palonier>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05249093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000123middlecase_56_2_ua07" (
+                displayName = "wj-wk00-0123middlecase_56"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "drive_palonier_2" (
+                displayName = "drive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/drive_palonier>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000124bottomcase_45_2_ua07" (
+                displayName = "wj-wk00-0124bottomcase_45"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000122topcabinetcase_95_2_og07" (
+                displayName = "wj-wk00-0122topcabinetcase_95"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "passive_palonier_2" (
+                displayName = "passive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/passive_palonier>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05249093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "hip_roll_assembly"
+            {
+                quatf xformOp:orient = (1, 0, 0, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.01900000000000029, 0.03500000000000127, 0.045940938812378845)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                def Xform "roll_motor_bottom" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_bottom>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-3.330669074e-16, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "roll_motor_top" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_top>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000123middlecase_56_xX07" (
+                    displayName = "wj-wk00-0123middlecase_56"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "drive_palonier" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/drive_palonier>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                    displayName = "wj-wk00-0124bottomcase_45"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                    displayName = "wj-wk00-0122topcabinetcase_95"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "passive_palonier" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/passive_palonier>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0125, 5.988265439e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "left_roll_to_pitch_assembly"
+                {
+                    quatf xformOp:orient = (-0.5, 0.5, 0.5, -0.5)
+                    float3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.01905000000000324, 2.0469737016526324e-15, -0.046015000000000895)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                    def Xform "left_roll_to_pitch" (
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/left_roll_to_pitch>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.035, -0.065, 0.01905)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000123middlecase_56_xX07" (
+                        displayName = "wj-wk00-0123middlecase_56"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "drive_palonier" (
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/drive_palonier>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                        displayName = "wj-wk00-0124bottomcase_45"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                        displayName = "wj-wk00-0122topcabinetcase_95"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "passive_palonier" (
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/passive_palonier>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0676, 3.657284978e-16, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "knee_and_ankle_assembly"
+                    {
+                        quatf xformOp:orient = (6.123234e-17, -0.70710677, -8.591743e-17, 0.70710677)
+                        float3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0741499999999998, 1.395910297075087e-18, 0.03510999999999991)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                        def Xform "left_cache" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_cache>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.065, 0.10915)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "leg_spacer" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/leg_spacer>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.14365, 0.10925)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_right_sheet" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_left_sheet" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000123middlecase_56_xX07" (
+                            displayName = "wj-wk00-0123middlecase_56"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "drive_palonier" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/drive_palonier>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                            displayName = "wj-wk00-0124bottomcase_45"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                            displayName = "wj-wk00-0122topcabinetcase_95"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "passive_palonier" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/passive_palonier>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (7.355227538e-16, -0.05315, 0.00665)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "knee_and_ankle_assembly_2"
+                        {
+                            quatf xformOp:orient = (1, 0, 0, 0)
+                            float3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (1.3877787807814457e-17, -0.07865000000000001, 0.00009999999999996123)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                            def Xform "leg_spacer" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/leg_spacer>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10925)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_right_sheet" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_left_sheet" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000123middlecase_56_xX07" (
+                                displayName = "wj-wk00-0123middlecase_56"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "drive_palonier" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/drive_palonier>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                                displayName = "wj-wk00-0124bottomcase_45"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                                displayName = "wj-wk00-0122topcabinetcase_95"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "passive_palonier" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/passive_palonier>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-7.008282843e-16, -0.05315, 0.00665)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "foot_assembly"
+                            {
+                                quatf xformOp:orient = (1, 0, 0, 0)
+                                float3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-3.469446951953614e-17, -0.07865000000000018, 0.00009999999999997511)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                def Xform "foot_side" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_side>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_tpu" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_tpu>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_pla" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_pla>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_top" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_top>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_side_1" (
+                                    displayName = "foot_side"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_side_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_tpu_1" (
+                                    displayName = "foot_bottom_tpu"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_tpu_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_pla_1" (
+                                    displayName = "foot_bottom_pla"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_pla_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_top_1" (
+                                    displayName = "foot_top"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_top_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "left_foot"
+                                {
+                                    quatf xformOp:orient = (-0.70710677, 0.70710677, -1.7249552e-18, -1.7249552e-18)
+                                    float3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.0004999999999999657, -0.03622499999999973, 0.019550000000000345)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+                            }
+
+                            def Xform "leg_spacer_1" (
+                                displayName = "leg_spacer"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/leg_spacer_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10925)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_right_sheet_1" (
+                                displayName = "left_knee_to_ankle_right_sheet"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_left_sheet_1" (
+                                displayName = "left_knee_to_ankle_left_sheet"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                                displayName = "wj-wk00-0123middlecase_56"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "drive_palonier_1" (
+                                displayName = "drive_palonier"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                                displayName = "wj-wk00-0124bottomcase_45"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                                displayName = "wj-wk00-0122topcabinetcase_95"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-2.775557562e-17, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "passive_palonier_1" (
+                                displayName = "passive_palonier"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-7.008282843e-16, -0.05315, 0.00665)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+                        }
+
+                        def Xform "left_cache_1" (
+                            displayName = "left_cache"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_cache_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.065, 0.10915)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "leg_spacer_1" (
+                            displayName = "leg_spacer"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/leg_spacer_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.14365, 0.10925)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_right_sheet_1" (
+                            displayName = "left_knee_to_ankle_right_sheet"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_left_sheet_1" (
+                            displayName = "left_knee_to_ankle_left_sheet"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                            displayName = "wj-wk00-0123middlecase_56"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "drive_palonier_1" (
+                            displayName = "drive_palonier"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                            displayName = "wj-wk00-0124bottomcase_45"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                            displayName = "wj-wk00-0122topcabinetcase_95"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (4.440892099e-16, -0.05315, 0.00955)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "passive_palonier_1" (
+                            displayName = "passive_palonier"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (7.355227538e-16, -0.05315, 0.00665)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+                    }
+
+                    def Xform "left_roll_to_pitch_1" (
+                        displayName = "left_roll_to_pitch"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/left_roll_to_pitch_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.035, -0.065, 0.01905)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                        displayName = "wj-wk00-0123middlecase_56"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "drive_palonier_1" (
+                        displayName = "drive_palonier"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                        displayName = "wj-wk00-0124bottomcase_45"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                        displayName = "wj-wk00-0122topcabinetcase_95"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0647, -1.482646471e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "passive_palonier_1" (
+                        displayName = "passive_palonier"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.0676, 3.657284978e-16, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+                }
+
+                def Xform "roll_motor_bottom_1" (
+                    displayName = "roll_motor_bottom"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_bottom_1>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-3.330669074e-16, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "roll_motor_top_1" (
+                    displayName = "roll_motor_top"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_top_1>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                    displayName = "wj-wk00-0123middlecase_56"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "drive_palonier_1" (
+                    displayName = "drive_palonier"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                    displayName = "wj-wk00-0124bottomcase_45"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                    displayName = "wj-wk00-0122topcabinetcase_95"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 7.369105326e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "passive_palonier_1" (
+                    displayName = "passive_palonier"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0125, 5.988265439e-15, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+            }
+
+            def Xform "hip_roll_assembly_2"
+            {
+                quatf xformOp:orient = (1, 0, 0, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.01899999999999843, -0.035000000000001516, 0.045940938812377416)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                def Xform "roll_motor_bottom" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_bottom>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-3.6429193e-16, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "roll_motor_top" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_top>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (3.469446952e-18, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000123middlecase_56_xX07" (
+                    displayName = "wj-wk00-0123middlecase_56"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "drive_palonier" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/drive_palonier>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                    displayName = "wj-wk00-0124bottomcase_45"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                    displayName = "wj-wk00-0122topcabinetcase_95"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "passive_palonier" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/passive_palonier>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0125, 3.911454494e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "right_roll_to_pitch_assembly"
+                {
+                    quatf xformOp:orient = (-0.5, 0.5, 0.5, -0.5)
+                    float3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.01905000000000826, 3.785166624581393e-14, -0.04601500000000303)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                    def Xform "right_roll_to_pitch" (
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/right_roll_to_pitch>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.035, -0.065, 0.01905)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000123middlecase_56_xX07" (
+                        displayName = "wj-wk00-0123middlecase_56"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "drive_palonier" (
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/drive_palonier>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                        displayName = "wj-wk00-0124bottomcase_45"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                        displayName = "wj-wk00-0122topcabinetcase_95"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "passive_palonier" (
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/passive_palonier>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0676, 9.52200558e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "knee_and_ankle_assembly_3"
+                    {
+                        quatf xformOp:orient = (0.70710677, -8.427332e-25, 0.70710677, 8.427332e-25)
+                        float3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0741499999999998, 3.1868767607495796e-16, 0.035110000000000016)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                        def Xform "right_cache" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/right_cache>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.065, 0.1092)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "leg_spacer" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/leg_spacer>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.14365, -0.07215)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_right_sheet" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.14365, -0.07205)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_left_sheet" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.14365, -0.07205)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000123middlecase_56_xX07" (
+                            displayName = "wj-wk00-0123middlecase_56"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "drive_palonier" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/drive_palonier>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                            displayName = "wj-wk00-0124bottomcase_45"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                            displayName = "wj-wk00-0122topcabinetcase_95"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "passive_palonier" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/passive_palonier>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-3.330669074e-16, 0.05315, 0.03045)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "knee_and_ankle_assembly_4"
+                        {
+                            quatf xformOp:orient = (6.123234e-17, 1, 2.5144941e-30, 1.0409551e-24)
+                            float3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-6.938893903907228e-18, 0.07864999999999941, 0.03699999999999966)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                            def Xform "leg_spacer" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/leg_spacer>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10925)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_right_sheet" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_left_sheet" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000123middlecase_56_xX07" (
+                                displayName = "wj-wk00-0123middlecase_56"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "drive_palonier" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/drive_palonier>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                                displayName = "wj-wk00-0124bottomcase_45"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                                displayName = "wj-wk00-0122topcabinetcase_95"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "passive_palonier" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/passive_palonier>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (2.706168623e-16, -0.05315, 0.00665)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "foot_assembly_2"
+                            {
+                                quatf xformOp:orient = (1, 0, 0, 0)
+                                float3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-6.938893903907228e-18, -0.07865000000000004, 0.00009999999999996123)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                def Xform "foot_side" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_side>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_tpu" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_tpu>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_pla" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_pla>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_top" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_top>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_side_1" (
+                                    displayName = "foot_side"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_side_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_tpu_1" (
+                                    displayName = "foot_bottom_tpu"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_tpu_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_bottom_pla_1" (
+                                    displayName = "foot_bottom_pla"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_bottom_pla_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01656, 0.2228, 0.10955)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "foot_top_1" (
+                                    displayName = "foot_top"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/foot_top_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.01606, 0.2223, 0.10905)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "right_foot"
+                                {
+                                    quatf xformOp:orient = (-0.70710677, 0.70710677, 1.4684984e-16, -7.9520914e-16)
+                                    float3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.0005000000000002155, -0.03622499999999984, 0.019550000000000664)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+                            }
+
+                            def Xform "leg_spacer_1" (
+                                displayName = "leg_spacer"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/leg_spacer_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10925)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_right_sheet_1" (
+                                displayName = "left_knee_to_ankle_right_sheet"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_knee_to_ankle_left_sheet_1" (
+                                displayName = "left_knee_to_ankle_left_sheet"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.01606, 0.14365, 0.10915)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                                displayName = "wj-wk00-0123middlecase_56"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "drive_palonier_1" (
+                                displayName = "drive_palonier"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                                displayName = "wj-wk00-0124bottomcase_45"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                                displayName = "wj-wk00-0122topcabinetcase_95"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, -0.05315, 0.00955)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "passive_palonier_1" (
+                                displayName = "passive_palonier"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (2.706168623e-16, -0.05315, 0.00665)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+                        }
+
+                        def Xform "right_cache_1" (
+                            displayName = "right_cache"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/right_cache_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.065, 0.1092)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "leg_spacer_1" (
+                            displayName = "leg_spacer"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/leg_spacer_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.14365, -0.07215)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_right_sheet_1" (
+                            displayName = "left_knee_to_ankle_right_sheet"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_right_sheet_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.14365, -0.07205)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "left_knee_to_ankle_left_sheet_1" (
+                            displayName = "left_knee_to_ankle_left_sheet"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/left_knee_to_ankle_left_sheet_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.01606, -0.14365, -0.07205)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                            displayName = "wj-wk00-0123middlecase_56"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "drive_palonier_1" (
+                            displayName = "drive_palonier"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                            displayName = "wj-wk00-0124bottomcase_45"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                            displayName = "wj-wk00-0122topcabinetcase_95"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-1.387778781e-17, 0.05315, 0.02755)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "passive_palonier_1" (
+                            displayName = "passive_palonier"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.5, 0.5, -0.5, -0.5)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-3.330669074e-16, 0.05315, 0.03045)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+                    }
+
+                    def Xform "right_roll_to_pitch_1" (
+                        displayName = "right_roll_to_pitch"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/right_roll_to_pitch_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.035, -0.065, 0.01905)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                        displayName = "wj-wk00-0123middlecase_56"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "drive_palonier_1" (
+                        displayName = "drive_palonier"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                        displayName = "wj-wk00-0124bottomcase_45"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                        displayName = "wj-wk00-0122topcabinetcase_95"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0647, 1.042189338e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "passive_palonier_1" (
+                        displayName = "passive_palonier"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.5, -0.5, 0.5, 0.5)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.0676, 9.52200558e-17, 0.00961)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+                }
+
+                def Xform "roll_motor_bottom_1" (
+                    displayName = "roll_motor_bottom"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_bottom_1>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-3.6429193e-16, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "roll_motor_top_1" (
+                    displayName = "roll_motor_top"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/roll_motor_top_1>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (3.469446952e-18, -0.035, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                    displayName = "wj-wk00-0123middlecase_56"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "drive_palonier_1" (
+                    displayName = "drive_palonier"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                    displayName = "wj-wk00-0124bottomcase_45"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                    displayName = "wj-wk00-0122topcabinetcase_95"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0096, 3.851780006e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "passive_palonier_1" (
+                    displayName = "passive_palonier"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, -0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0.0125, 3.911454494e-14, -0.020515)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+            }
+
+            def Xform "neck_pitch_assembly"
+            {
+                quatf xformOp:orient = (0.70710677, 0.70710677, 3.181602e-14, -3.1772724e-14)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.0009999999999989635, 0.019150000000000326, 0.09000093881237624)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                def Xform "neck_left_sheet" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/neck_left_sheet>
+                )
+                {
+                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-0.02, -0.02511, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "neck_right_sheet" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/neck_right_sheet>
+                )
+                {
+                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-0.02, -0.02511, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000123middlecase_56_xX07" (
+                    displayName = "wj-wk00-0123middlecase_56"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "drive_palonier" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/drive_palonier>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                    displayName = "wj-wk00-0124bottomcase_45"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                    displayName = "wj-wk00-0122topcabinetcase_95"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "passive_palonier" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/passive_palonier>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.63106116e-15, 0.0405, 0.00655)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "head_pitch_to_yaw"
+                {
+                    quatf xformOp:orient = (1, 0, 0, 0)
+                    float3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (8.673617379884035e-19, 0.06600000000000002, -3.469446951953614e-18)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                    def Xform "head_pitch_to_yaw" (
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/head_pitch_to_yaw>
+                    )
+                    {
+                        quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.02, -0.09111, 0.01905)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+
+                    def Xform "neck_yaw_assembly"
+                    {
+                        quatf xformOp:orient = (-0.70710677, 0.70710677, -2.5972592e-14, -2.6015889e-14)
+                        float3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-1.691355389077387e-17, 0.05699999999999994, 0.019050000000000015)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                        def Xform "head_yaw_to_roll" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/head_yaw_to_roll>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-0.02, -1.752612812e-16, -0.14821)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000123middlecase_56_xX07" (
+                            displayName = "wj-wk00-0123middlecase_56"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "drive_palonier" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/drive_palonier>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                            displayName = "wj-wk00-0124bottomcase_45"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                            displayName = "wj-wk00-0122topcabinetcase_95"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "passive_palonier" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/passive_palonier>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 1.580224666e-17, -0.00655)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "head_assembly"
+                        {
+                            quatf xformOp:orient = (-0.70710677, 2.5889979e-14, 0.70710677, 2.5889979e-14)
+                            float3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0409500000000001, -1.7527483370943786e-16, -0.01914999999999978)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                            def Xform "head_bot_sheet" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/head_bot_sheet>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.12906, 7.832818595e-16, 0.06095)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "head" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/head>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.12906, 7.85789077e-16, 0.06095)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "head_roll_mount" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/head_roll_mount>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.12906, 2.983588853e-16, 0.06095)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "raspberrypizerow" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/raspberrypizerow>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, 0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.03205, 0.048, 0.00595)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "roll_bearing" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/roll_bearing>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (6.383782392e-16, -0.035, 0.167325)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "sg90" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/sg90>
+                            )
+                            {
+                                quatd xformOp:orient = (0.4883213937, -0.4788899422, -0.3729913533, -0.6269641519)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.006245944034, 0.03314078427, 0.1028120631)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "sg90_1" (
+                                displayName = "sg90"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/sg90>
+                            )
+                            {
+                                quatd xformOp:orient = (0.4883213937, 0.4788899422, -0.3729913533, 0.6269641519)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.006245944034, -0.03314078427, 0.1028120631)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "board" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/board>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.03205, -0.03400001262, -0.00555001262)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000123middlecase_56_xX07" (
+                                displayName = "wj-wk00-0123middlecase_56"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "drive_palonier" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/drive_palonier>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000124bottomcase_45_xX07" (
+                                displayName = "wj-wk00-0124bottomcase_45"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000122topcabinetcase_95_rd07" (
+                                displayName = "wj-wk00-0122topcabinetcase_95"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "passive_palonier" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/passive_palonier>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 3.339207166e-16, -0.00655)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "left_antenna_holder"
+                            {
+                                quatf xformOp:orient = (0.37299135, 0.62696415, 0.4883214, -0.47888994)
+                                float3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0007040694550353443, 0.060662837687359784, 0.11643485329544212)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                def Xform "antenna" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/antenna>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7819569707, -0.6090400815, -0.1047042906, -0.0815506652)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.07913918596, -0.110974144, -0.07931503757)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "left_antenna_holder" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/left_antenna_holder>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.6090400815, -0.7819569707, -0.0815506652, -0.1047042906)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.02969810365, -0.1109618802, 0.1019938544)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "antenna_1" (
+                                    displayName = "antenna"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/antenna_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7819569707, -0.6090400815, -0.1047042906, -0.0815506652)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.07913918596, -0.110974144, -0.07931503757)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "left_antenna_holder_1" (
+                                    displayName = "left_antenna_holder"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/left_antenna_holder_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.6090400815, -0.7819569707, -0.0815506652, -0.1047042906)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.02969810365, -0.1109618802, 0.1019938544)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+                            }
+
+                            def Xform "right_antenna_holder"
+                            {
+                                quatf xformOp:orient = (-0.37299135, 0.62696415, -0.4883214, -0.47888994)
+                                float3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0007040694550353443, -0.060662837687358265, 0.11643485329544212)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                def Xform "right_antenna_holder" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/right_antenna_holder>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.6090400815, 0.7819569707, -0.0815506652, 0.1047042906)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.02969810365, 0.1109618802, 0.1019938544)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "antenna" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/antenna>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.6090400815, 0.7819569707, -0.0815506652, 0.1047042906)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.02969810365, 0.109950937, 0.1019938544)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "right_antenna_holder_1" (
+                                    displayName = "right_antenna_holder"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/right_antenna_holder_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.6090400815, 0.7819569707, -0.0815506652, 0.1047042906)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.02969810365, 0.1109618802, 0.1019938544)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "antenna_1" (
+                                    displayName = "antenna"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/antenna_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.6090400815, 0.7819569707, -0.0815506652, 0.1047042906)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0.02969810365, 0.109950937, 0.1019938544)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+                            }
+
+                            def Xform "head_bot_sheet_1" (
+                                displayName = "head_bot_sheet"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/head_bot_sheet_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.12906, 7.832818595e-16, 0.06095)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "head_1" (
+                                displayName = "head"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/head_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.12906, 7.85789077e-16, 0.06095)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "head_roll_mount_1" (
+                                displayName = "head_roll_mount"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/head_roll_mount_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.12906, 2.983588853e-16, 0.06095)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "raspberrypizerow_1" (
+                                displayName = "raspberrypizerow"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/raspberrypizerow_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, 0.5, -0.5, 0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.03205, 0.048, 0.00595)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "roll_bearing_1" (
+                                displayName = "roll_bearing"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/roll_bearing_1>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (6.383782392e-16, -0.035, 0.167325)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "sg90_2" (
+                                displayName = "sg90"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/sg90_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.4883213937, -0.4788899422, -0.3729913533, -0.6269641519)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.006245944034, 0.03314078427, 0.1028120631)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "sg90_3" (
+                                displayName = "sg90"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/sg90_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.4883213937, 0.4788899422, -0.3729913533, 0.6269641519)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (-0.006245944034, -0.03314078427, 0.1028120631)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "board_1" (
+                                displayName = "board"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/board_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.03205, -0.03400001262, -0.00555001262)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                                displayName = "wj-wk00-0123middlecase_56"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "drive_palonier_1" (
+                                displayName = "drive_palonier"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                                displayName = "wj-wk00-0124bottomcase_45"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                                displayName = "wj-wk00-0122topcabinetcase_95"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "passive_palonier_1" (
+                                displayName = "passive_palonier"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                            )
+                            {
+                                quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.0255, 3.339207166e-16, -0.00655)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "head_2" (
+                                displayName = "head"
+                            )
+                            {
+                                quatf xformOp:orient = (0.70710677, 7.850462e-17, 0.70710677, -7.850462e-17)
+                                float3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0.04245000000000057, 7.4178402136027e-16, 0.03594999999999999)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+                        }
+
+                        def Xform "head_yaw_to_roll_1" (
+                            displayName = "head_yaw_to_roll"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/head_yaw_to_roll_1>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (-0.02, -1.752612812e-16, -0.14821)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                            displayName = "wj-wk00-0123middlecase_56"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "drive_palonier_1" (
+                            displayName = "drive_palonier"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                            displayName = "wj-wk00-0124bottomcase_45"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                            displayName = "wj-wk00-0122topcabinetcase_95"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 7.182839393e-19, -0.00945)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "passive_palonier_1" (
+                            displayName = "passive_palonier"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                        )
+                        {
+                            quatd xformOp:orient = (0.7071067691, 0.7071067691, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.0255, 1.580224666e-17, -0.00655)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+                    }
+
+                    def Xform "head_pitch_to_yaw_1" (
+                        displayName = "head_pitch_to_yaw"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/head_pitch_to_yaw_1>
+                    )
+                    {
+                        quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (-0.02, -0.09111, 0.01905)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+                }
+
+                def Xform "neck_left_sheet_1" (
+                    displayName = "neck_left_sheet"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/neck_left_sheet_1>
+                )
+                {
+                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-0.02, -0.02511, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "neck_right_sheet_1" (
+                    displayName = "neck_right_sheet"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/neck_right_sheet_1>
+                )
+                {
+                    quatd xformOp:orient = (0.7071067691, -0.7071067691, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-0.02, -0.02511, 0.01905)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000123middlecase_56_1_ua07" (
+                    displayName = "wj-wk00-0123middlecase_56"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "drive_palonier_1" (
+                    displayName = "drive_palonier"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/drive_palonier_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000124bottomcase_45_1_ua07" (
+                    displayName = "wj-wk00-0124bottomcase_45"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__wjwk000122topcabinetcase_95_1_og07" (
+                    displayName = "wj-wk00-0122topcabinetcase_95"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.645155788e-15, 0.0405, 0.00945)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "passive_palonier_1" (
+                    displayName = "passive_palonier"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/passive_palonier_1>
+                )
+                {
+                    quatd xformOp:orient = (0.5, -0.5, 0.5, -0.5)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (-4.63106116e-15, 0.0405, 0.00655)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+            }
+
+            def Xform "body_front_1" (
+                displayName = "body_front"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_front_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 0, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "usb_c_charger_1" (
+                displayName = "usb_c_charger"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/usb_c_charger_1>
+            )
+            {
+                quatd xformOp:orient = (0.5, 0.5, -0.5, 0.5)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1263, -0.0257, 0.05760788544)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "body_back_1" (
+                displayName = "body_back"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_back_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 3.469446952e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "body_middle_bottom_1" (
+                displayName = "body_middle_bottom"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_middle_bottom_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -3.469446952e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "power_switch_1" (
+                displayName = "power_switch"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/power_switch_1>
+            )
+            {
+                quatd xformOp:orient = (0.9013032317, 0, -0.4331887364, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1203403424, -2.775557562e-17, 0.08991260578)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "bms_1" (
+                displayName = "bms"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/bms_1>
+            )
+            {
+                quatd xformOp:orient = (0.5, 0.5, 0.5, -0.5)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.07520275855, -0.0249, 0.02948994591)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "battery_pack_lid_1" (
+                displayName = "battery_pack_lid"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/battery_pack_lid_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 0, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "body_middle_top_1" (
+                displayName = "body_middle_top"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/body_middle_top_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 0, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "bno055_1" (
+                displayName = "bno055"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/bno055_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.08711, 1.301042607e-16, 0.04179093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "roll_bearing_2" (
+                displayName = "roll_bearing"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/roll_bearing_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -6.938893904e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "trunk_bottom_1" (
+                displayName = "trunk_bottom"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/trunk_bottom_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, 9.107298249e-18, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "trunk_top_1" (
+                displayName = "trunk_top"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/trunk_top_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -2.424276058e-16, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "board_1" (
+                displayName = "board"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/board_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0, 1)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.06349001262, 0.01649999234, 0.06039093815)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "roll_bearing_3" (
+                displayName = "roll_bearing"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/roll_bearing_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.019, -0.07, 0.06489093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "cell_2" (
+                displayName = "cell"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/cell_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0.4574659169, 0.8892271519, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1296245682, -0.0105, 0.06501343217)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "holder_1" (
+                displayName = "holder"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/holder_1>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1396245682, -0.06352445856, 0.03145495376)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "cell_3" (
+                displayName = "cell"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/cell_1>
+            )
+            {
+                quatd xformOp:orient = (0.9304590225, 0, 0, 0.3663959801)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.1296245682, 0.0105, 0.00001343217405)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000123middlecase_56_3_ua07" (
+                displayName = "wj-wk00-0123middlecase_56"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "drive_palonier_3" (
+                displayName = "drive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/drive_palonier_1>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000124bottomcase_45_3_ua07" (
+                displayName = "wj-wk00-0124bottomcase_45"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000122topcabinetcase_95_3_og07" (
+                displayName = "wj-wk00-0122topcabinetcase_95"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0097, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "passive_palonier_3" (
+                displayName = "passive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/passive_palonier_1>
+            )
+            {
+                quatd xformOp:orient = (0.7071067691, 0, 0.7071067691, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.001, 0.0126, 0.06450093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000123middlecase_56_4_ua07" (
+                displayName = "wj-wk00-0123middlecase_56"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "drive_palonier_4" (
+                displayName = "drive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/drive_palonier_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000124bottomcase_45_4_ua07" (
+                displayName = "wj-wk00-0124bottomcase_45"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000122topcabinetcase_95_4_og07" (
+                displayName = "wj-wk00-0122topcabinetcase_95"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "passive_palonier_4" (
+                displayName = "passive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/passive_palonier_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, -0.035, 0.05249093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000123middlecase_56_5_ua07" (
+                displayName = "wj-wk00-0123middlecase_56"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000123middlecase_56_xX07_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "drive_palonier_5" (
+                displayName = "drive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/drive_palonier_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000124bottomcase_45_5_ua07" (
+                displayName = "wj-wk00-0124bottomcase_45"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000124bottomcase_45_xX07_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "tn__wjwk000122topcabinetcase_95_5_og07" (
+                displayName = "wj-wk00-0122topcabinetcase_95"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/tn__wjwk000122topcabinetcase_95_rd07_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05539093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "passive_palonier_5" (
+                displayName = "passive_palonier"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/passive_palonier_1>
+            )
+            {
+                quatd xformOp:orient = (0, 0, 0.7071067691, -0.7071067691)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0445, 0.035, 0.05249093881)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Xform "trunk"
+            {
+                quatf xformOp:orient = (1, 0, 0, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.02400000000000076, -2.411265631607762e-16, 0.08819093881237675)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+        }
+    }
+
+    def Scope "Physics"
+    {
+    }
+
+    def Scope "VisualMaterials"
+    {
+    }
+}
+

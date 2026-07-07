@@ -1,0 +1,738 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.2"
+    }
+    defaultPrim = "onshape"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\tmpw8qpsj5j\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\usdex_robot\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\temp_robot\\robot.usd
+
+
+Generated from Composed Stage of root layer C:\\DataDrive\\ovGemelli\\scenes\\duck\\robot\\payloads\\base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "onshape"
+{
+    over "Geometry"
+    {
+        over "trunk_assembly" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsArticulationRootAPI", "NewtonArticulationRootAPI", "PhysicsMassAPI"]
+        )
+        {
+            bool newton:selfCollisionEnabled = 0
+            point3f physics:centerOfMass = (-0.048325896, -0.0000997823, 0.038497068)
+            float3 physics:diagonalInertia = (0.001676062, 0.0029271916, 0.003444893)
+            float physics:mass = 0.69852644
+            quatf physics:principalAxes = (0.7083133, -0.70576864, 0.0065699415, -0.011821447)
+
+            over "hip_roll_assembly" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            )
+            {
+                point3f physics:centerOfMass = (0.0007950805, -0.0000054654097, -0.03306002)
+                float3 physics:diagonalInertia = (0.000014254415, 0.00002445535, 0.000028181848)
+                float physics:mass = 0.06648
+                quatf physics:principalAxes = (0.508949, 0.50957, 0.49052763, 0.49060372)
+
+                over "left_roll_to_pitch_assembly" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                )
+                {
+                    point3f physics:centerOfMass = (0.050804246, -0.00041104958, 0.020470437)
+                    float3 physics:diagonalInertia = (0.00002511705, 0.000028241597, 0.000041387357)
+                    float physics:mass = 0.07516
+                    quatf physics:principalAxes = (0.70703477, -0.700543, 0.07077764, -0.06581688)
+
+                    over "knee_and_ankle_assembly" (
+                        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        point3f physics:centerOfMass = (0.002533693, -0.039063625, 0.010277553)
+                        float3 physics:diagonalInertia = (0.00007027457, 0.00021662496, 0.00022850219)
+                        float physics:mass = 0.12407
+                        quatf physics:principalAxes = (-0.050046302, 0.76936215, 0.63516086, -0.046346057)
+
+                        over "knee_and_ankle_assembly_2" (
+                            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                        )
+                        {
+                            point3f physics:centerOfMass = (0.0000050185936, -0.057746504, 0.018113576)
+                            float3 physics:diagonalInertia = (0.00001872698, 0.00004239353, 0.000049957474)
+                            float physics:mass = 0.07259
+                            quatf physics:principalAxes = (-0.50092214, 0.4989097, 0.5009374, 0.49922717)
+
+                            over "foot_assembly" (
+                                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                point3f physics:centerOfMass = (0.011071806, -0.02466083, 0.01906263)
+                                float3 physics:diagonalInertia = (0.000018696475, 0.00006060954, 0.00006749493)
+                                float physics:mass = 0.07524
+                                quatf physics:principalAxes = (-0.70410746, 0.70990664, -0.011633439, -0.01139779)
+
+                                over "left_foot" (
+                                    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    point3f physics:centerOfMass = (0, 0, 0)
+                                    float3 physics:diagonalInertia = (0, 0, 0)
+                                    float physics:mass = 1e-9
+                                    quatf physics:principalAxes = (1, 0, 0, 0)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            over "hip_roll_assembly_2" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            )
+            {
+                point3f physics:centerOfMass = (0.0007950805, -0.0000054654097, -0.03306002)
+                float3 physics:diagonalInertia = (0.000014254415, 0.00002445535, 0.000028181848)
+                float physics:mass = 0.06648
+                quatf physics:principalAxes = (0.508949, 0.50957, 0.49052763, 0.49060372)
+
+                over "right_roll_to_pitch_assembly" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                )
+                {
+                    point3f physics:centerOfMass = (-0.050804246, -0.00042074188, 0.020470437)
+                    float3 physics:diagonalInertia = (0.000025116298, 0.000028241257, 0.00004138724)
+                    float physics:mass = 0.07516
+                    quatf physics:principalAxes = (0.70662934, -0.7009502, -0.07098693, 0.0656095)
+
+                    over "knee_and_ankle_assembly_3" (
+                        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        point3f physics:centerOfMass = (0.002533693, 0.039063625, 0.010808979)
+                        float3 physics:diagonalInertia = (0.000070952694, 0.00021757974, 0.00022878226)
+                        float physics:mass = 0.12407
+                        quatf physics:principalAxes = (0.047553092, 0.6351571, 0.76904064, 0.053764638)
+
+                        over "knee_and_ankle_assembly_4" (
+                            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                        )
+                        {
+                            point3f physics:centerOfMass = (0.0000050185936, -0.057746504, 0.018113576)
+                            float3 physics:diagonalInertia = (0.00001872698, 0.00004239353, 0.000049957474)
+                            float physics:mass = 0.07259
+                            quatf physics:principalAxes = (-0.50092214, 0.4989097, 0.5009374, 0.49922717)
+
+                            over "foot_assembly_2" (
+                                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                point3f physics:centerOfMass = (0.011071806, -0.02466083, 0.01906263)
+                                float3 physics:diagonalInertia = (0.000018696475, 0.00006060954, 0.00006749493)
+                                float physics:mass = 0.07524
+                                quatf physics:principalAxes = (-0.70410746, 0.70990664, -0.011633439, -0.01139779)
+
+                                over "right_foot" (
+                                    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    point3f physics:centerOfMass = (0, 0, 0)
+                                    float3 physics:diagonalInertia = (0, 0, 0)
+                                    float physics:mass = 1e-9
+                                    quatf physics:principalAxes = (1, 0, 0, 0)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            over "neck_pitch_assembly" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            )
+            {
+                point3f physics:centerOfMass = (-0.0000056313725, 0.04929676, 0.018178556)
+                float3 physics:diagonalInertia = (0.000017023109, 0.000028004282, 0.000034945642)
+                float physics:mass = 0.06618
+                quatf physics:principalAxes = (-0.499378, 0.5003773, 0.49977848, 0.50046545)
+
+                over "head_pitch_to_yaw" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                )
+                {
+                    point3f physics:centerOfMass = (-0.0076624667, 0.02601496, 0.01866807)
+                    float3 physics:diagonalInertia = (0.0000042897896, 0.000008031245, 0.000009786103)
+                    float physics:mass = 0.016937789
+                    quatf physics:principalAxes = (-0.42601714, 0.43738478, 0.553513, 0.5664162)
+
+                    over "neck_yaw_assembly" (
+                        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        point3f physics:centerOfMass = (0.004129069, 0.000003957446, -0.02228284)
+                        float3 physics:diagonalInertia = (0.000030680472, 0.00006949353, 0.00007089265)
+                        float physics:mass = 0.09180989
+                        quatf physics:principalAxes = (0.9984693, -0.0015267365, 0.055287443, -0.000034914312)
+
+                        over "head_assembly" (
+                            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                        )
+                        {
+                            point3f physics:centerOfMass = (0.007617785, 0.0001809797, 0.024257509)
+                            float3 physics:diagonalInertia = (0.0009095783, 0.0014412788, 0.0020710416)
+                            float physics:mass = 0.352583
+                            quatf physics:principalAxes = (0.6787365, 0.002798808, 0.7343761, -0.0008464988)
+
+                            over "left_antenna_holder" (
+                                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                point3f physics:centerOfMass = (-0.0049398546, 0.008130322, -0.0023337426)
+                                float3 physics:diagonalInertia = (2.4527307e-7, 0.000003596775, 0.0000038083626)
+                                float physics:mass = 0.004216289
+                                quatf physics:principalAxes = (-0.004684538, 0.72475815, 0.68897957, -0.0032932032)
+                            }
+
+                            over "right_antenna_holder" (
+                                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                point3f physics:centerOfMass = (-0.004939857, -0.008262126, -0.0023337412)
+                                float3 physics:diagonalInertia = (2.4514648e-7, 0.000003658504, 0.0000038699786)
+                                float physics:mass = 0.004216287
+                                quatf physics:principalAxes = (0.0032418934, 0.68902045, 0.7247192, 0.0047292365)
+                            }
+
+                            over "head_2" (
+                                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                point3f physics:centerOfMass = (0, 0, 0)
+                                float3 physics:diagonalInertia = (0, 0, 0)
+                                float physics:mass = 1e-9
+                                quatf physics:principalAxes = (1, 0, 0, 0)
+                            }
+                        }
+                    }
+                }
+            }
+
+            over "trunk" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            )
+            {
+                point3f physics:centerOfMass = (0, 0, 0)
+                float3 physics:diagonalInertia = (0, 0, 0)
+                float physics:mass = 1e-9
+                quatf physics:principalAxes = (1, 0, 0, 0)
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        def PhysicsRevoluteJoint "left_ankle" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2/foot_assembly>
+            point3f physics:localPos0 = (-4.1633363e-17, -0.07865, 0.0001)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90
+            float physics:upperLimit = 90
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "left_knee" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2>
+            point3f physics:localPos0 = (6.938894e-18, -0.07865, 0.0001)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90
+            float physics:upperLimit = 90
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "left_hip_pitch" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly>
+            point3f physics:localPos0 = (0.07415, 1.4094628e-18, 0.03511)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (-2.7755576e-16, 0.70710677, 1.110223e-16, -0.70710677)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -70
+            float physics:upperLimit = 30
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "left_hip_roll" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly>
+            point3f physics:localPos0 = (0.01905, 2.0469737e-15, -0.046015)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.5, -0.5, -0.5, 0.5)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -25
+            float physics:upperLimit = 25
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "left_hip_yaw" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly>
+            point3f physics:localPos0 = (-0.019, 0.035, 0.04594094)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -30
+            float physics:upperLimit = 30
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "right_ankle" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4/foot_assembly_2>
+            point3f physics:localPos0 = (-1.3877788e-17, -0.07865, 0.0001)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90
+            float physics:upperLimit = 90
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "right_knee" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4>
+            point3f physics:localPos0 = (0, 0.07865, 0.037)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (5.551115e-17, 1, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90
+            float physics:upperLimit = 90
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "right_hip_pitch" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3>
+            point3f physics:localPos0 = (-0.07415, 3.1870123e-16, 0.03511)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 6.655086e-17, 0.70710677, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -30
+            float physics:upperLimit = 70
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "right_hip_roll" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly>
+            point3f physics:localPos0 = (0.01905, 3.7851666e-14, -0.046015)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.5, -0.5, -0.5, 0.5)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -25
+            float physics:upperLimit = 25
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "right_hip_yaw" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2>
+            point3f physics:localPos0 = (-0.019, -0.035, 0.04594094)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -30
+            float physics:upperLimit = 30
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "left_antenna" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly/left_antenna_holder>
+            point3f physics:localPos0 = (0.00070406945, 0.060662836, 0.11643485)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (-0.37299135, -0.62696415, -0.4883214, 0.47888994)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90
+            float physics:upperLimit = 90
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "right_antenna" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly/right_antenna_holder>
+            point3f physics:localPos0 = (0.00070406945, -0.060662836, 0.11643485)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.37299135, -0.62696415, 0.4883214, 0.47888994)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90
+            float physics:upperLimit = 90
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "head_roll" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly>
+            point3f physics:localPos0 = (0.04095, -1.7527483e-16, -0.01915)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (-0.70710677, -4.7406125e-17, 0.70710677, -2.0441447e-16)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -30
+            float physics:upperLimit = 30
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "head_yaw" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly>
+            point3f physics:localPos0 = (-1.7130394e-17, 0.057, 0.01905)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, -0.70710677, -3.181602e-14, 3.1772724e-14)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -160
+            float physics:upperLimit = 160
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "head_pitch" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw>
+            point3f physics:localPos0 = (8.6736174e-19, 0.066, -6.938894e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -45
+            float physics:upperLimit = 45
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsRevoluteJoint "neck_pitch" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+            float drive:angular:physics:damping = 0.0052359877
+            float drive:angular:physics:maxForce = 1
+            float drive:angular:physics:stiffness = 0.23335052
+            uniform token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly>
+            point3f physics:localPos0 = (0.001, 0.01915, 0.09000094)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0.70710677, 3.181602e-14, -3.1772724e-14)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -20
+            float physics:upperLimit = 65
+            custom float urdf:limit:effort = 1
+            custom float urdf:limit:velocity = 20
+
+            def Scope "joint_properties"
+            {
+                custom string urdf:friction = "0.0"
+            }
+        }
+
+        def PhysicsFixedJoint "trunk_frame"
+        {
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/trunk>
+            point3f physics:localPos0 = (-0.024, -2.4112656e-16, 0.088190936)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+        }
+
+        def PhysicsFixedJoint "left_foot_frame"
+        {
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2/foot_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2/foot_assembly/left_foot>
+            point3f physics:localPos0 = (0.0005, -0.036225, 0.01955)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, -0.70710677, -8.214444e-17, 6.4792707e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+        }
+
+        def PhysicsFixedJoint "right_foot_frame"
+        {
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4/foot_assembly_2>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4/foot_assembly_2/right_foot>
+            point3f physics:localPos0 = (0.0005, -0.036225, 0.01955)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, -0.70710677, -8.0316737e-10, -8.031664e-10)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+        }
+
+        def PhysicsFixedJoint "head_frame"
+        {
+            custom rel physics:body0
+            prepend rel physics:body0 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly>
+            custom rel physics:body1
+            prepend rel physics:body1 = </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly/head_2>
+            point3f physics:localPos0 = (0.04245, 7.41784e-16, 0.03595)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (-0.70710677, 4.7406125e-17, -0.70710677, 2.0441447e-16)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+        }
+    }
+}
+

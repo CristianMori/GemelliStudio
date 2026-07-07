@@ -1,0 +1,308 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.2"
+    }
+    defaultPrim = "onshape"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\tmpw8qpsj5j\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\usdex_robot\\onshape.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\crist\\AppData\\Local\\Temp\\urdf_import_robot_6bttqu5h\\temp_robot\\robot.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "onshape" (
+    prepend apiSchemas = ["IsaacRobotAPI"]
+)
+{
+    prepend rel isaac:physics:robotJoints = [
+        </onshape/Physics/trunk_frame>,
+        </onshape/Physics/left_hip_yaw>,
+        </onshape/Physics/right_hip_yaw>,
+        </onshape/Physics/neck_pitch>,
+        </onshape/Physics/left_hip_roll>,
+        </onshape/Physics/left_hip_pitch>,
+        </onshape/Physics/left_knee>,
+        </onshape/Physics/left_ankle>,
+        </onshape/Physics/left_foot_frame>,
+        </onshape/Physics/right_hip_roll>,
+        </onshape/Physics/right_hip_pitch>,
+        </onshape/Physics/right_knee>,
+        </onshape/Physics/right_ankle>,
+        </onshape/Physics/right_foot_frame>,
+        </onshape/Physics/head_pitch>,
+        </onshape/Physics/head_yaw>,
+        </onshape/Physics/head_roll>,
+        </onshape/Physics/head_frame>,
+        </onshape/Physics/left_antenna>,
+        </onshape/Physics/right_antenna>,
+    ]
+    prepend rel isaac:physics:robotLinks = [
+        </onshape/Geometry/trunk_assembly>,
+        </onshape/Geometry/trunk_assembly/trunk>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2/foot_assembly>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly/left_roll_to_pitch_assembly/knee_and_ankle_assembly/knee_and_ankle_assembly_2/foot_assembly/left_foot>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly_2>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4/foot_assembly_2>,
+        </onshape/Geometry/trunk_assembly/hip_roll_assembly_2/right_roll_to_pitch_assembly/knee_and_ankle_assembly_3/knee_and_ankle_assembly_4/foot_assembly_2/right_foot>,
+        </onshape/Geometry/trunk_assembly/neck_pitch_assembly>,
+        </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw>,
+        </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly>,
+        </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly>,
+        </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly/head_2>,
+        </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly/left_antenna_holder>,
+        </onshape/Geometry/trunk_assembly/neck_pitch_assembly/head_pitch_to_yaw/neck_yaw_assembly/head_assembly/right_antenna_holder>,
+    ]
+    token isaac:robotType = "Default"
+
+    over "Geometry"
+    {
+        over "trunk_assembly" (
+            prepend apiSchemas = ["IsaacLinkAPI"]
+        )
+        {
+            over "hip_roll_assembly" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+                over "left_roll_to_pitch_assembly" (
+                    prepend apiSchemas = ["IsaacLinkAPI"]
+                )
+                {
+                    over "knee_and_ankle_assembly" (
+                        prepend apiSchemas = ["IsaacLinkAPI"]
+                    )
+                    {
+                        over "knee_and_ankle_assembly_2" (
+                            prepend apiSchemas = ["IsaacLinkAPI"]
+                        )
+                        {
+                            over "foot_assembly" (
+                                prepend apiSchemas = ["IsaacLinkAPI"]
+                            )
+                            {
+                                over "left_foot" (
+                                    prepend apiSchemas = ["IsaacLinkAPI"]
+                                )
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            over "hip_roll_assembly_2" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+                over "right_roll_to_pitch_assembly" (
+                    prepend apiSchemas = ["IsaacLinkAPI"]
+                )
+                {
+                    over "knee_and_ankle_assembly_3" (
+                        prepend apiSchemas = ["IsaacLinkAPI"]
+                    )
+                    {
+                        over "knee_and_ankle_assembly_4" (
+                            prepend apiSchemas = ["IsaacLinkAPI"]
+                        )
+                        {
+                            over "foot_assembly_2" (
+                                prepend apiSchemas = ["IsaacLinkAPI"]
+                            )
+                            {
+                                over "right_foot" (
+                                    prepend apiSchemas = ["IsaacLinkAPI"]
+                                )
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            over "neck_pitch_assembly" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+                over "head_pitch_to_yaw" (
+                    prepend apiSchemas = ["IsaacLinkAPI"]
+                )
+                {
+                    over "neck_yaw_assembly" (
+                        prepend apiSchemas = ["IsaacLinkAPI"]
+                    )
+                    {
+                        over "head_assembly" (
+                            prepend apiSchemas = ["IsaacLinkAPI"]
+                        )
+                        {
+                            over "left_antenna_holder" (
+                                prepend apiSchemas = ["IsaacLinkAPI"]
+                            )
+                            {
+                            }
+
+                            over "right_antenna_holder" (
+                                prepend apiSchemas = ["IsaacLinkAPI"]
+                            )
+                            {
+                            }
+
+                            over "head_2" (
+                                prepend apiSchemas = ["IsaacLinkAPI"]
+                            )
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+
+            over "trunk" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        over "trunk_frame" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "left_foot_frame" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "left_ankle" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "left_knee" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "left_hip_pitch" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "left_hip_roll" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "left_hip_yaw" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "right_foot_frame" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "right_ankle" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "right_knee" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "right_hip_pitch" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "right_hip_roll" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "right_hip_yaw" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "head_frame" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "left_antenna" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "right_antenna" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "head_roll" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "head_yaw" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "head_pitch" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "neck_pitch" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+    }
+}
+

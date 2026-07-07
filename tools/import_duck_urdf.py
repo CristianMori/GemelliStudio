@@ -2,7 +2,7 @@
 # (Isaac Sim 6.x API: URDFImporter/URDFImporterConfig).
 # Run with Isaac Sim's bundled Python:
 #   C:\isaacsim\python.bat tools\import_duck_urdf.py
-# Output: scenes\duck\robot\robot.usda (gitignored; regenerate any time).
+# Output: scenes\duck\robot\robot.usda (vendored in the repo; rerun to regenerate from the URDF).
 
 import os
 import sys
