@@ -9,11 +9,13 @@ using Gemelli.Fmi;
 namespace Gemelli.Studio;
 
 /// <summary>
-/// The signal mapper: a node graph of the running FMI wiring. Signal sources (sensors, operator
-/// values) sit on the left, FMI instances in the middle, actuators (drive joints, forces) on the
-/// right. Wires are cubic splines carrying the live value that crossed them on the latest frame.
-/// Nodes drag; right-click cuts a wire; dragging from a port dot to a compatible port reconnects —
-/// all applied to the live <see cref="FmiController"/>, so rewiring takes effect on the next frame.
+/// The signal mapper: a node graph of the running signal graph. Scene sources (sensors, operator
+/// values) and source blocks sit on the left, behavior blocks (FMU/SSP, policies) in the middle,
+/// actuators on the right. Wires are cubic splines carrying the live value that crossed them on the
+/// latest frame; vector wires draw thick with an element count. Nodes drag by their title bar;
+/// right-click cuts a wire (or removes a constant/device node); dragging between port dots
+/// connects — width mismatches open an element picker on drop. Everything applies to the live
+/// <see cref="SignalGraphController"/>, so rewiring takes effect on the next frame.
 /// </summary>
 public sealed class SignalMapperWindow : Window
 {
@@ -28,20 +30,24 @@ public sealed class SignalMapperWindow : Window
     private static readonly IBrush WireOut = B("#E5A34B");
     private static IBrush B(string hex) => new SolidColorBrush(Color.Parse(hex));
 
-    private enum PortKind { Source, FmiInput, FmiOutput, Actuator, Constant }
+    private enum PortKind { SceneSource, BlockInput, BlockOutput, Actuator, Constant }
 
-    /// <summary>A connection point: its node, kind, and either a scene endpoint or an FMI variable.</summary>
+    /// <summary>A connection point: its node, kind, and either a scene endpoint or a block pin.</summary>
     private sealed class Port
     {
         public required Node Node;
         public required PortKind Kind;
         public required string Label;
-        public SignalEndpoint? Endpoint;   // Source / Actuator / Constant ports
-        public string? FmuVariable;        // FmiInput / FmiOutput ports
-        public int RowIndex;               // vertical slot within the node
-        public double LocalY = double.NaN; // explicit anchor for irregular rows (constant nodes)
+        public SignalEndpoint? Endpoint;      // SceneSource / Actuator / Constant ports
+        public PinRef? Pin;                   // BlockInput / BlockOutput ports
+        public int Width = 1;                 // >1 = vector pin (thick wires)
+        public IReadOnlyList<string>? ElementLabels;
+        public int RowIndex;                  // vertical slot within the node
+        public double LocalY = double.NaN;    // explicit anchor for irregular rows (constant nodes)
+
+        public bool IsRightSide => Kind is PortKind.SceneSource or PortKind.BlockOutput or PortKind.Constant;
         public Point Center => new(
-            Node.Pos.X + (Kind is PortKind.Source or PortKind.FmiOutput or PortKind.Constant ? Node.Width : 0),
+            Node.Pos.X + (IsRightSide ? Node.Width : 0),
             Node.Pos.Y + (double.IsNaN(LocalY) ? HeaderH + RowIndex * RowH + RowH * 0.5 : LocalY));
     }
 
@@ -54,17 +60,18 @@ public sealed class SignalMapperWindow : Window
         public Point Pos;
         public readonly List<Port> Ports = [];
         public Avalonia.Controls.Border? Visual;
-        public FmiConstant? Constant; // non-null for constant nodes (editable value, removable)
+        public FmiConstant? Constant;   // non-null for constant nodes (editable value, removable)
+        public string? BlockPath;       // non-null for block nodes; "block:N" ones are removable
+        public KeyboardBlock? Keyboard; // non-null for keyboard nodes (has an add-key box)
     }
 
     private const double HeaderH = 26, RowH = 20;
 
-    private readonly FmiController _fmi;
+    private readonly SignalGraphController _graph;
     private readonly Canvas _canvas = new() { Background = Brushes.Transparent };
     private readonly WireLayer _wires;
     private readonly List<Node> _nodes = [];
     private readonly List<Port> _ports = [];
-    private readonly Dictionary<Node, string> _fmiNodeInstance = new(); // FMI node -> its prim path
     private readonly DispatcherTimer _timer; // repaints the wire layer so value labels stay live
 
     // Interaction state.
@@ -73,9 +80,9 @@ public sealed class SignalMapperWindow : Window
     private Port? _connectFrom;
     private Point _connectCursor;
 
-    public SignalMapperWindow(FmiController fmi)
+    public SignalMapperWindow(SignalGraphController graph)
     {
-        _fmi = fmi;
+        _graph = graph;
         Title = "Signal Mapper";
         Width = 1150;
         Height = 640;
@@ -86,20 +93,15 @@ public sealed class SignalMapperWindow : Window
         root.Children.Add(_wires);   // wires under the nodes
         root.Children.Add(_canvas);
 
-        var addConst = new Button
-        {
-            Content = "+ Constant", FontSize = 12, Foreground = Text, Background = NodeHeader,
-            Padding = new Thickness(10, 4), Margin = new Thickness(8),
-        };
-        addConst.Click += (_, _) => AddConstantNode(_fmi.AddConstant());
-        var hint = new TextBlock
+        var toolbar = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 10 };
+        toolbar.Children.Add(ToolbarButton("+ Constant", () => AddConstantNode(_graph.AddConstant())));
+        toolbar.Children.Add(ToolbarButton("+ Gamepad", () => AddDeviceNode(new GamepadBlock())));
+        toolbar.Children.Add(ToolbarButton("+ Keyboard", () => AddDeviceNode(new KeyboardBlock())));
+        toolbar.Children.Add(new TextBlock
         {
             Text = "drag headers to move · drag a dot to connect · right-click a wire to cut",
             Foreground = TextDim, FontSize = 11, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-        };
-        var toolbar = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 10 };
-        toolbar.Children.Add(addConst);
-        toolbar.Children.Add(hint);
+        });
 
         var dock = new DockPanel();
         DockPanel.SetDock(toolbar, Dock.Top);
@@ -123,86 +125,95 @@ public sealed class SignalMapperWindow : Window
         Closed += (_, _) => _timer.Stop();
     }
 
+    private Button ToolbarButton(string text, Action onClick)
+    {
+        var b = new Button
+        {
+            Content = text, FontSize = 12, Foreground = Text, Background = NodeHeader,
+            Padding = new Thickness(10, 4), Margin = new Thickness(8, 8, 0, 8),
+        };
+        b.Click += (_, _) => onClick();
+        return b;
+    }
+
     // ---------------------------------------------------------------- graph construction
 
-    // Nodes come from the controller: source/actuator endpoints from the mapping rows (the endpoint
-    // universe is fixed; wires between them change), FMI nodes from the live instance ports.
+    // Nodes come from the controller: scene source/actuator endpoints from the wire rows (the scene
+    // endpoint universe is fixed; wires between them change), block nodes from the block list.
     private void BuildGraph()
     {
         _nodes.Clear();
         _ports.Clear();
         _canvas.Children.Clear();
 
-        IReadOnlyList<SignalMapping> rows = _fmi.Mappings;
+        IReadOnlyList<SignalMapping> rows = _graph.Mappings;
 
-        // Left: one node per input-side target prim; a port per distinct endpoint on it. Overlap
-        // sensors get their own flavor of label.
+        // Left: one node per scene prim used as an input source; a port per distinct endpoint.
         var sourceNodes = new Dictionary<string, Node>();
-        foreach (SignalMapping r in rows.Where(r => r.IsInput))
-            AddEndpointPort(sourceNodes, r.Endpoint, PortKind.Source, 230);
+        foreach (SignalMapping r in rows)
+            if (r.SourceEndpoint is { } ep && ep.UsdAttribute != SignalGraphController.ConstantAttribute)
+                AddEndpointPort(sourceNodes, ep, PortKind.SceneSource, 230);
 
-        // Right: one node per output-side target prim.
+        // Right: one node per scene prim used as an actuator target.
         var actuatorNodes = new Dictionary<string, Node>();
-        foreach (SignalMapping r in rows.Where(r => !r.IsInput))
-            AddEndpointPort(actuatorNodes, r.Endpoint, PortKind.Actuator, 250);
+        foreach (SignalMapping r in rows)
+            if (r.SinkEndpoint is { } ep)
+                AddEndpointPort(actuatorNodes, ep, PortKind.Actuator, 250);
 
-        // Middle: the FMI instances with their full connectable surface.
-        var fmiNodes = new List<Node>();
-        foreach (FmiInstancePorts inst in _fmi.InstancePorts)
+        // Middle: every block with its full pin surface.
+        var blockNodes = new List<Node>();
+        foreach ((string path, ISignalBlock block) in _graph.Blocks)
         {
-            var node = new Node { Title = $"{(inst.IsSsp ? "SSP" : "FMU")}  {inst.Name}", Width = 240 };
-            int i = 0;
-            foreach (string v in inst.Inputs)
-            {
-                var p = new Port { Node = node, Kind = PortKind.FmiInput, Label = v, FmuVariable = v, RowIndex = i++ };
-                node.Ports.Add(p); _ports.Add(p);
-            }
-            foreach (string v in inst.Outputs)
-            {
-                var p = new Port { Node = node, Kind = PortKind.FmiOutput, Label = v, FmuVariable = v, RowIndex = i++ };
-                node.Ports.Add(p); _ports.Add(p);
-            }
-            node.Pos = new Point(0, 0); // placed below
-            fmiNodes.Add(node);
-            _nodes.Add(node);
-            _fmiNodeInstance[node] = inst.PrimPath;
+            Node node = MakeBlockNode(path, block);
+            blockNodes.Add(node);
         }
 
-        // Column layout: sources x=30, FMI x=430, actuators x=830; stack each column.
+        // Column layout: sources x=30, blocks x=430, actuators x=830; stack each column.
         double y = 30;
         foreach (Node n in sourceNodes.Values) { n.Pos = new Point(30, y); y += NodeHeight(n) + 24; }
         y = 30;
-        foreach (Node n in fmiNodes) { n.Pos = new Point(430, y); y += NodeHeight(n) + 24; }
+        foreach (Node n in blockNodes) { n.Pos = new Point(430, y); y += NodeHeight(n) + 24; }
         y = 30;
         foreach (Node n in actuatorNodes.Values) { n.Pos = new Point(830, y); y += NodeHeight(n) + 24; }
 
         foreach (Node n in _nodes) BuildNodeVisual(n);
 
         // Constant nodes already defined on the controller (e.g. window reopened mid-run).
-        foreach (FmiConstant c in _fmi.Constants) AddConstantNode(c);
+        foreach (FmiConstant c in _graph.Constants) AddConstantNode(c);
         _wires.InvalidateVisual();
     }
 
-    /// <summary>Creates the node for a constant: an editable value box with one output port.</summary>
-    private void AddConstantNode(FmiConstant c)
+    // Creates the node + ports for one block (visual built separately so layout can place it first).
+    private Node MakeBlockNode(string path, ISignalBlock block)
     {
-        int existing = _nodes.Count(n => n.Constant is not null);
         var node = new Node
         {
-            Title = c.Name, Width = 150, Constant = c,
-            Pos = new Point(220, 30 + existing * 96),
+            Title = block.DisplayName, Width = 240,
+            BlockPath = path, Keyboard = block as KeyboardBlock,
         };
-        var port = new Port
+        int i = 0;
+        foreach (BlockPin p in block.InputPins)
         {
-            Node = node, Kind = PortKind.Constant, Label = "value",
-            Endpoint = new SignalEndpoint(c.Path, FmiController.ConstantAttribute, 0, 0),
-            LocalY = HeaderH + 17,
-        };
-        node.Ports.Add(port);
-        _ports.Add(port);
+            var port = new Port
+            {
+                Node = node, Kind = PortKind.BlockInput,
+                Label = p.Width > 1 ? $"{p.Name} [{p.Width}]" : p.Name,
+                Pin = new PinRef(path, p.Name), Width = p.Width, ElementLabels = p.ElementLabels, RowIndex = i++,
+            };
+            node.Ports.Add(port); _ports.Add(port);
+        }
+        foreach (BlockPin p in block.OutputPins)
+        {
+            var port = new Port
+            {
+                Node = node, Kind = PortKind.BlockOutput,
+                Label = p.Width > 1 ? $"{p.Name} [{p.Width}]" : p.Name,
+                Pin = new PinRef(path, p.Name), Width = p.Width, ElementLabels = p.ElementLabels, RowIndex = i++,
+            };
+            node.Ports.Add(port); _ports.Add(port);
+        }
         _nodes.Add(node);
-        BuildNodeVisual(node);
-        _wires.InvalidateVisual();
+        return node;
     }
 
     private void AddEndpointPort(Dictionary<string, Node> byPrim, SignalEndpoint ep, PortKind kind, double width)
@@ -225,7 +236,40 @@ public sealed class SignalMapperWindow : Window
         _ports.Add(port);
     }
 
-    private static double NodeHeight(Node n) => HeaderH + n.Ports.Count * RowH + 8;
+    private static double NodeHeight(Node n) => HeaderH + n.Ports.Count * RowH + (n.Keyboard is null ? 8 : RowH + 12);
+
+    /// <summary>Creates the node for a constant: an editable value box with one output port.</summary>
+    private void AddConstantNode(FmiConstant c)
+    {
+        int existing = _nodes.Count(n => n.Constant is not null);
+        var node = new Node
+        {
+            Title = c.Name, Width = 150, Constant = c,
+            Pos = new Point(220, 30 + existing * 96),
+        };
+        var port = new Port
+        {
+            Node = node, Kind = PortKind.Constant, Label = "value",
+            Endpoint = SignalGraphController.ConstantEndpoint(c),
+            LocalY = HeaderH + 17,
+        };
+        node.Ports.Add(port);
+        _ports.Add(port);
+        _nodes.Add(node);
+        BuildNodeVisual(node);
+        _wires.InvalidateVisual();
+    }
+
+    /// <summary>Adds a device block (gamepad/keyboard) to the running graph and builds its node.</summary>
+    private void AddDeviceNode(ISignalBlock block)
+    {
+        string path = _graph.AddBlock(block);
+        int existing = _nodes.Count(n => n.BlockPath is not null && n.BlockPath.StartsWith("block:", StringComparison.Ordinal));
+        Node node = MakeBlockNode(path, block);
+        node.Pos = new Point(30, 460 + existing * 200); // below the scene sources; drag to taste
+        BuildNodeVisual(node);
+        _wires.InvalidateVisual();
+    }
 
     private void BuildNodeVisual(Node node)
     {
@@ -240,12 +284,13 @@ public sealed class SignalMapperWindow : Window
                 Margin = new Thickness(8, 5, 8, 0),
             },
         };
-        // Nodes drag by their title bar; right-click on a constant's header removes it (and its wires).
+        // Nodes drag by their title bar; right-click removes the removable kinds (constants and
+        // runtime device blocks) together with their wires.
         header.PointerPressed += (_, e) =>
         {
-            if (e.GetCurrentPoint(header).Properties.IsRightButtonPressed && node.Constant is not null)
+            if (e.GetCurrentPoint(header).Properties.IsRightButtonPressed && IsRemovable(node))
             {
-                RemoveConstantNode(node);
+                RemoveNode(node);
                 e.Handled = true;
                 return;
             }
@@ -260,8 +305,7 @@ public sealed class SignalMapperWindow : Window
         {
             // Body: [ value box ][ output dot ] — edits apply on the next frame.
             var row = new DockPanel { Height = 34, Margin = new Thickness(6, 0) };
-            Port p = node.Ports[0];
-            var dot = PortDot(p, WireOut);
+            var dot = PortDot(node.Ports[0], WireOut);
             DockPanel.SetDock(dot, Dock.Right);
             row.Children.Add(dot);
             var box = new TextBox
@@ -282,9 +326,9 @@ public sealed class SignalMapperWindow : Window
         {
             foreach (Port p in node.Ports)
             {
-                bool left = p.Kind is PortKind.FmiInput or PortKind.Actuator;
+                bool left = !p.IsRightSide;
                 var row = new DockPanel { Height = RowH, Margin = new Thickness(6, 0) };
-                var dot = PortDot(p, p.Kind is PortKind.Source or PortKind.FmiInput ? WireIn : WireOut);
+                var dot = PortDot(p, p.Kind is PortKind.SceneSource or PortKind.BlockInput ? WireIn : WireOut);
                 DockPanel.SetDock(dot, left ? Dock.Left : Dock.Right);
                 row.Children.Add(dot);
                 row.Children.Add(new TextBlock
@@ -295,6 +339,25 @@ public sealed class SignalMapperWindow : Window
                     TextAlignment = left ? TextAlignment.Left : TextAlignment.Right,
                 });
                 stack.Children.Add(row);
+            }
+
+            if (node.Keyboard is { } kb)
+            {
+                // On-the-fly key pins: type a key name (W, Space, Left) and press Enter.
+                var addRow = new DockPanel { Height = RowH + 8, Margin = new Thickness(6, 2) };
+                var box = new TextBox
+                {
+                    Watermark = "+ key", FontSize = 11, Padding = new Thickness(6, 2),
+                };
+                box.KeyDown += (_, e) =>
+                {
+                    if (e.Key != Key.Enter) return;
+                    if (kb.AddKey(box.Text ?? "")) RebuildNodeVisual(node, kb);
+                    box.Text = "";
+                    e.Handled = true;
+                };
+                addRow.Children.Add(box);
+                stack.Children.Add(addRow);
             }
         }
 
@@ -310,12 +373,26 @@ public sealed class SignalMapperWindow : Window
         _canvas.Children.Add(border);
     }
 
+    // A keyboard node grew a pin: rebuild its ports and visual in place (position preserved).
+    private void RebuildNodeVisual(Node node, ISignalBlock block)
+    {
+        _ports.RemoveAll(p => p.Node == node);
+        node.Ports.Clear();
+        if (node.Visual is not null) _canvas.Children.Remove(node.Visual);
+        _nodes.Remove(node);
+
+        Node fresh = MakeBlockNode(node.BlockPath!, block);
+        fresh.Pos = node.Pos;
+        BuildNodeVisual(fresh);
+        _wires.InvalidateVisual();
+    }
+
     /// <summary>The clickable connection dot for a port; pressing it starts a wire drag.</summary>
     private Ellipse PortDot(Port p, IBrush fill)
     {
         var dot = new Ellipse
         {
-            Width = 10, Height = 10, Fill = fill,
+            Width = p.Width > 1 ? 13 : 10, Height = p.Width > 1 ? 13 : 10, Fill = fill,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
             Cursor = new Cursor(StandardCursorType.Hand),
             Tag = p,
@@ -324,11 +401,15 @@ public sealed class SignalMapperWindow : Window
         return dot;
     }
 
-    /// <summary>Deletes a constant: its wires (via the controller), its ports, and its visual.</summary>
-    private void RemoveConstantNode(Node node)
+    private static bool IsRemovable(Node node) =>
+        node.Constant is not null
+        || (node.BlockPath is not null && node.BlockPath.StartsWith("block:", StringComparison.Ordinal));
+
+    /// <summary>Deletes a removable node: its wires (via the controller), its ports, and its visual.</summary>
+    private void RemoveNode(Node node)
     {
-        if (node.Constant is null) return;
-        _fmi.RemoveConstant(node.Constant.Id);
+        if (node.Constant is { } c) _graph.RemoveConstant(c.Id);
+        else if (node.BlockPath is { } path) _graph.RemoveBlock(path);
         _ports.RemoveAll(p => p.Node == node);
         _nodes.Remove(node);
         if (node.Visual is not null) _canvas.Children.Remove(node.Visual);
@@ -362,13 +443,14 @@ public sealed class SignalMapperWindow : Window
         }
     }
 
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    private async void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         if (_connectFrom is not null)
         {
-            Port? target = HitPort(e.GetPosition(_canvas), 14);
-            if (target is not null) TryConnect(_connectFrom, target);
+            Port from = _connectFrom;
             _connectFrom = null;
+            Port? target = HitPort(e.GetPosition(_canvas), 14);
+            if (target is not null) await TryConnect(from, target);
             _wires.InvalidateVisual();
         }
         _dragNode = null;
@@ -380,7 +462,7 @@ public sealed class SignalMapperWindow : Window
         if (!e.GetCurrentPoint(_canvas).Properties.IsRightButtonPressed) return;
         Point pos = e.GetPosition(_canvas);
         (SignalMapping Row, double Dist)? best = null;
-        foreach (SignalMapping row in _fmi.Mappings)
+        foreach (SignalMapping row in _graph.Mappings)
         {
             if (WireGeometry(row) is not { } g) continue;
             double d = DistanceToBezier(pos, g.From, g.C1, g.C2, g.To);
@@ -388,30 +470,89 @@ public sealed class SignalMapperWindow : Window
         }
         if (best is { Dist: <= 9 })
         {
-            _fmi.RemoveMapping(best.Value.Row.Id);
+            _graph.RemoveMapping(best.Value.Row.Id);
             _wires.InvalidateVisual();
             e.Handled = true;
         }
     }
 
-    // Valid wires: source → FMI input, FMI output → actuator, constant → FMI input,
-    // constant → actuator (bypasses the models). Direction of the drag doesn't matter.
-    private void TryConnect(Port a, Port b)
+    // Valid wires: any source-side port (scene source, constant, block output) to any sink-side
+    // port (block input, actuator). Drag direction doesn't matter. Width mismatches open the
+    // element picker to choose which component the wire carries.
+    private async Task TryConnect(Port a, Port b)
     {
-        (Port from, Port to) = a.Kind is PortKind.Source or PortKind.FmiOutput or PortKind.Constant ? (a, b) : (b, a);
-        FmiConstant? c = from.Node.Constant;
-        if (from.Kind == PortKind.Source && to.Kind == PortKind.FmiInput)
-            _fmi.AddMapping(FindInstancePath(to), to.FmuVariable!, isInput: true, from.Endpoint!);
-        else if (from.Kind == PortKind.FmiOutput && to.Kind == PortKind.Actuator)
-            _fmi.AddMapping(FindInstancePath(from), from.FmuVariable!, isInput: false, to.Endpoint!);
-        else if (from.Kind == PortKind.Constant && to.Kind == PortKind.FmiInput && c is not null)
-            _fmi.ConnectConstantToInput(c, FindInstancePath(to), to.FmuVariable!);
-        else if (from.Kind == PortKind.Constant && to.Kind == PortKind.Actuator && c is not null)
-            _fmi.ConnectConstantToActuator(c, to.Endpoint!);
+        (Port from, Port to) = a.IsRightSide ? (a, b) : (b, a);
+        if (!from.IsRightSide || to.IsRightSide) return;
+
+        int fromW = Math.Max(1, from.Width), toW = Math.Max(1, to.Width);
+        int sourceOffset = 0, sinkOffset = 0;
+        int count = Math.Min(fromW, toW);
+        if (fromW != toW)
+        {
+            // Pick the element on the wider side; the wire then carries the narrower width.
+            if (fromW > toW)
+            {
+                int? pick = await PickElement(from, $"{from.Label}: which element feeds {to.Label}?");
+                if (pick is null) return;
+                sourceOffset = pick.Value;
+            }
+            else
+            {
+                int? pick = await PickElement(to, $"{to.Label}: which element does {from.Label} drive?");
+                if (pick is null) return;
+                sinkOffset = pick.Value;
+            }
+        }
+
+        _graph.Connect(
+            sourceEndpoint: from.Endpoint, sourcePin: from.Pin,
+            sinkPin: to.Pin, sinkEndpoint: to.Endpoint,
+            sourceOffset: sourceOffset, sinkOffset: sinkOffset, count: count);
     }
 
-    private string FindInstancePath(Port fmiPort) =>
-        _fmiNodeInstance.TryGetValue(fmiPort.Node, out string? path) ? path : "";
+    // The drop-time element picker: a small modal listing the vector pin's element labels.
+    private async Task<int?> PickElement(Port vectorPort, string prompt)
+    {
+        var list = new ListBox { Background = NodeBg, Foreground = Text };
+        var items = new List<string>();
+        for (int i = 0; i < vectorPort.Width; i++)
+            items.Add(vectorPort.ElementLabels is { } labels && i < labels.Count ? $"{i}: {labels[i]}" : $"element {i}");
+        list.ItemsSource = items;
+
+        var dialog = new Window
+        {
+            Title = "Pick element",
+            Width = 340, Height = Math.Min(420, 90 + items.Count * 26),
+            Background = Bg,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Content = new DockPanel
+            {
+                Children =
+                {
+                    Dock(new TextBlock
+                    {
+                        Text = prompt, Foreground = TextDim, FontSize = 12, Margin = new Thickness(10, 8),
+                        TextWrapping = TextWrapping.Wrap,
+                    }, Avalonia.Controls.Dock.Top),
+                    new ScrollViewer { Content = list },
+                },
+            },
+        };
+        int? result = null;
+        list.SelectionChanged += (_, _) =>
+        {
+            result = list.SelectedIndex >= 0 ? list.SelectedIndex : null;
+            dialog.Close();
+        };
+        await dialog.ShowDialog(this);
+        return result;
+
+        static Control Dock(Control c, Avalonia.Controls.Dock dock)
+        {
+            DockPanel.SetDock(c, dock);
+            return c;
+        }
+    }
 
     /// <summary>The nearest port dot within <paramref name="radius"/> px of a point, or null.</summary>
     private Port? HitPort(Point pos, double radius)
@@ -428,32 +569,23 @@ public sealed class SignalMapperWindow : Window
 
     // ---------------------------------------------------------------- wires
 
-    // Resolves a mapping row to its wire's cubic-bezier control points (source and sink port
-    // anchors, with horizontal control handles), or null when either endpoint has no port.
+    // Resolves a wire row to its source and sink ports, or null when either has no port on screen.
+    private (Port From, Port To)? WirePorts(SignalMapping row)
+    {
+        Port? from = row.SourcePin is { } sp
+            ? _ports.FirstOrDefault(p => p.Kind == PortKind.BlockOutput && Equals(p.Pin, sp))
+            : _ports.FirstOrDefault(p => p.Kind is PortKind.SceneSource or PortKind.Constant && Equals(p.Endpoint, row.SourceEndpoint));
+        Port? to = row.SinkPin is { } kp
+            ? _ports.FirstOrDefault(p => p.Kind == PortKind.BlockInput && Equals(p.Pin, kp))
+            : _ports.FirstOrDefault(p => p.Kind == PortKind.Actuator && Equals(p.Endpoint, row.SinkEndpoint));
+        return from is null || to is null ? null : (from, to);
+    }
+
+    // A wire's cubic-bezier control points (port anchors with horizontal control handles).
     private (Point From, Point C1, Point C2, Point To)? WireGeometry(SignalMapping row)
     {
-        Point from, to;
-        if (!row.IsInput && row.InstancePath.StartsWith("const:", StringComparison.Ordinal))
-        {
-            // Constant → actuator: no FMI port involved.
-            Port? cPort = _ports.FirstOrDefault(p => p.Kind == PortKind.Constant && p.Endpoint?.TargetPath == row.InstancePath);
-            Port? aPort = _ports.FirstOrDefault(p => p.Kind == PortKind.Actuator && Equals(p.Endpoint, row.Endpoint));
-            if (cPort is null || aPort is null) return null;
-            (from, to) = (cPort.Center, aPort.Center);
-        }
-        else
-        {
-            Port? fmiPort = _ports.FirstOrDefault(p =>
-                (row.IsInput ? p.Kind == PortKind.FmiInput : p.Kind == PortKind.FmiOutput)
-                && p.FmuVariable == row.FmuVariable);
-            Port? scenePort = row.IsInput && row.Endpoint.UsdAttribute == FmiController.ConstantAttribute
-                ? _ports.FirstOrDefault(p => p.Kind == PortKind.Constant && p.Endpoint?.TargetPath == row.Endpoint.TargetPath)
-                : _ports.FirstOrDefault(p =>
-                    (row.IsInput ? p.Kind == PortKind.Source : p.Kind == PortKind.Actuator)
-                    && Equals(p.Endpoint, row.Endpoint));
-            if (fmiPort is null || scenePort is null) return null;
-            (from, to) = row.IsInput ? (scenePort.Center, fmiPort.Center) : (fmiPort.Center, scenePort.Center);
-        }
+        if (WirePorts(row) is not { } ports) return null;
+        (Point from, Point to) = (ports.From.Center, ports.To.Center);
         double dx = Math.Max(40, Math.Abs(to.X - from.X) * 0.45);
         return (from, new Point(from.X + dx, from.Y), new Point(to.X - dx, to.Y), to);
     }
@@ -487,36 +619,27 @@ public sealed class SignalMapperWindow : Window
             // Fill the layer so it hit-tests for the right-click cut everywhere.
             ctx.FillRectangle(Brushes.Transparent, new Rect(Bounds.Size));
 
-            IReadOnlyList<SignalMapping> mappings = _w._fmi.Mappings;
+            IReadOnlyList<SignalMapping> mappings = _w._graph.Mappings;
 
-            // Unconnected FMI output pins still show their live value, right of the dot.
+            // Unconnected block output pins still show their live value, right of the dot.
             foreach (Port p in _w._ports)
             {
-                if (p.Kind != PortKind.FmiOutput) continue;
-                if (mappings.Any(r => !r.IsInput && r.FmuVariable == p.FmuVariable
-                        && r.InstancePath == _w.FindInstancePath(p))) continue;
-                if (_w._fmi.InstanceOutputs(_w.FindInstancePath(p)) is not { } outs
-                    || !outs.TryGetValue(p.FmuVariable!, out double value)) continue;
-                var txt = new FormattedText(
-                    value.ToString("0.##"),
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight, Typeface.Default, 11, TextDim);
-                ctx.DrawText(txt, p.Center + new Point(10, -7));
+                if (p.Kind != PortKind.BlockOutput || p.Pin is null) continue;
+                if (mappings.Any(r => Equals(r.SourcePin, p.Pin))) continue;
+                if (_w._graph.BlockOutputs(p.Pin.BlockPath) is not { } outs
+                    || outs.GetValueOrDefault(p.Pin.Pin) is not { Length: > 0 } v) continue;
+                DrawLabel(ctx, FormatValue(v, p.Width), p.Center + new Point(10, -7), TextDim, boxed: false);
             }
 
             foreach (SignalMapping row in mappings)
             {
                 if (_w.WireGeometry(row) is not { } g) continue;
-                IBrush brush = row.IsInput ? WireIn : WireOut;
-                DrawWire(ctx, g.From, g.C1, g.C2, g.To, new Pen(brush, 1.8));
+                IBrush brush = row.SinkPin is not null ? WireIn : WireOut;
+                double thickness = row.Count > 1 ? 3.6 : 1.8;
+                DrawWire(ctx, g.From, g.C1, g.C2, g.To, new Pen(brush, thickness));
 
                 Point mid = Bezier(g.From, g.C1, g.C2, g.To, 0.5);
-                var label = new FormattedText(
-                    row.LastValue.ToString("0.##"),
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight, Typeface.Default, 11, brush);
-                ctx.FillRectangle(Bg, new Rect(mid.X - label.Width / 2 - 3, mid.Y - 8, label.Width + 6, 15));
-                ctx.DrawText(label, new Point(mid.X - label.Width / 2, mid.Y - 8));
+                DrawLabel(ctx, FormatValue(row.LastValues, row.Count), new Point(mid.X, mid.Y - 8), brush, boxed: true);
             }
 
             if (_w._connectFrom is { } from)
@@ -526,6 +649,25 @@ public sealed class SignalMapperWindow : Window
                 DrawWire(ctx, a, new Point(a.X + dx, a.Y), new Point(b.X - dx, b.Y), b,
                     new Pen(Accent, 1.5, dashStyle: new DashStyle([4, 3], 0)));
             }
+        }
+
+        // Scalars print plainly; vectors print "[n] first-value".
+        private static string FormatValue(double[] v, int width)
+        {
+            if (v.Length == 0) return "";
+            return width > 1 || v.Length > 1 ? $"[{v.Length}] {v[0]:0.##}…" : v[0].ToString("0.##");
+        }
+
+        private void DrawLabel(DrawingContext ctx, string text, Point at, IBrush brush, bool boxed)
+        {
+            if (text.Length == 0) return;
+            var label = new FormattedText(
+                text, System.Globalization.CultureInfo.InvariantCulture,
+                FlowDirection.LeftToRight, Typeface.Default, 11, brush);
+            Point origin = boxed ? new Point(at.X - label.Width / 2, at.Y) : at;
+            if (boxed)
+                ctx.FillRectangle(Bg, new Rect(origin.X - 3, origin.Y, label.Width + 6, 15));
+            ctx.DrawText(label, origin);
         }
 
         private static void DrawWire(DrawingContext ctx, Point p0, Point c1, Point c2, Point p3, IPen pen)

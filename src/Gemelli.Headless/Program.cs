@@ -40,13 +40,13 @@ try
     var runner = new TwinRunner(twin);
 
     // FMI co-simulation models embedded in the scene (ovfmi USD-FMI schema): detected automatically
-    // and stepped once per frame alongside whatever other controller runs.
+    // and stepped once per frame as a signal graph alongside whatever other controller runs.
     Gemelli.Fmi.FmiSceneConfig? fmiConfig = null;
     try { fmiConfig = Gemelli.Fmi.FmiSchema.Load(options.Sim.UsdPath); }
     catch (Exception ex) { Console.Error.WriteLine($"FMI schema read failed: {ex.Message.Split('\n')[0]}"); }
     if (fmiConfig is not null)
     {
-        runner.Add(new Gemelli.Fmi.FmiController(fmiConfig));
+        runner.Add(new Gemelli.Fmi.SignalGraphController(fmiConfig));
         Console.WriteLine($"Controller: FMI ({fmiConfig.Instances.Count} instance(s))");
     }
 
