@@ -99,6 +99,7 @@ public sealed class SignalMapperWindow : Window
         toolbar.Children.Add(ToolbarButton("+ Keyboard", () => AddDeviceNode(new KeyboardBlock())));
         toolbar.Children.Add(ToolbarButton("+ Multiply", () => AddDeviceNode(new MultiplyBlock())));
         toolbar.Children.Add(ToolbarButton("+ ONNX…", () => _ = AddOnnxBlock()));
+        toolbar.Children.Add(ToolbarButton("+ ROS…", () => _ = AddRosBlock()));
         toolbar.Children.Add(new TextBlock
         {
             Text = "drag headers to move · drag a dot to connect · right-click a wire to cut",
@@ -282,6 +283,87 @@ public sealed class SignalMapperWindow : Window
         {
             Console.Error.WriteLine("[fmi] ONNX block failed: " + ex.Message.Split('\n')[0]);
         }
+    }
+
+    /// <summary>The "+ ROS…" dialog: pick a role (subscribe/publish), topic, and master URI.</summary>
+    private async Task AddRosBlock()
+    {
+        string[] kinds = ["Subscribe  Twist (cmd_vel)", "Publish  JointState", "Publish  Odometry", "Publish  /clock"];
+        string[] defaultTopics = ["/cmd_vel", "/joint_states", "/odom", "/clock"];
+
+        var master = new TextBox
+        {
+            Text = Environment.GetEnvironmentVariable("ROS_MASTER_URI") ?? "http://localhost:11311/",
+        };
+        var kind = new ComboBox { ItemsSource = kinds, SelectedIndex = 0, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch };
+        var topic = new TextBox { Text = defaultTopics[0] };
+        // Joint names for the JointState publisher; prefilled from any block exposing a labelled
+        // DOF pin (e.g. the duck policy), so the common case is zero typing.
+        var names = new TextBox
+        {
+            Text = string.Join(",", _graph.Blocks
+                .SelectMany(b => b.Block.InputPins)
+                .FirstOrDefault(p => p.Name == "dof_pos" && p.ElementLabels is not null)?.ElementLabels ?? []),
+            Watermark = "joint names, comma-separated",
+        };
+        var error = new TextBlock { Foreground = Brushes.IndianRed, FontSize = 11, TextWrapping = TextWrapping.Wrap };
+        kind.SelectionChanged += (_, _) =>
+        {
+            int i = Math.Max(0, kind.SelectedIndex);
+            topic.Text = defaultTopics[i];
+            names.IsEnabled = i == 1;
+        };
+        names.IsEnabled = false;
+
+        var dialog = new Window
+        {
+            Title = "Add ROS block",
+            Width = 380, SizeToContent = SizeToContent.Height,
+            Background = Bg,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        };
+        var ok = new Button { Content = "Add", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right };
+        ok.Click += (_, _) =>
+        {
+            try
+            {
+                string uri = master.Text ?? "";
+                string top = string.IsNullOrWhiteSpace(topic.Text) ? defaultTopics[kind.SelectedIndex] : topic.Text!;
+                ISignalBlock block = kind.SelectedIndex switch
+                {
+                    0 => new RosTwistSubscriberBlock(top, uri),
+                    1 => new RosJointStatePublisherBlock(top, ParseNames(names.Text), masterUri: uri),
+                    2 => new RosOdometryPublisherBlock(top, masterUri: uri),
+                    _ => new RosClockBlock(uri),
+                };
+                AddDeviceNode(block);
+                dialog.Close();
+            }
+            catch (Exception ex)
+            {
+                error.Text = ex.Message.Split('\n')[0]; // e.g. master unreachable
+            }
+        };
+
+        var form = new StackPanel { Spacing = 6, Margin = new Thickness(12) };
+        form.Children.Add(Label("Master URI (roscore)"));
+        form.Children.Add(master);
+        form.Children.Add(Label("Role"));
+        form.Children.Add(kind);
+        form.Children.Add(Label("Topic"));
+        form.Children.Add(topic);
+        form.Children.Add(Label("Joint names (JointState only)"));
+        form.Children.Add(names);
+        form.Children.Add(error);
+        form.Children.Add(ok);
+        dialog.Content = form;
+        await dialog.ShowDialog(this);
+        return;
+
+        TextBlock Label(string text) => new() { Text = text, Foreground = TextDim, FontSize = 11 };
+
+        static string[] ParseNames(string? csv) =>
+            (csv ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
     /// <summary>Adds a runtime block (device, policy) to the running graph and builds its node.</summary>
