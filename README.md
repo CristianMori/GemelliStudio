@@ -63,8 +63,8 @@ the apps auto-discover them. From the repo root (PowerShell):
 .\run-studio.ps1            # incremental build, then launch the Studio UI (-NoBuild to skip)
 
 .\run-headless.ps1 --usd scenes\franka_studio.usda `
-    --products /Render/OmniverseKit/HydraTextures/camera_sensor_162912244368 `
-    --steps 60 --device gpu --record out\dataset
+    --products /Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0 `
+    --steps 60 --device gpu
 ```
 
 In Studio: pick a scene from the dropdown (or **Browse**), choose a device, press **Start**. Drag to
@@ -253,14 +253,18 @@ The render product needs a camera that exists in the USD. The `tools/` USD-autho
 
 ```powershell
 .\run-headless.ps1 --usd scenes\franka_studio.usda `
-  --products /Render/OmniverseKit/HydraTextures/camera_sensor_162912244368 `
-  --steps 120 --out out --device gpu --record out\dataset
+  --products /Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0 `
+  --steps 120 --out out --device gpu
 ```
 
 Flags: `--usd --products --steps --out --record <dir> --dt --rigid <glob> --device cpu|gpu|auto
 --script <path.csx> --dump-dof <robotPath>` (`--ovrtx-lib` / `--ovphysx-lib` optional, auto-discovered).
 The first render compiles RTX shaders (slow once, then cached). Color PNGs (plus normalized depth PNGs
 when the product carries depth) land in `out\`; `--record` writes the labeled dataset described above.
+The overview product above shows the whole scene; for the labeled dataset (color + depth) render the
+wrist sensor camera instead (`--products .../camera_sensor_162912244368 --record out\dataset`) - it
+rides the robot wrist, so at the home pose it sees only the floor; drive the arm with `--script` for
+interesting captures.
 
 ---
 
