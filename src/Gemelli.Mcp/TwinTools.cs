@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Gemelli.Core;
@@ -65,6 +66,8 @@ public static class TwinTools
         TwinService twin,
         [Description("Number of frames to advance. Default 1.")] int n = 1)
     {
+        if (!twin.IsRunning)
+            throw new McpException("Twin is not running. Call start_twin first.");
         twin.Step(n);
         return $"Stepped {n}. sim_time={twin.SimTime:F4}s, frame_count={twin.FrameCount}.";
     }
@@ -87,6 +90,8 @@ public static class TwinTools
         TwinService twin,
         [Description("USD glob, e.g. '/World/Cube*'. Default '/World/*'.")] string pattern = "/World/*")
     {
+        if (!twin.IsRunning)
+            throw new McpException("Twin is not running. Call start_twin first.");
         // Poses arrive flat: 7 floats per body (px,py,pz, qx,qy,qz,qw) — unpack into one line each.
         float[] flat = twin.Invoke(api => api.Read(SimTensor.RigidBodyPose, pattern));
         int n = flat.Length / 7;
@@ -105,7 +110,11 @@ public static class TwinTools
     public static float[] read_dof(
         TwinService twin,
         [Description("USD glob selecting the articulation(s), e.g. '/World/robot'.")] string pattern)
-        => twin.Invoke(api => api.Read(SimTensor.ArticulationDofPosition, pattern));
+    {
+        if (!twin.IsRunning)
+            throw new McpException("Twin is not running. Call start_twin first.");
+        return twin.Invoke(api => api.Read(SimTensor.ArticulationDofPosition, pattern));
+    }
 
     [McpServerTool, Description("Set articulation DOF position targets for prims matching a USD glob.")]
     public static string set_dof_targets(
@@ -113,6 +122,8 @@ public static class TwinTools
         [Description("USD glob selecting the articulation(s), e.g. '/World/robot'.")] string pattern,
         [Description("Target positions, one per DOF (flat row-major). Radians for revolute joints, metres for prismatic — NOT the degrees USD files author.")] float[] values)
     {
+        if (!twin.IsRunning)
+            throw new McpException("Twin is not running. Call start_twin first.");
         twin.Invoke(api => api.SetDofPositionTargets(pattern, values));
         return $"Set {values.Length} DOF position targets on '{pattern}'.";
     }
@@ -125,7 +136,7 @@ public static class TwinTools
         [Description("Render product path. Omit to use the first product that produced color.")] string? renderProduct = null)
     {
         if (!twin.IsRunning)
-            throw new InvalidOperationException("Twin is not running. Call start_twin first.");
+            throw new McpException("Twin is not running. Call start_twin first.");
 
         byte[]? png = twin.LatestColorPng(renderProduct);
         if (png is null)
@@ -134,7 +145,7 @@ public static class TwinTools
             png = twin.LatestColorPng(renderProduct);
         }
         if (png is null)
-            throw new InvalidOperationException(
+            throw new McpException(
                 "No color image available. Check the render product has a valid camera and the scene is lit.");
 
         return ImageContentBlock.FromBytes(png, "image/png");
