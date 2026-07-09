@@ -28,6 +28,9 @@
     <Project Path="src/Gemelli.Render/Gemelli.Render.csproj">
       <Platform Project="x64" />
     </Project>
+    <Project Path="src/Gemelli.Ros/Gemelli.Ros.csproj">
+      <Platform Project="x64" />
+    </Project>
     <Project Path="src/Gemelli.Scripting/Gemelli.Scripting.csproj">
       <Platform Project="x64" />
     </Project>
@@ -51,6 +54,9 @@
       <Platform Project="x64" />
     </Project>
     <Project Path="tools/raster-probe/raster-probe.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="tools/ros-probe/ros-probe.csproj">
       <Platform Project="x64" />
     </Project>
     <Project Path="tools/usd-addcam/usd-addcam.csproj">

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Gemelli.Ros</RootNamespace>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <!-- Intentionally dependency-free: a ROS 1 node is XML-RPC over HTTP plus TCPROS framing,
+       both implemented here on raw sockets and System.Xml. No native libraries, no bridge. -->
+
+</Project>
