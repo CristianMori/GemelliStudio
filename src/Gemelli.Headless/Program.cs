@@ -198,5 +198,5 @@ internal static class ArgParser
 
     public static void PrintUsage() => Console.Error.WriteLine(
         "Usage: Gemelli.Headless --usd <path> --products <p1,p2,...> " +
-        "[--steps n] [--out dir] [--record dir] [--dt sec] [--rigid glob] [--ovrtx-lib dir] [--ovphysx-lib path] [--device cpu|gpu|auto] [--script path.csx]");
+        "[--steps n] [--out dir] [--record dir] [--dt sec] [--rigid glob] [--ovrtx-lib dir] [--ovphysx-lib path] [--device cpu|gpu|auto] [--script path.csx] [--dump-dof robotPath]");
 }
