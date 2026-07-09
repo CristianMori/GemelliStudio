@@ -24,7 +24,7 @@ public static class TwinTools
         [Description("Path (or URL) to the USD scene to load into both physics and renderer.")] string usd,
         [Description("Render product prim paths to render (e.g. a camera's RenderProduct).")] string[] renderProducts,
         [Description("Physics device: 'cpu', 'gpu', or 'auto'. Default 'auto'.")] string device = "auto",
-        [Description("Rigid-body USD glob whose poses are mirrored into the renderer. Default '/World/*'.")] string rigidBodyPattern = "/World/*")
+        [Description("Rigid-body USD glob whose poses are mirrored into the renderer. Default '/World/**' (all nested bodies).")] string rigidBodyPattern = "/World/**")
     {
         if (twin.IsRunning)
             return "Twin is already running. Call stop_twin first to load a different scene.";
