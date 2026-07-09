@@ -13,6 +13,10 @@ using Gemelli.Core.Control;
 
 CrashDialogs.Suppress();
 
+// Stray Console.WriteLine from shared components (e.g. the FMI blocks ready line) must not corrupt
+// the JSON-RPC stream; the stdio transport writes through the raw stdout handle, so this is safe.
+Console.SetOut(Console.Error);
+
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Logging.AddConsole(o => o.LogToStandardErrorThreshold = LogLevel.Trace);

@@ -45,10 +45,29 @@ public static class TwinTools
             OvrtxLibraryDirectory = GemelliEnvironment.ResolveOvrtxDirectory(),
         };
 
-        twin.Start(options);
+        // Behavior blocks embedded in the scene (ovfmi USD-FMI schema: FMU/SSP/ONNX instances) step
+        // once per frame, exactly as in Studio and Headless - without this the twin runs bare playback
+        // over MCP and FMI/policy-driven scenes behave differently than everywhere else.
+        List<IController> controllers = [];
+        string graphNote = "";
+        try
+        {
+            Gemelli.Fmi.FmiSceneConfig? fmi = Gemelli.Fmi.FmiSchema.Load(usd);
+            if (fmi is not null && fmi.Instances.Count > 0)
+            {
+                controllers.Add(new Gemelli.Fmi.SignalGraphController(fmi));
+                graphNote = $" Signal graph: {fmi.Instances.Count} instance(s).";
+            }
+        }
+        catch (Exception ex)
+        {
+            graphNote = $" Signal graph not attached (schema read failed: {ex.Message.Split('\n')[0]}).";
+        }
+
+        twin.Start(options, controllers);
         var (maj, min, patch) = twin.RenderVersion;
         return $"Twin started. ovrtx {maj}.{min}.{patch}. Rigid bodies bridged: {twin.RigidBodyPaths.Count}. " +
-               $"Render products: {string.Join(", ", renderProducts)}. State: paused at t=0.";
+               $"Render products: {string.Join(", ", renderProducts)}. State: paused at t=0.{graphNote}";
     }
 
     [McpServerTool, Description("Stop the twin and shut down both workers.")]
