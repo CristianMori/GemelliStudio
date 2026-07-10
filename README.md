@@ -48,6 +48,9 @@ Isaac Sim exports. Gemelli treats that USD as an editable, save-back-able docume
 - **ONNX policies as blocks.** An exported RL actor drops into the graph like any other block. The
   bundled demo walks the **Open Duck Mini v2** biped with its MuJoCo-trained policy, steered live
   from the mapper.
+- **ROS 1 in the graph.** Topic blocks speak the actual ROS wire protocols (XML-RPC + TCPROS, via
+  the [Mori.RosSharp](https://www.nuget.org/packages/Mori.RosSharp) package — no bridge, no native
+  deps): subscribe `/cmd_vel` to steer, publish joint states, odometry, and `/clock` back out.
 - **Adjustable time.** A settings pane exposes the physics timestep and a sim-time **time-scale** (slow-mo
   through ~10× acceleration, bounded by physics throughput).
 - **One assembled-app folder.** A `dotnet build` drops the whole app into `dist\<Config>\`.
@@ -405,6 +408,41 @@ mapper. To regenerate the robot USD from the source URDF, clone the Open Duck Mi
 
 ---
 
+## ROS 1 integration
+
+The mapper's **＋ ROS…** button adds topic blocks backed by
+[Mori.RosSharp](https://www.nuget.org/packages/Mori.RosSharp) — a pure managed ROS 1 node
+(XML-RPC graph APIs + TCPROS transport on raw sockets). The twin joins the ROS graph as a regular
+node named `/gemelli`: no rosbridge, no ROS installation on the Windows side, no native libraries.
+
+| Block | Direction | Message |
+|---|---|---|
+| Twist subscriber | ROS → twin | `geometry_msgs/Twist` as `linear [3]` / `angular [3]` pins (e.g. `/cmd_vel`) |
+| JointState publisher | twin → ROS | wired position/velocity vectors at a fixed rate; joint names prefill from labelled DOF pins |
+| Odometry publisher | twin → ROS | a body's `fmi:bodyPose`/`fmi:bodyVelocity` as `nav_msgs/Odometry` |
+| Clock publisher | twin → ROS | sim time on `/clock` for `use_sim_time` consumers (follows the time-scale) |
+
+The duck demo closes the loop end-to-end: `teleop_twist_keyboard` on the ROS side publishes
+`/cmd_vel`, the Twist block feeds the walking policy's command pins, and the policy drives PhysX —
+while joint states stream back out to `rostopic echo`:
+
+```bash
+# ROS side (e.g. Ubuntu 20.04 in WSL2 with Noetic):
+roscore &
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py _speed:=0.12 _turn:=1.0
+```
+
+In Studio: start `duck_walk.usda` → **Signals** → **＋ ROS…** (master URI, Subscribe Twist) → wire
+`linear` → `cmd_vx` (element `x`) and `angular` → `cmd_wz` (element `z`).
+
+Networking note for WSL2 (NAT): ROS carries each node's callback URIs inside the protocol, so both
+sides must be mutually reachable — set `ROS_IP` on the WSL side to its `eth0` address, and allow
+inbound TCP from the WSL subnet on the Windows side (one elevated rule:
+`New-NetFirewallRule -DisplayName "ROS inbound (WSL)" -Direction Inbound -Action Allow -Protocol TCP -RemoteAddress 172.16.0.0/12`).
+ROS 1 only for now; ROS 2 (DDS) is a different protocol family.
+
+---
+
 ## Tool-drivable (MCP server)
 
 `Gemelli.Mcp` exposes the twin over the **Model Context Protocol** (stdio) so any MCP-compatible client can
@@ -463,6 +501,7 @@ reserved for the sensor cameras and ground-truth RTX mode.
 - ✅ **FMI co-simulation** (`Gemelli.Fmi`) — FMI 2.0 + SSP 1.0 host via the ovfmi USD-FMI schema; conveyor demo verified end-to-end (sensor → controller → roller drives)
 - ✅ **Signal Mapper** — live node graph of the signal wiring: per-wire values, cut/reconnect at runtime, vector pins with thick wires + element picker, palette of constant / gamepad / keyboard / multiply / ONNX blocks
 - ✅ **ONNX policy blocks** — exported RL actors as graph blocks; the Open Duck Mini v2 walks in PhysX with its MuJoCo-trained policy (`duck_walk.usda`)
+- ✅ **ROS 1 integration** — topic blocks over Mori.RosSharp (pure managed XML-RPC + TCPROS); teleop-steered duck verified against a live roscore, joint states/odometry/clock published back
 - ✅ **MCP server** (`Gemelli.Mcp`) — tool-drivable incl. `render_frame` vision; verified end-to-end
 - ✅ **Avalonia Studio** — viewport + transport + outliner + inspector + sensor panel + settings over the shared `TwinService`
 - ✅ Packaging: single assembled-app folder (`dist\<Config>\`), native-lib auto-discovery, one-command launchers
