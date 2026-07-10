@@ -4,6 +4,9 @@
   <Folder Name="/external/ovrtx/csharp/">
     <Project Path="external/ovrtx/csharp/Nvidia.Ovrtx/Nvidia.Ovrtx.csproj" />
   </Folder>
+  <Folder Name="/external/Mori.RosSharp/">
+    <Project Path="external/Mori.RosSharp/src/Mori.RosSharp/Mori.RosSharp.csproj" />
+  </Folder>
   <Folder Name="/external/physx/" />
   <Folder Name="/external/physx/ovphysx/" />
   <Folder Name="/external/physx/ovphysx/csharp/">
@@ -26,9 +29,6 @@
       <Platform Project="x64" />
     </Project>
     <Project Path="src/Gemelli.Render/Gemelli.Render.csproj">
-      <Platform Project="x64" />
-    </Project>
-    <Project Path="src/Gemelli.Ros/Gemelli.Ros.csproj">
       <Platform Project="x64" />
     </Project>
     <Project Path="src/Gemelli.Scripting/Gemelli.Scripting.csproj">
@@ -54,9 +54,6 @@
       <Platform Project="x64" />
     </Project>
     <Project Path="tools/raster-probe/raster-probe.csproj">
-      <Platform Project="x64" />
-    </Project>
-    <Project Path="tools/ros-probe/ros-probe.csproj">
       <Platform Project="x64" />
     </Project>
     <Project Path="tools/usd-addcam/usd-addcam.csproj">

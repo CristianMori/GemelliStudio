@@ -15,8 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
-    <!-- ROS 1 transport for the ROS topic blocks (pure managed XML-RPC + TCPROS). -->
-    <ProjectReference Include="..\Gemelli.Ros\Gemelli.Ros.csproj" />
+    <!-- ROS 1 transport for the ROS topic blocks (vendored Mori.RosSharp — see README Setup). -->
+    <ProjectReference Include="$(RosSharpProject)" />
   </ItemGroup>
 
 </Project>

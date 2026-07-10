@@ -139,7 +139,7 @@ clean directory, and the orchestrator finds it by a fixed relative path (no scan
 | `src/Gemelli.Studio` → `Gemelli.Studio.exe` | Avalonia UI: viewport, outliner, inspector, sensor panel, script panel, settings |
 | `src/Gemelli.Headless` → `Gemelli.Headless.exe` | Console host: load USD → run loop → save PNGs / record datasets |
 | `src/Gemelli.Scripting` | Roslyn `.csx` controller host (hot-reload) + script globals |
-| `src/Gemelli.Fmi` | Signal graph: FMI 2.0 co-simulation host (P/Invoke, no Python), SSP 1.0 runner, ovfmi USD-FMI schema reader, ONNX policy blocks, device/constant/multiply blocks, `SignalGraphController` |
+| `src/Gemelli.Fmi` | Signal graph: FMI 2.0 co-simulation host (P/Invoke, no Python), SSP 1.0 runner, ovfmi USD-FMI schema reader, ONNX policy blocks, ROS topic blocks, device/constant/multiply blocks, `SignalGraphController` |
 | `src/Gemelli.Mcp` → `Gemelli.Mcp.exe` | Model Context Protocol server (stdio) — tool-drivable, incl. `render_frame` vision |
 | `scenes/` | Sample USD scenes (franka_studio, conveyor_fmi, duck_walk, …) |
 | `tools/` | USD authoring (`usd-addcam`, `usd-addseg`, `usd-snapshot`), `import_duck_urdf.py`, and de-risk probes (`raster-probe`, `ovrtx-smoke`, `artic-probe`) |
@@ -160,6 +160,7 @@ git clone --depth 1 --filter=blob:none --sparse https://github.com/CristianMori/
 ( cd ovrtx && git sparse-checkout set csharp include skills examples )
 git clone --depth 1 --filter=blob:none --sparse https://github.com/CristianMori/PhysX.git physx
 ( cd physx && git sparse-checkout set ovphysx/csharp )
+git clone --depth 1 https://github.com/CristianMori/Mori.RosSharp.git Mori.RosSharp
 ```
 
 Native libraries (gitignored, version-matched). The apps auto-discover these conventional paths, so no
