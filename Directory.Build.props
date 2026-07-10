@@ -17,7 +17,6 @@
     <!-- Relative paths to the vendored wrappers, for use in <ProjectReference>. -->
     <OvPhysxProject>$(MSBuildThisFileDirectory)external\physx\ovphysx\csharp\Nvidia.OvPhysx\Nvidia.OvPhysx.csproj</OvPhysxProject>
     <OvrtxProject>$(MSBuildThisFileDirectory)external\ovrtx\csharp\Nvidia.Ovrtx\Nvidia.Ovrtx.csproj</OvrtxProject>
-    <RosSharpProject>$(MSBuildThisFileDirectory)external\Mori.RosSharp\src\Mori.RosSharp\Mori.RosSharp.csproj</RosSharpProject>
 
     <!-- Single assembled-app folder for the runtime executables (Studio + the two worker hosts):
          opt in per-project with an <Import> of build/GemelliApp.props, which computes the dist/<Config>/

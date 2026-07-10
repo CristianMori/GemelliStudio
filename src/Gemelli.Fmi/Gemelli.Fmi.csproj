@@ -8,6 +8,8 @@
   <ItemGroup>
     <!-- ONNX Runtime for policy blocks (RL controllers exported as .onnx), CPU execution. -->
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.20.1" />
+    <!-- ROS 1 transport for the ROS topic blocks (pure managed XML-RPC + TCPROS). -->
+    <PackageReference Include="Mori.RosSharp" Version="1.0.0" />
     <!-- USD.NET for reading the USD-FMI schema prims (FmuInstance/SspInstance). Same version as
          Gemelli.Viewport, so the shared dist root carries one consistent set of USD natives. -->
     <PackageReference Include="UniversalSceneDescription" Version="7.3.4" />
@@ -15,8 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
-    <!-- ROS 1 transport for the ROS topic blocks (vendored Mori.RosSharp — see README Setup). -->
-    <ProjectReference Include="$(RosSharpProject)" />
   </ItemGroup>
 
 </Project>

@@ -160,7 +160,6 @@ git clone --depth 1 --filter=blob:none --sparse https://github.com/CristianMori/
 ( cd ovrtx && git sparse-checkout set csharp include skills examples )
 git clone --depth 1 --filter=blob:none --sparse https://github.com/CristianMori/PhysX.git physx
 ( cd physx && git sparse-checkout set ovphysx/csharp )
-git clone --depth 1 https://github.com/CristianMori/Mori.RosSharp.git Mori.RosSharp
 ```
 
 Native libraries (gitignored, version-matched). The apps auto-discover these conventional paths, so no
