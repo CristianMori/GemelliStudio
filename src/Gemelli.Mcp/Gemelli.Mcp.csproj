@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Orchestrator: lands in the assembled-app root (dist/<Config>/) beside the worker subfolders. -->
   <Import Project="$(MSBuildThisFileDirectory)..\..\build\GemelliApp.props" />
@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Gemelli.Core\Gemelli.Core.csproj" />
+    <ProjectReference Include="..\Gemelli.Fmi\Gemelli.Fmi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
