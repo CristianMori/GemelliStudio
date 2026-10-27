@@ -63,4 +63,72 @@ public static class TransformConversion
         }
         return matrices;
     }
+
+    /// <summary>
+    /// Converts a flat <c>[N, 7]</c> world-pose buffer into a flat <c>[N, 16]</c> matrix buffer,
+    /// re-expressing each pose relative to its nearest bridged ancestor (per
+    /// <paramref name="ancestorIndex"/>, -1 for none). The renderer composes <c>omni:xform</c>
+    /// down the prim hierarchy, so a body nested under another bridged body must be written
+    /// parent-relative or it is double-transformed (v' = v * M row-vector convention:
+    /// local = world_child * inverse(world_ancestor)).
+    /// </summary>
+    public static double[] PosesToUsdMatrices(ReadOnlySpan<float> poses, ReadOnlySpan<int> ancestorIndex)
+    {
+        if (poses.Length % PoseStride != 0)
+            throw new ArgumentException($"poses length ({poses.Length}) must be a multiple of {PoseStride}.", nameof(poses));
+        int n = poses.Length / PoseStride;
+        if (ancestorIndex.Length != n)
+            throw new ArgumentException($"ancestorIndex length ({ancestorIndex.Length}) must match pose count ({n}).", nameof(ancestorIndex));
+
+        var matrices = new double[n * MatrixStride];
+        for (int i = 0; i < n; i++)
+        {
+            Span<double> dst = matrices.AsSpan(i * MatrixStride, MatrixStride);
+            int a = ancestorIndex[i];
+            if (a < 0)
+            {
+                PoseToUsdMatrix(poses.Slice(i * PoseStride, PoseStride), dst);
+                continue;
+            }
+            Matrix4x4 child = PoseToMatrix(poses.Slice(i * PoseStride, PoseStride));
+            Matrix4x4 ancestor = PoseToMatrix(poses.Slice(a * PoseStride, PoseStride));
+            Matrix4x4.Invert(ancestor, out Matrix4x4 inv);
+            Matrix4x4 local = child * inv; // row-vector: world_child = local * world_ancestor
+            dst[0] = local.M11; dst[1] = local.M12; dst[2] = local.M13; dst[3] = local.M14;
+            dst[4] = local.M21; dst[5] = local.M22; dst[6] = local.M23; dst[7] = local.M24;
+            dst[8] = local.M31; dst[9] = local.M32; dst[10] = local.M33; dst[11] = local.M34;
+            dst[12] = local.M41; dst[13] = local.M42; dst[14] = local.M43; dst[15] = 1.0;
+        }
+        return matrices;
+    }
+
+    /// <summary>Builds the row-vector world matrix for one <c>(px,py,pz,qx,qy,qz,qw)</c> pose.</summary>
+    private static Matrix4x4 PoseToMatrix(ReadOnlySpan<float> pose)
+    {
+        Matrix4x4 m = Matrix4x4.CreateFromQuaternion(new Quaternion(pose[3], pose[4], pose[5], pose[6]));
+        m.M41 = pose[0]; m.M42 = pose[1]; m.M43 = pose[2];
+        return m;
+    }
+
+    /// <summary>
+    /// For each prim path, the index of its nearest ancestor that is itself in
+    /// <paramref name="primPaths"/>, or -1. Ancestry is by USD path prefix (segment-aligned).
+    /// </summary>
+    public static int[] NearestBridgedAncestors(IReadOnlyList<string> primPaths)
+    {
+        var index = new Dictionary<string, int>(primPaths.Count);
+        for (int i = 0; i < primPaths.Count; i++) index[primPaths[i]] = i;
+
+        var result = new int[primPaths.Count];
+        for (int i = 0; i < primPaths.Count; i++)
+        {
+            result[i] = -1;
+            string path = primPaths[i];
+            for (int cut = path.LastIndexOf('/'); cut > 0; cut = path.LastIndexOf('/', cut - 1))
+            {
+                if (index.TryGetValue(path[..cut], out int a)) { result[i] = a; break; }
+            }
+        }
+        return result;
+    }
 }

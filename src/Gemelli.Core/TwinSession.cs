@@ -21,6 +21,7 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
     private readonly FrameBuffer? _frameBuffer; // shared-memory framebuffer (Windows); null = inline pipe transport
 
     private string[] _primPaths = [];
+    private int[] _bridgedAncestors = [];
     private double _simTime; // double: float ulps exceed a 1/60s increment after ~4.5h and sim time would drift
     private bool _disposed;
     private IReadOnlyList<CapturedFrame> _latestFrames = [];
@@ -154,6 +155,7 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
             _physics.Send((ushort)PhysicsOp.LoadUsd, w => w.Write(options.UsdPath));
             using (BinaryReader r = _physics.Request((ushort)PhysicsOp.BindPoses, w => w.Write(options.RigidBodyPattern)))
                 _primPaths = Wire.ReadStringArray(r);
+            _bridgedAncestors = TransformConversion.NearestBridgedAncestors(_primPaths);
 
             // Render: init renderer (with the shared framebuffer name), load the same USD.
             using (BinaryReader r = _render.Request((ushort)RenderOp.Init, w =>
@@ -220,7 +222,7 @@ public sealed class TwinSession : IDisposable, ISimApi, ITwinDriver
 
         // 2. Convert final poses -> USD 4×4 matrices (pure, in-process). Append the interactive
         //    camera transform (if the UI has set one) so the viewport can orbit/pan/zoom live.
-        double[] bodyMatrices = n > 0 ? TransformConversion.PosesToUsdMatrices(poses) : [];
+        double[] bodyMatrices = n > 0 ? TransformConversion.PosesToUsdMatrices(poses, _bridgedAncestors) : [];
         string[] writePaths = _primPaths;
         double[] matrices = bodyMatrices;
         lock (_camLock)
