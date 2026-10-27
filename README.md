@@ -1,10 +1,26 @@
 # Gemelli Studio
 
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-10-512BD4)](#)
+[![Isaac Sim](https://img.shields.io/badge/Isaac%20Sim-6.0-76B900)](#)
+
 *Gemelli* — Italian for "twins" (as in *digital twin*).
 
 A **C#/.NET digital-twin runtime and editor**. Load an Isaac Sim–exported USD scene and run rigid-body +
 articulation physics alongside physically-accurate sensor rendering, entirely in managed code — no live
-Isaac Sim in the loop. Everything is .NET 8/10, C#, x64.
+Isaac Sim in the loop. The app targets **.NET 10** (`net10.0`), C#, x64. Vendored wrapper projects under
+`external/` keep their own `net8.0` settings.
+
+Gemelli Studio ships as the built Windows app under `dist\<Config>\`. ROS topic blocks reference
+[Mori.RosSharp](https://www.nuget.org/packages/Mori.RosSharp) **1.0.0**
+(`src/Gemelli.Fmi/Gemelli.Fmi.csproj`).
+
+<!-- TODO: add a GIF of the Open Duck Mini walking. The still is docs/duck-walk.png. -->
+
+![The Open Duck Mini v2 standing in the Fast viewport, driven by its ONNX walking policy](docs/duck-walk.png)
+
+*Open Duck Mini v2 in the fast viewport, in the walking policy's home pose. Robot USD and the ONNX
+policy are vendored under `scenes/duck/`.*
 
 ![Gemelli Studio — a Franka Panda driven live by a C# script in the fast rasterized viewport (431 fps), with the outliner, sensor (depth) panel, and per-frame script editor](docs/gemelli-studio.png)
 
@@ -25,6 +41,66 @@ Isaac Sim exports. Gemelli treats that USD as an editable, save-back-able docume
 > portable — the .NET orchestrator, Avalonia UI, GL rasterizer, IPC, and scripting are all cross-platform —
 > so a **Linux build is a possible future direction**, pending Linux engine binaries and abstracting those
 > Windows-specific bits.
+
+---
+
+## Quick start
+
+Windows x64. Clone, put the native engines in place ([Setup](#setup)), build and launch with one
+script, then pick a scene.
+
+**Requirements**
+
+- **.NET 10 SDK.** App projects target `net10.0`.
+- **NVIDIA GPU.** ovphysx 0.4.13 and ovrtx 0.2.0 were verified live on an RTX GPU. The physics device
+  is `cpu`, `gpu`, or `auto`. The fast viewport is an in-process GL rasterizer; RTX mode and the
+  sensor cameras go through ovrtx.
+- **Isaac Sim 6.x** is the USD authoring tool, and it stays out of the runtime loop. Shipped scenes
+  are already exported. Regenerating the duck from URDF (`tools/import_duck_urdf.py`) uses Isaac
+  Sim's bundled Python and the 6.x URDF importer API.
+- **MSVC x64** (Visual Studio C++ toolset, located via `vswhere`) is required only to compile the
+  conveyor demo FMUs with `tools/build-fmus.ps1`.
+
+```powershell
+git clone https://github.com/CristianMori/GemelliStudio.git
+cd GemelliStudio
+# wrappers + native libraries: see Setup, then
+.\run-studio.ps1
+```
+
+`.\run-studio.ps1` incrementally builds `Gemelli.slnx` in Release and starts
+`dist\Release\Gemelli.Studio.exe`. `-NoBuild` skips the build. `-Debug` uses the Debug output.
+
+In the scene dropdown (or **Browse**), pick a scene, choose a device, press **Start**:
+
+- **`duck_walk.usda`** — Open Duck Mini v2. The converted robot and the walking-policy ONNX ship
+  under `scenes\duck\`. **Start** and the duck holds its crouch and steps in place. Steer it from
+  the Signal Mapper.
+- **`conveyor_fmi.usda`** — FMI / SSP conveyor (presence sensor, line controller, roller drives).
+  Vendor ovfmi and build the FMUs first; the scene header lists both prerequisites. Commands are
+  in [FMI co-simulation](#fmi-co-simulation-the-conveyor-demo).
+
+The dropdown defaults to the first filename containing `franka` (`franka_studio.usda` when present):
+a Franka Panda driven from the per-frame C# script.
+
+Drag to orbit · Shift-drag to pan · wheel to zoom. Select a body in the outliner to edit its transform
+in the inspector; switch the **Sensor** panel between Color / Depth / Segmentation; **⚙ Settings**
+opens the pacing pane; **● Rec** records a dataset; **Save USD** bakes the current state (including
+robot joint pose) to a new `.usda`.
+
+Headless (same build, no UI), once Setup is done:
+
+```powershell
+.\run-headless.ps1 --usd scenes\franka_studio.usda `
+    --products /Render/OmniverseKit/HydraTextures/camera_sensor_162912244368 `
+    --steps 60 --device gpu --record out\dataset
+```
+
+Tier-1 tests do not need the native libraries:
+
+```bash
+dotnet test tests/Gemelli.Tests --filter TransformConversion
+```
 
 ---
 
@@ -49,32 +125,11 @@ Isaac Sim exports. Gemelli treats that USD as an editable, save-back-able docume
   bundled demo walks the **Open Duck Mini v2** biped with its MuJoCo-trained policy, steered live
   from the mapper.
 - **ROS 1 in the graph.** Topic blocks speak the actual ROS wire protocols (XML-RPC + TCPROS, via
-  the [Mori.RosSharp](https://www.nuget.org/packages/Mori.RosSharp) package — no bridge, no native
+  the [Mori.RosSharp](https://www.nuget.org/packages/Mori.RosSharp) 1.0.0 package — no bridge, no native
   deps): subscribe `/cmd_vel` to steer, publish joint states, odometry, and `/clock` back out.
 - **Adjustable time.** A settings pane exposes the physics timestep and a sim-time **time-scale** (slow-mo
   through ~10× acceleration, bounded by physics throughput).
 - **One assembled-app folder.** A `dotnet build` drops the whole app into `dist\<Config>\`.
-
----
-
-## Quick start
-
-With the native libraries placed under `native\` (see [Setup](#setup)), no environment setup is needed —
-the apps auto-discover them. From the repo root (PowerShell):
-
-```powershell
-.\run-studio.ps1            # incremental build, then launch the Studio UI (-NoBuild to skip)
-
-.\run-headless.ps1 --usd scenes\franka_studio.usda `
-    --products /Render/OmniverseKit/HydraTextures/camera_sensor_162912244368 `
-    --steps 60 --device gpu --record out\dataset
-```
-
-In Studio: pick a scene from the dropdown (or **Browse**), choose a device, press **Start**. Drag to
-orbit · Shift-drag to pan · wheel to zoom. Select a body in the outliner to edit its transform in the
-inspector; switch the **Sensor** panel between Color / Depth / Segmentation; **⚙ Settings** opens the
-pacing pane; **● Rec** records a dataset; **Save USD** bakes the current state (including robot joint pose)
-to a new `.usda`.
 
 ---
 
@@ -155,7 +210,8 @@ clean directory, and the orchestrator finds it by a fixed relative path (no scan
 
 ## Setup
 
-Re-create the vendored wrapper sources (shallow sparse clones):
+`.\run-studio.ps1` discovers the libraries below. Re-create the vendored wrapper sources (shallow
+sparse clones):
 
 ```bash
 mkdir -p external && cd external
@@ -411,7 +467,7 @@ mapper. To regenerate the robot USD from the source URDF, clone the Open Duck Mi
 ## ROS 1 integration
 
 The mapper's **＋ ROS…** button adds topic blocks backed by
-[Mori.RosSharp](https://www.nuget.org/packages/Mori.RosSharp) — a pure managed ROS 1 node
+[Mori.RosSharp](https://www.nuget.org/packages/Mori.RosSharp) 1.0.0 — a pure managed ROS 1 node
 (XML-RPC graph APIs + TCPROS transport on raw sockets). The twin joins the ROS graph as a regular
 node named `/gemelli`: no rosbridge, no ROS installation on the Windows side, no native libraries.
 
@@ -516,3 +572,15 @@ Apache License 2.0 © 2026 Cristian Mori. See [LICENSE](LICENSE).
 
 The two native engines (*ovphysx*, *ovrtx*) and their C# wrappers are acquired separately under their own
 terms; they are not redistributed here (see [Setup](#setup)).
+
+---
+
+## Related projects
+
+Part of a family of open-source robotics / industrial-automation libraries by @CristianMori:
+
+- **EtherNet/IP + CIP Safety:** [Python](https://github.com/CristianMori/EthernetIpPython) · [C#](https://github.com/CristianMori/EthernetIpSharp) · [Rust](https://github.com/CristianMori/EthernetIpRust) · [C++](https://github.com/CristianMori/EthernetIpCpp)
+- **PLC tooling:** [MoriFixPlc](https://github.com/CristianMori/MoriFixPlc) (portable PLC HAL) · [EscaFlow](https://github.com/CristianMori/Mori.EscaFlow) (PLC transpiler)
+- **ROS in pure C#:** [Mori.RosSharp](https://github.com/CristianMori/Mori.RosSharp) (ROS 1) · [Mori.Ros2Sharp](https://github.com/CristianMori/Mori.Ros2Sharp) (ROS 2)
+- **Simulation & vision:** [GemelliStudio](https://github.com/CristianMori/GemelliStudio) · [LocateAnythingSharp](https://github.com/CristianMori/LocateAnythingSharp) · [Mori.SkyScope](https://github.com/CristianMori/Mori.SkyScope)
+- **AI agents:** [Deckhand](https://github.com/CristianMori/DeckHand)
